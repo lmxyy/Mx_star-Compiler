@@ -171,18 +171,6 @@ public class Mx_starBaseListener implements Mx_starListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpression(Mx_starParser.ExpressionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitExpression(Mx_starParser.ExpressionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterVariable(Mx_starParser.VariableContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -190,6 +178,18 @@ public class Mx_starBaseListener implements Mx_starListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitVariable(Mx_starParser.VariableContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterExpression(Mx_starParser.ExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExpression(Mx_starParser.ExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

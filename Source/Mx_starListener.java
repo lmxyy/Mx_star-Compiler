@@ -137,16 +137,6 @@ public interface Mx_starListener extends ParseTreeListener {
 	 */
 	void exitAssignment(Mx_starParser.AssignmentContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Mx_starParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterExpression(Mx_starParser.ExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Mx_starParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitExpression(Mx_starParser.ExpressionContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link Mx_starParser#variable}.
 	 * @param ctx the parse tree
 	 */
@@ -156,6 +146,16 @@ public interface Mx_starListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitVariable(Mx_starParser.VariableContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Mx_starParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpression(Mx_starParser.ExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Mx_starParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpression(Mx_starParser.ExpressionContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Mx_starParser#term}.
 	 * @param ctx the parse tree

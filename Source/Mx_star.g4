@@ -4,15 +4,15 @@ defclass
     :
 	Class Identifier 
 	'{'
-	(defvar|defun)*
+	(defvar ';'|defun)*
 	(Identifier '(' Void? ')' block)?
-	(defvar|defun)*
+	(defvar ';'|defun)*
 	'}'
     ;
 
 defvar
     :
-	(basetype Identifier ('=' expression)? ';')
+	(vartype Identifier ('=' expression)?)
     ;
 
 defun
@@ -40,23 +40,23 @@ stmts
 
 stmt
     :
-	';'|
-	defvar|
-	assignment|
-	callfun|
-	(expression ';')|
+	defvar ';'|
+	assignment ';'|
+	callfun ';'|
+	expression ';'|
 	block|
 	if_stmt|
 	while_stmt|
 	for_stmt|
 	(Break ';')|
 	(Continue ';')|
-	(return_stmt)
+	(return_stmt)|
+	';'
     ;
 
 callfun
     :
-	variable'(' (expression ('(' ',' expression')')*)? ')'
+	variable'(' (expression (',' expression )*)? ')'
     ;
 
 if_stmt
@@ -77,7 +77,7 @@ for_stmt
 
 return_stmt
     :
-	Return expression ';'
+	Return expression? ';'
     ;
 
 assignment
@@ -85,7 +85,14 @@ assignment
 	(variable '=' expression)|
 	(('++'|'--') variable)|
 	(variable ('++'|'--'))
+    ;
 
+variable
+    :
+	Identifier|
+	'(' variable ')'|
+	variable '.' Identifier|
+	variable ('[' expression ']')+
     ;
 
 expression
@@ -93,6 +100,8 @@ expression
 	term|
 	callfun|
 	'('expression')'|
+	expression '.' Identifier|
+	expression '[' expression ']'|
 	('-'|'!'|'~') expression|
 	expression ('*'|'/'|'%') expression|
 	expression ('+'|'-') expression|
@@ -106,14 +115,6 @@ expression
 	expression '||' expression|
 	expression '?' expression ':' expression|
 	New vartype_plus ('(' (expression (',' expression)* )? ')')?
-    ;
-
-variable
-    :
-	Identifier|
-	'(' variable ')'|
-	variable '.' Identifier|
-	variable ('[' expression ']')+
     ;
 
 term
@@ -170,17 +171,10 @@ Integerliteral
 	Decimalliteral
     ;
 
-Identifier
-    :
-	LETTER
-	(
-	    NONDIGIT|
-	    DIGIT
-	)*
-    ;
 
 Decimalliteral
     :
+	'0'|
 	NONZERODIGIT
 	(
 		'\''? DIGIT
@@ -345,4 +339,13 @@ Class
 This
     :
 	'this'
+    ;
+
+Identifier
+    :
+	LETTER
+	(
+	    NONDIGIT|
+	    DIGIT
+	)*
     ;
