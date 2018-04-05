@@ -92,27 +92,28 @@ expression
     :
 	term|
 	callfun|
-	('('expression')')|
-	(('-'|'!'|'~') expression)|
-	(expression ('*'|'/'|'%') expression)|
-	(expression ('+'|'-') expression)|
-	(expression ('<<'|'>>') expression)|
-	(expression ('>'|'>='|'<'|'<=') expression)|
-	(expression ('=='|'!=') expression)|	
-	(expression '&' expression)|
-	(expression '^' expression)|
-	(expression '|' expression)|
-	(expression '&&' expression)|
-	(expression '||' expression)|
-	(expression '?' expression ':' expression)|
-	(New vartype_plus ('(' (expression (',' expression)* )? ')')?)
+	'('expression')'|
+	('-'|'!'|'~') expression|
+	expression ('*'|'/'|'%') expression|
+	expression ('+'|'-') expression|
+	expression ('<<'|'>>') expression|
+	expression ('>'|'>='|'<'|'<=') expression|
+	expression ('=='|'!=') expression|	
+	expression '&' expression|
+	expression '^' expression|
+	expression '|' expression|
+	expression '&&' expression|
+	expression '||' expression|
+	expression '?' expression ':' expression|
+	New vartype_plus ('(' (expression (',' expression)* )? ')')?
     ;
 
 variable
     :
 	Identifier|
-	(variable '.' Identifier)|
-	(variable ('[' expression ']')+)
+	'(' variable ')'|
+	variable '.' Identifier|
+	variable ('[' expression ']')+
     ;
 
 term
@@ -123,12 +124,12 @@ term
 
 vartype_plus
     :
-	basetype (('[' Decimalliteral ']')*('[' ']')*)?
+	basetype ('[' Decimalliteral ']')*('[' ']')*
     ;
 
 vartype
     :
-	basetype (('[' ']')*)?
+	basetype ('[' ']')*
     ;
 
 basetype
