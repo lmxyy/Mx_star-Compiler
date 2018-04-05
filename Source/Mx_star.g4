@@ -56,13 +56,13 @@ stmt
 
 callfun
     :
-	variable'(' (expression ('(',expression')')*)? ')'
+	variable'(' (expression ('(' ',' expression')')*)? ')'
     ;
 
 if_stmt
     :
 	(If '(' expression ')' (stmt|block) )|
-	(If '(' expreesion ')' (stmt|block) Else (stmt|block))
+	(If '(' expression ')' (stmt|block) Else (stmt|block))
     ;
 
 while_stmt
@@ -93,7 +93,7 @@ expression
 	term|
 	callfun|
 	('('expression')')|
-	(('-'|'!'|'~') expreesion)|
+	(('-'|'!'|'~') expression)|
 	(expression ('*'|'/'|'%') expression)|
 	(expression ('+'|'-') expression)|
 	(expression ('<<'|'>>') expression)|
@@ -108,19 +108,6 @@ expression
 	(New vartype_plus ('(' (expression (',' expression)* )? ')')?)
     ;
 
-term
-    :
-	variable|
-	literal
-    ;
-
-callfun
-    :
-	(variable'('')')|
-	(variable'('expression')')|
-	(variable'('expression (',' expression)+ ')')
-    ;
-
 variable
     :
 	Identifier|
@@ -128,12 +115,18 @@ variable
 	(variable ('[' expression ']')+)
     ;
 
-vartype_plus:
+term
+    :
+	variable|
+	literal
+    ;
+
+vartype_plus
     :
 	basetype (('[' Decimalliteral ']')*('[' ']')*)?
     ;
 
-vartype_plus
+vartype
     :
 	basetype (('[' ']')*)?
     ;
@@ -180,7 +173,7 @@ Identifier
     :
 	LETTER
 	(
-	    Identifiernondigit|
+	    NONDIGIT|
 	    DIGIT
 	)*
     ;
