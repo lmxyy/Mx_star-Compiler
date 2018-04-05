@@ -1,25 +1,187 @@
 grammar Mx_star;
 
+defclass
+    :
+	Class Identifier 
+	'{'
+	(defvar|defun)*
+	(Identifier '(' Void? ')' block)?
+	(defvar|defun)*
+	'}'
+    ;
+
+defvar
+    :
+	(basetype Identifier ('=' expression)? ';')
+    ;
+
+defun
+    :
+	funtype Identifier '(' params ')' block
+    ;
+
+params
+    :
+	(Void?)|
+	(vartype Identifier (',' vartype Identifier)*)|
+    ;
+
+block
+    :
+	'{'
+	stmts
+	'}'
+    ;
+
+stmts
+    :
+	stmt*
+    ;
+
+stmt
+    :
+	';'|
+	defvar|
+	assignment|
+	callfun|
+	(expression ';')|
+	block|
+	if_stmt|
+	while_stmt|
+	for_stmt|
+	(Break ';')|
+	(Continue ';')|
+	(return_stmt)
+    ;
+
+callfun
+    :
+	variable'(' (expression ('(',expression')')*)? ')'
+    ;
+
+if_stmt
+    :
+	(If '(' expression ')' (stmt|block) )|
+	(If '(' expreesion ')' (stmt|block) Else (stmt|block))
+    ;
+
+while_stmt
+    :
+	While '(' expression ')' (stmt|block)
+    ;
+
+for_stmt
+    :
+	For '(' (defvar|assignment) ';' (expression)? ';' assignment ')' (stmt|block)
+    ;
+
+return_stmt
+    :
+	Return expression ';'
+    ;
+
+assignment
+    :
+	(variable '=' expression)|
+	(('++'|'--') variable)|
+	(variable ('++'|'--'))
+
+    ;
+
+expression
+    :
+	term|
+	callfun|
+	('('expression')')|
+	(('-'|'!'|'~') expreesion)|
+	(expression ('*'|'/'|'%') expression)|
+	(expression ('+'|'-') expression)|
+	(expression ('<<'|'>>') expression)|
+	(expression ('>'|'>='|'<'|'<=') expression)|
+	(expression ('=='|'!=') expression)|	
+	(expression '&' expression)|
+	(expression '^' expression)|
+	(expression '|' expression)|
+	(expression '&&' expression)|
+	(expression '||' expression)|
+	(expression '?' expression ':' expression)|
+	(New vartype_plus ('(' (expression (',' expression)* )? ')')?)
+    ;
+
+term
+    :
+	variable|
+	literal
+    ;
+
+callfun
+    :
+	(variable'('')')|
+	(variable'('expression')')|
+	(variable'('expression (',' expression)+ ')')
+    ;
+
+variable
+    :
+	Identifier|
+	(variable '.' Identifier)|
+	(variable ('[' expression ']')+)
+    ;
+
+vartype_plus:
+    :
+	basetype (('[' Decimalliteral ']')*('[' ']')*)?
+    ;
+
+vartype_plus
+    :
+	basetype (('[' ']')*)?
+    ;
+
+basetype
+    :
+	Int|
+	String|
+	Bool|
+	Identifier
+    ;
+
+funtype
+    :
+	vartype|
+	Void
+    ;
+
+literal
+    :
+	Integerliteral|
+	Stringliteral|
+	Booleanliteral|
+	Null
+    ;
+
+Booleanliteral
+    :
+	False|
+	True
+    ;
+
 Stringliteral
     :
-	Encodingprefix? '"' Schar* '"'
-	| Encodingprefix? 'R' Rawstring
+	 '"' Schar* '"'
     ;
 
 Integerliteral
     :
-	Decimalliteral Integersuffix?
-	| Octalliteral Integersuffix?
-	| Hexadecimalliteral Integersuffix?
-	| Binaryliteral Integersuffix?
+	Decimalliteral
     ;
 
 Identifier
     :
 	LETTER
 	(
-		Identifiernondigit
-		| DIGIT
+	    Identifiernondigit|
+	    DIGIT
 	)*
     ;
 
@@ -29,44 +191,6 @@ Decimalliteral
 	(
 		'\''? DIGIT
 	)*
-    ;
-
-Octalliteral
-    :
-	'0'
-	(
-		'\''? OCTALDIGIT
-	)*
-    ;
-
-Hexadecimalliteral
-    :
-	(
-		'0x'
-		| '0X'
-	) HEXADECIMALDIGIT
-	(
-		'\''? HEXADECIMALDIGIT
-	)*
-    ;
-
-Binaryliteral
-    :
-	(
-		'0b'
-		| '0B'
-	) BINARYDIGIT
-	(
-		'\''? BINARYDIGIT
-	)*
-    ;
-
-Integersuffix
-    :
-	Unsignedsuffix Longsuffix?
-	| Unsignedsuffix Longlongsuffix?
-	| Longsuffix Unsignedsuffix?
-	| Longlongsuffix Unsignedsuffix?
     ;
 
 // --------------------------------------------------Skip Tokens--------------------------------------------------
@@ -103,43 +227,6 @@ NONZERODIGIT
     ;
 
 fragment
-OCTALDIGIT
-    :
-	[0-7]
-    ;
-
-fragment
-HEXADECIMALDIGIT
-    :
-	[0-9a-fA-F]
-    ;
-
-fragment
-BINARYDIGIT
-    :
-	[01]
-    ;
-
-fragment
-Unsignedsuffix
-    :
-	[uU]
-    ;
-
-fragment
-Longsuffix
-    :
-	[lL]
-    ;
-
-fragment
-Longlongsuffix
-    :
-	'll'
-	| 'LL'
-    ;
-
-fragment
 NONDIGIT
     :
 	[a-zA-Z_]
@@ -158,33 +245,15 @@ DIGIT
     ;
 
 fragment
-Encodingprefix
-    :
-	'u8'
-	| 'u'
-	| 'U'
-	| 'L'
-    ;
-
-fragment
 Schar
     :
 	~["\\\r\n]
 	| Escapesequence
-	| Universalcharactername
     ;
 
 fragment
 Escapesequence
-:
-	Simpleescapesequence
-	| Octalescapesequence
-	| Hexadecimalescapesequence
-;
-
-fragment
-Simpleescapesequence
-:
+    :
 	'\\\''
 	| '\\"'
 	| '\\?'
@@ -196,40 +265,7 @@ Simpleescapesequence
 	| '\\r'
 	| '\\t'
 	| '\\v'
-;
-
-fragment
-Octalescapesequence
-:
-	'\\' OCTALDIGIT
-	| '\\' OCTALDIGIT OCTALDIGIT
-	| '\\' OCTALDIGIT OCTALDIGIT OCTALDIGIT
-;
-
-fragment
-Hexadecimalescapesequence
-:
-	'\\x' HEXADECIMALDIGIT+
-;
-
-fragment
-Rawstring /* '"' dcharsequence? '(' rcharsequence? ')' dcharsequence? '"' */
-    :
-	'"' .*? '(' .*? ')' .*? '"'
     ;
-
-fragment
-Universalcharactername
-:
-	'\\u' Hexquad
-	| '\\U' Hexquad Hexquad
-;
-
-fragment
-Hexquad
-:
-	HEXADECIMALDIGIT HEXADECIMALDIGIT HEXADECIMALDIGIT HEXADECIMALDIGIT
-;
 
 // --------------------------------------------------Key Words--------------------------------------------------
 Int
@@ -316,4 +352,3 @@ This
     :
 	'this'
     ;
-
