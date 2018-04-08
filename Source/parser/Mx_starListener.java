@@ -7,6 +7,16 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface Mx_starListener extends ParseTreeListener {
 	/**
+	 * Enter a parse tree produced by {@link Mx_starParser#prog}.
+	 * @param ctx the parse tree
+	 */
+	void enterProg(Mx_starParser.ProgContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Mx_starParser#prog}.
+	 * @param ctx the parse tree
+	 */
+	void exitProg(Mx_starParser.ProgContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link Mx_starParser#defclass}.
 	 * @param ctx the parse tree
 	 */

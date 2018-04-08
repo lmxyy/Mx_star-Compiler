@@ -15,6 +15,18 @@ public class Mx_starBaseListener implements Mx_starListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterProg(Mx_starParser.ProgContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitProg(Mx_starParser.ProgContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterDefclass(Mx_starParser.DefclassContext ctx) { }
 	/**
 	 * {@inheritDoc}

@@ -1,5 +1,10 @@
 grammar Mx_star;
 
+prog
+    :
+	(defclass|defvar|defun)+
+    ;
+
 defclass
     :
 	Class Identifier 
