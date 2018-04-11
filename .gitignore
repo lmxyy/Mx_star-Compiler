@@ -7,3 +7,7 @@ Document/自制编译器-青木峰郎著.pdf
 
 # Mac File:
 .DS_Store
+
+# IDE:
+.idea
+Mx_star-Compiler.iml
