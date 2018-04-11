@@ -77,7 +77,7 @@ while_stmt
 
 for_stmt
     :
-	For '(' (defvar|assignment) ';' (expression)? ';' assignment ')' (stmt|block)
+	For '(' (defvar|assignment) ';' (expression)? ';' (assignment|expression)? ')' (stmt|block)
     ;
 
 return_stmt
