@@ -11,3 +11,6 @@ Document/自制编译器-青木峰郎著.pdf
 # IDE:
 .idea
 Mx_star-Compiler.iml
+
+# JAVA:
+*.class
