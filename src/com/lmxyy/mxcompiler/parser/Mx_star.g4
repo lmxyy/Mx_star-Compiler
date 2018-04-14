@@ -130,7 +130,7 @@ term
 
 vartype_plus
     :
-	basetype ('[' Decimalliteral ']')*('[' ']')*
+	basetype ('[' Integerliteral ']')*('[' ']')*
     ;
 
 vartype
@@ -173,17 +173,11 @@ Stringliteral
 
 Integerliteral
     :
-	Decimalliteral
-    ;
-
-
-Decimalliteral
-    :
 	'0'|
-	NONZERODIGIT
-	(
-		'\''? DIGIT
-	)*
+    NONZERODIGIT
+    (
+    	'\''? DIGIT
+    )*
     ;
 
 // --------------------------------------------------Skip Tokens--------------------------------------------------

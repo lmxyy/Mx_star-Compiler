@@ -1,5 +1,30 @@
 #+AUTHOR: Lmxyy
-#+TITLE: Manual of the Mx* Compiler
+#+TITLE: Mx* Compiler
+* Overview
+Mx*Compiler is a compiler for course Compiler 2018 at ACM Class, Shanghai Jiao Tong University.
+|----------------------------------+-------------------------------|
+| Source Language                  | Target Language               |
+|----------------------------------+-------------------------------|
+| Mx* (a C-and-Java-like language) | Linux x86-64 Assembly in NASM |
+|----------------------------------+-------------------------------|
+* Features
+* Todo List
+** DONE parser [100%]
+- [X] Mx_star.g4
+** TODO ast [33%]
+*** TODO Vistor
+*** DONE Location
+*** TODO Node [0%]
+- [ ] DefNode
+  - [ ] DefunNode
+  - [ ] DefvarNode
+  - [ ] DefclassNode
+# - [ ] StmtNode
+#   - [ ] BlockNode
+#   - [ ] 
+** TODO symbol [50%]
+- [X] Type
+- [ ] Other
 * Reference
 + [[https://github.com/abcdabcd987/compiler2016/tree/master/src/com/abcdabcd987/compiler2016][abcdabcd987/compiler2016]]
 + [[https://github.com/antlr/antlr4/blob/master/doc/getting-started.md][Getting Started with ANTLR v4]]
