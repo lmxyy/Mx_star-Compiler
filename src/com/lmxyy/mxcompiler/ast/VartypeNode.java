@@ -15,7 +15,7 @@ public class VartypeNode extends Node{
     public Type getType() {
         return type;
     }
-    
+
     @Override
     public Location location() { return location; }
     @Override

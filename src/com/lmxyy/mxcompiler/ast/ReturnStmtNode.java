@@ -1,14 +1,13 @@
 package com.lmxyy.mxcompiler.ast;
 
-import java.util.List;
-
-public class BlockNode extends StmtNode {
-    private List<StmtNode> stmts;
+public class ReturnStmtNode extends StmtNode {
+    private ExpressionNode expr;
     private Location location;
 
-    public BlockNode(List<StmtNode> _stmts) {
-        stmts = _stmts;
+    public ReturnStmtNode(ExpressionNode _expr) {
+        expr = _expr;
     }
+
     public void setLocation(Location _location) {
         location = _location;
     }

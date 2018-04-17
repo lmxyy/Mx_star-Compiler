@@ -17,15 +17,12 @@ public class DefunNode extends DefNode {
     public VartypeNode getReturnType() {
         return returnType;
     }
-
     public String getName() {
         return name;
     }
-
     public List<DefvarNode> getParameterList() {
         return parameterList;
     }
-
     public BlockNode getBody() {
         return body;
     }

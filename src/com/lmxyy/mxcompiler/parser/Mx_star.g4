@@ -47,7 +47,6 @@ stmt
     :
 	defvar ';'|
 	assignment ';'|
-	callfun ';'|
 	expression ';'|
 	block|
 	if_stmt|
