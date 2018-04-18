@@ -7,7 +7,6 @@ public class Type {
 
     private int dimension;
     private Types type;
-
     public int getDimension() {
         return dimension;
     }

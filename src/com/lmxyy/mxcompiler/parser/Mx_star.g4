@@ -10,7 +10,7 @@ defclass
 	Class Identifier 
 	'{'
 	(defvar ';'|defun)*
-	(Identifier '(' Void? ')' block)?
+	(Identifier '(' params ')' block)?
 	(defvar ';'|defun)*
 	'}'
     ;
