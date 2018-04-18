@@ -104,6 +104,7 @@ expression
 	term|
 	callfun|
 	'('expression')'|
+	expression '.' callfun|
 	expression '.' Identifier|
 	expression '[' expression ']'|
 	('-'|'!'|'~') expression|

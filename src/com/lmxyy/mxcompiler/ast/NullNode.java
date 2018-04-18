@@ -1,17 +1,10 @@
 package com.lmxyy.mxcompiler.ast;
 
-public class IdentifierNode extends ExprNode {
-    private String name;
-    Location location;
-    public IdentifierNode(String _name) {
-        name = _name;
-    }
+public class NullNode extends TermNode {
+    private Location location;
+
     public void setLocation(Location _location) {
         location = _location;
-    }
-
-    public String getName() {
-        return name;
     }
 
     @Override

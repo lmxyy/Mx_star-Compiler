@@ -19,4 +19,8 @@ public interface Visitor {
     void visit(StringliteralNode node);
     void visit(IntegerliteralNode node);
     void visit(BooleanliteralNode node);
+    void visit(NullNode node);
+    void visit(VariableNode node);
+    void visit(CallfunNode node);
+    void visit(AssignmentNode node);
 }

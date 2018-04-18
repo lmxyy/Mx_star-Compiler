@@ -1,6 +1,6 @@
 package com.lmxyy.mxcompiler.ast;
 
-public class IntegerliteralNode extends ExprNode {
+public class IntegerliteralNode extends TermNode {
     private int val;
     private Location location;
 

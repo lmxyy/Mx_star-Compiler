@@ -1,6 +1,6 @@
 package com.lmxyy.mxcompiler.ast;
 
-public class StringliteralNode extends ExprNode {
+public class StringliteralNode extends TermNode {
     private String val;
     private Location location;
 
