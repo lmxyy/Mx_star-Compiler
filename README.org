@@ -15,7 +15,7 @@ Mx*Compiler is a compiler for course Compiler 2018 at ACM Class, Shanghai Jiao T
 *** TODO Vistor
 *** DONE Location
 *** TODO Node [66%]
-- [X] Definition
+- [X] Definitions
   - [X] DefNode
   - [X] DefunNode
   - [X] DefvarNode
@@ -32,16 +32,16 @@ Mx*Compiler is a compiler for course Compiler 2018 at ACM Class, Shanghai Jiao T
   - [X] ReturnStmtNode
   - [X] BlankStmtNode
   - [X] BlockNode
-- [ ] Expression
-  - [ ] ExprNode
+- [-] Expressions
+  - [X] ExprNode
   - [ ] ExpressionNode
   - [ ] TermNode
-  - [ ] IdentifierNode
+  - [X] IdentifierNode
   - [ ] CallfunNode
   - [ ] VartypePlusNode
   - [ ] VariableNode
-  - [ ] IntegerliteralNode
-  - [ ] StringliteralNode
+  - [X] IntegerliteralNode
+  - [X] StringliteralNode
   - [ ] BooleanliteralNode
   - [ ] NullNode
   - [ ] ScharNode
