@@ -11,10 +11,10 @@ Mx*Compiler is a compiler for course Compiler 2018 at ACM Class, Shanghai Jiao T
 * Todo List
 ** DONE parser [100%]
 - [X] Mx_star.g4
-** TODO ast [33%]
-*** TODO Vistor
+** DONE ast [100%]
+*** DONE Vistor
 *** DONE Location
-*** TODO Node [66%]
+*** DONE Node [100%]
 - [X] Definitions
   - [X] DefNode
   - [X] DefunNode
@@ -32,13 +32,12 @@ Mx*Compiler is a compiler for course Compiler 2018 at ACM Class, Shanghai Jiao T
   - [X] ReturnStmtNode
   - [X] BlankStmtNode
   - [X] BlockNode
-- [-] Expressions
+- [X] Expressions
   - [X] ExprNode
-  - [ ] ExpressionNode
+  - [X] ExpressionNode
   - [X] TermNode
   - [X] IdentifierNode
   - [X] CallfunNode
-  - [ ] VartypePlusNode
   - [X] VariableNode
   - [X] LiteralNode
   - [X] IntegerliteralNode
@@ -46,9 +45,9 @@ Mx*Compiler is a compiler for course Compiler 2018 at ACM Class, Shanghai Jiao T
   - [X] BooleanliteralNode
   - [X] NullNode
   - [X] AssignmentNode
-** TODO symbol [50%]
+** DONE symbol [100%]
 - [X] Type
-- [ ] AssignmentOperator
+- [X] ExprOperator
 * Reference
 + [[https://github.com/abcdabcd987/compiler2016/tree/master/src/com/abcdabcd987/compiler2016][abcdabcd987/compiler2016]]
 + [[https://github.com/antlr/antlr4/blob/master/doc/getting-started.md][Getting Started with ANTLR v4]]

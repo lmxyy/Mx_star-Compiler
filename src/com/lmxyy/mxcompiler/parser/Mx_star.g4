@@ -86,9 +86,7 @@ return_stmt
 
 assignment
     :
-	(variable '=' expression)|
-	(('++'|'--') variable)|
-	(variable ('++'|'--'))
+	(variable '=' expression)
     ;
 
 variable
@@ -107,6 +105,8 @@ expression
 	expression '.' callfun|
 	expression '.' Identifier|
 	expression '[' expression ']'|
+	variable ('++'|'--')|
+    ('++'|'--') variable|
 	('-'|'!'|'~') expression|
 	expression ('*'|'/'|'%') expression|
 	expression ('+'|'-') expression|
