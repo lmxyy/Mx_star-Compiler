@@ -22,7 +22,9 @@ public class ExpressionNode extends ExprNode{
     }
 
     @Override
-    public Location location() { return exprs.get(0).location(); }
+    public Location location() {
+        return exprs.get(0).location();
+    }
     @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);

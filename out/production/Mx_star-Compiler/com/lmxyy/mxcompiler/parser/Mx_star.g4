@@ -1,9 +1,5 @@
 grammar Mx_star;
 
-@header {
-package com.lmxyy.mxcompiler.parser;
-}
-
 prog
     :
 	(defclass|defvar|defun)+

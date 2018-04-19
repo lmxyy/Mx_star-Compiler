@@ -24,4 +24,5 @@ public interface Visitor {
     void visit(CallfunNode node);
     void visit(AssignmentNode node);
     void visit(ExpressionNode node);
+    void visit(ProgNode node);
 }
