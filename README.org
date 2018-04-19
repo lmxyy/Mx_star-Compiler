@@ -21,6 +21,7 @@ Mx*Compiler is a compiler for course Compiler 2018 at ACM Class, Shanghai Jiao T
   - [X] DefunNode
   - [X] DefvarNode
   - [X] DefclassNode
+  - [X] DefvarlistNode
 - [X] Statements
   - [X] StmtNode
   - [X] ExpressionStmtNode

@@ -4,6 +4,7 @@ public interface Visitor {
     void visit(DefunNode node);
     void visit(DefvarNode node);
     void visit(DefclassNode node);
+    void visit(DefvarlistNode node);
     void visit(VartypeNode node);
     void visit(IfStmtNode node);
     void visit(WhileStmtNode node);

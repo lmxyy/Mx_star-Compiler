@@ -19,11 +19,29 @@ public interface Mx_starVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitProg(Mx_starParser.ProgContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Mx_starParser#progsec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitProgsec(Mx_starParser.ProgsecContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Mx_starParser#defclass}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitDefclass(Mx_starParser.DefclassContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Mx_starParser#constructor}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConstructor(Mx_starParser.ConstructorContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Mx_starParser#classmem}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitClassmem(Mx_starParser.ClassmemContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Mx_starParser#defvar}.
 	 * @param ctx the parse tree

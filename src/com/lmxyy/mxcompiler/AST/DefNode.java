@@ -1,3 +1,5 @@
 package com.lmxyy.mxcompiler.ast;
 
-public abstract class DefNode extends Node {}
+public abstract class DefNode extends Node {
+
+}

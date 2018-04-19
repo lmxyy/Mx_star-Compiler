@@ -6,22 +6,37 @@ package com.lmxyy.mxcompiler.parser;
 
 prog
     :
-	(defclass|defvar|defun)+
+	progsec*
+    ;
+
+progsec
+    :
+    defclass|defvar|defun
     ;
 
 defclass
     :
 	Class Identifier 
 	'{'
-	(defvar ';'|defun)*
-	(Identifier '(' params ')' block)?
-	(defvar ';'|defun)*
-	'}'
+	classmem*
+    constructor?
+	classmem*
+    '}'
+    ;
+
+constructor
+    :
+    (Identifier '(' params ')' block)
+    ;
+
+classmem
+    :
+    defvar ';'|defun
     ;
 
 defvar
     :
-	(vartype Identifier ('=' expression)?)
+	(vartype Identifier ('=' expression)?)(','Identifier ('=' expression)?)*
     ;
 
 defun

@@ -20,6 +20,16 @@ public interface Mx_starListener extends ParseTreeListener {
 	 */
 	void exitProg(Mx_starParser.ProgContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link Mx_starParser#progsec}.
+	 * @param ctx the parse tree
+	 */
+	void enterProgsec(Mx_starParser.ProgsecContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Mx_starParser#progsec}.
+	 * @param ctx the parse tree
+	 */
+	void exitProgsec(Mx_starParser.ProgsecContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link Mx_starParser#defclass}.
 	 * @param ctx the parse tree
 	 */
@@ -29,6 +39,26 @@ public interface Mx_starListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDefclass(Mx_starParser.DefclassContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Mx_starParser#constructor}.
+	 * @param ctx the parse tree
+	 */
+	void enterConstructor(Mx_starParser.ConstructorContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Mx_starParser#constructor}.
+	 * @param ctx the parse tree
+	 */
+	void exitConstructor(Mx_starParser.ConstructorContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Mx_starParser#classmem}.
+	 * @param ctx the parse tree
+	 */
+	void enterClassmem(Mx_starParser.ClassmemContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Mx_starParser#classmem}.
+	 * @param ctx the parse tree
+	 */
+	void exitClassmem(Mx_starParser.ClassmemContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Mx_starParser#defvar}.
 	 * @param ctx the parse tree

@@ -30,6 +30,18 @@ public class Mx_starBaseListener implements Mx_starListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterProgsec(Mx_starParser.ProgsecContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitProgsec(Mx_starParser.ProgsecContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterDefclass(Mx_starParser.DefclassContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -37,6 +49,30 @@ public class Mx_starBaseListener implements Mx_starListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDefclass(Mx_starParser.DefclassContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterConstructor(Mx_starParser.ConstructorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitConstructor(Mx_starParser.ConstructorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterClassmem(Mx_starParser.ClassmemContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitClassmem(Mx_starParser.ClassmemContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

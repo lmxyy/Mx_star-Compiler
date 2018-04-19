@@ -22,7 +22,9 @@ public class DefvarNode extends DefNode {
     }
 
     @Override
-    public Location location() { return type.location(); }
+    public Location location() {
+        return type.location();
+    }
 
     @Override
     public void accept(Visitor visitor) {
