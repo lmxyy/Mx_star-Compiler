@@ -70,6 +70,16 @@ public interface Mx_starListener extends ParseTreeListener {
 	 */
 	void exitDefvar(Mx_starParser.DefvarContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link Mx_starParser#defvarassignment}.
+	 * @param ctx the parse tree
+	 */
+	void enterDefvarassignment(Mx_starParser.DefvarassignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Mx_starParser#defvarassignment}.
+	 * @param ctx the parse tree
+	 */
+	void exitDefvarassignment(Mx_starParser.DefvarassignmentContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link Mx_starParser#defun}.
 	 * @param ctx the parse tree
 	 */
@@ -99,16 +109,6 @@ public interface Mx_starListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBlock(Mx_starParser.BlockContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link Mx_starParser#stmts}.
-	 * @param ctx the parse tree
-	 */
-	void enterStmts(Mx_starParser.StmtsContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Mx_starParser#stmts}.
-	 * @param ctx the parse tree
-	 */
-	void exitStmts(Mx_starParser.StmtsContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Mx_starParser#stmt}.
 	 * @param ctx the parse tree

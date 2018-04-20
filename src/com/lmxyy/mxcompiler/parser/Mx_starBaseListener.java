@@ -90,6 +90,18 @@ public class Mx_starBaseListener implements Mx_starListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterDefvarassignment(Mx_starParser.DefvarassignmentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDefvarassignment(Mx_starParser.DefvarassignmentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterDefun(Mx_starParser.DefunContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -121,18 +133,6 @@ public class Mx_starBaseListener implements Mx_starListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitBlock(Mx_starParser.BlockContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterStmts(Mx_starParser.StmtsContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStmts(Mx_starParser.StmtsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

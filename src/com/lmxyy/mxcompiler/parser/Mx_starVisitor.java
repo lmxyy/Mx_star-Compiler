@@ -49,6 +49,12 @@ public interface Mx_starVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDefvar(Mx_starParser.DefvarContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Mx_starParser#defvarassignment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDefvarassignment(Mx_starParser.DefvarassignmentContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Mx_starParser#defun}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -66,12 +72,6 @@ public interface Mx_starVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitBlock(Mx_starParser.BlockContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link Mx_starParser#stmts}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStmts(Mx_starParser.StmtsContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Mx_starParser#stmt}.
 	 * @param ctx the parse tree

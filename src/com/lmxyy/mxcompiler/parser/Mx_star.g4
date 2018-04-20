@@ -36,7 +36,12 @@ classmem
 
 defvar
     :
-	(vartype Identifier ('=' expression)?)(','Identifier ('=' expression)?)*
+	(vartype defvarassignment)(',' defvarassignment)*
+    ;
+
+defvarassignment
+    :
+    Identifier ('=' expression)?
     ;
 
 defun
@@ -53,13 +58,8 @@ params
 block
     :
 	'{'
-	stmts
-	'}'
-    ;
-
-stmts
-    :
 	stmt*
+	'}'
     ;
 
 stmt
