@@ -3,10 +3,14 @@ package com.lmxyy.mxcompiler.ast;
 public class WhileStmtNode extends StmtNode {
     private ExpressionNode cond;
     private StmtNode block;
+    private Location location;
 
     public WhileStmtNode(ExpressionNode _cond,StmtNode _block) {
         cond = _cond;
         block = _block;
+    }
+    public void setLocation(Location _location) {
+        location = _location;
     }
 
     public ExpressionNode getCond() {

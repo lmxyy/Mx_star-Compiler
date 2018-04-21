@@ -14,6 +14,7 @@ public class ExprOperator {
         NEG,
         NOT,
         COMP,
+        NEW,
         TIMES,
         DIVIDE,
         MOD,

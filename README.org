@@ -16,6 +16,8 @@ Mx*Compiler is a compiler for course Compiler 2018 at ACM Class, Shanghai Jiao T
 *** DONE Location
 *** DONE Node [100%]
 - [X] ProgNode
+- [X] VartypeNode
+- [X] VartypePlusNode
 - [X] Definitions
   - [X] DefNode
   - [X] DefunNode
@@ -24,8 +26,6 @@ Mx*Compiler is a compiler for course Compiler 2018 at ACM Class, Shanghai Jiao T
   - [X] DefvarlistNode
 - [X] Statements
   - [X] StmtNode
-  - [X] ExpressionStmtNode
-  - [X] AssignmentStmtNode
   - [X] IfStmtNode
   - [X] WhileStmtNode
   - [X] ForStmtNode

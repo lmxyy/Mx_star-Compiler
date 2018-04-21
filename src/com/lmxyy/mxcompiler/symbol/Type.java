@@ -2,7 +2,7 @@ package com.lmxyy.mxcompiler.symbol;
 
 public class Type {
     public enum Types {
-        VOID,NULL,INT,BOOL,STRING,CLASS
+        VOID,INT,BOOL,STRING,NULL,CLASS
     }
     private Types type;
     private boolean isFun;

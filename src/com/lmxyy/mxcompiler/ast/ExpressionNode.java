@@ -7,15 +7,20 @@ import java.util.List;
 
 public class ExpressionNode extends ExprNode{
     List<ExprNode> exprs;
+    VartypePlusNode vartype;
     ExprOperator op;
 
-    public ExpressionNode(List<ExprNode> _exprs,ExprOperator _op) {
+    public ExpressionNode(List<ExprNode> _exprs,VartypePlusNode _vartype,ExprOperator _op) {
         exprs = _exprs;
+        vartype = _vartype;
         op = _op;
     }
 
     public List<ExprNode> getExprs() {
         return exprs;
+    }
+    public VartypePlusNode getVartype() {
+        return vartype;
     }
     public ExprOperator getOp() {
         return op;

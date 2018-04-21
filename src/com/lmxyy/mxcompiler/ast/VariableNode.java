@@ -1,32 +1,30 @@
 package com.lmxyy.mxcompiler.ast;
 
-import java.util.List;
-
 public class VariableNode extends TermNode {
-    private VariableNode base;
-    private IdentifierNode name;
-    private List<ExpressionNode> dim;
+    private VariableNode var;
+    private IdentifierNode id;
+    private ExpressionNode expr;
 
-    public VariableNode(VariableNode _base,IdentifierNode _name,List<ExpressionNode> _dim) {
-        base = _base;
-        name = _name;
-        dim = _dim;
+    public VariableNode(VariableNode _var,IdentifierNode _id,ExpressionNode _expr) {
+        var = _var;
+        id = _id;
+        expr = _expr;
     }
 
-    public VariableNode getBase() {
-        return base;
+    public VariableNode getVar() {
+        return var;
     }
-    public IdentifierNode getName() {
-        return name;
+    public IdentifierNode getId() {
+        return id;
     }
-    public List<ExpressionNode> getDim() {
-        return dim;
+    public ExpressionNode getExpr() {
+        return expr;
     }
 
     @Override
     public Location location() {
-        if (base != null) return base.location();
-        else return name.location();
+        if (var != null) return var.location();
+        else return id.location();
     }
     @Override
     public void accept(Visitor visitor) {

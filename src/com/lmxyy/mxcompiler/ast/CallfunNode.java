@@ -3,14 +3,14 @@ package com.lmxyy.mxcompiler.ast;
 import java.util.List;
 
 public class CallfunNode extends ExprNode {
-    IdentifierNode fun;
+    VariableNode fun;
     List<ExpressionNode> params;
-    public CallfunNode(IdentifierNode _fun,List<ExpressionNode> _params) {
+    public CallfunNode(VariableNode _fun,List<ExpressionNode> _params) {
         fun = _fun;
         params = _params;
     }
 
-    public IdentifierNode getFun() {
+    public VariableNode getFun() {
         return fun;
     }
     public List<ExpressionNode> getParams() {

@@ -82,20 +82,34 @@ callfun
 	variable'(' (expression (',' expression )*)? ')'
     ;
 
+stmtorblock
+    :
+    stmt|block
+    ;
+
 if_stmt
     :
-	(If '(' expression ')' (stmt|block) )|
-	(If '(' expression ')' (stmt|block) Else (stmt|block))
+	If '(' expression ')' stmtorblock|
+	If '(' expression ')' stmtorblock Else stmtorblock
     ;
 
 while_stmt
     :
-	While '(' expression ')' (stmt|block)
+	While '(' expression ')' stmtorblock
     ;
 
 for_stmt
     :
-	For '(' (defvar|assignment) ';' (expression)? ';' (assignment|expression)? ')' (stmt|block)
+	For '(' forinit? ';' expression? ';' forstep? ')' stmtorblock
+    ;
+
+forinit
+    :
+    defvar|expression|assignment
+    ;
+forstep
+    :
+    assignment|expression
     ;
 
 return_stmt
@@ -113,32 +127,7 @@ variable
 	Identifier|
 	'(' variable ')'|
 	variable '.' Identifier|
-	variable ('[' expression ']')+
-    ;
-
-expression
-    :
-	term|
-	callfun|
-	'('expression')'|
-	expression '.' callfun|
-	expression '.' Identifier|
-	expression '[' expression ']'|
-	variable ('++'|'--')|
-    ('++'|'--') variable|
-	('-'|'!'|'~') expression|
-	expression ('*'|'/'|'%') expression|
-	expression ('+'|'-') expression|
-	expression ('<<'|'>>') expression|
-	expression ('>'|'>='|'<'|'<=') expression|
-	expression ('=='|'!=') expression|	
-	expression '&' expression|
-	expression '^' expression|
-	expression '|' expression|
-	expression '&&' expression|
-	expression '||' expression|
-	expression '?' expression ':' expression|
-	New vartype_plus ('(' (expression (',' expression)* )? ')')?
+	variable '[' expression ']'
     ;
 
 term
@@ -147,14 +136,71 @@ term
 	literal
     ;
 
+expression
+    :
+	term|
+	callfun|
+	lefpar expression rigpar|
+	expression mem callfun|
+	expression mem Identifier|
+	expression lefbra expression rigbra|
+	variable (sinc|sdec)|
+    (pinc|pdec) variable|
+	(neg|not|comp) expression|
+	New vartype_plus ('(' (expression (',' expression)* )? ')')?|
+	expression (times|divide|mod) expression|
+	expression (add|sub) expression|
+	expression (lesh|rish) expression|
+	expression (grtr|geq|less|leq) expression|
+	expression (equ|neq) expression|
+	expression band expression|
+	expression xor expression|
+	expression bor expression|
+	expression and expression|
+	expression or expression|
+	expression que expression ':' expression
+    ;
+
+lefpar: '(' ;
+rigpar: ')' ;
+mem: '.' ;
+lefbra: '[' ;
+rigbra: ']' ;
+sinc: '++' ;
+sdec: '--' ;
+pinc: '++' ;
+pdec: '--';
+neg: '-' ;
+not: '!' ;
+comp: '~' ;
+times: '*' ;
+divide: '/' ;
+mod: '%' ;
+add: '+' ;
+sub: '-' ;
+lesh: '<<' ;
+rish: '>>' ;
+less: '<' ;
+grtr: '>' ;
+leq: '<=' ;
+geq: '>=' ;
+equ: '==' ;
+neq: '!=' ;
+band: '&' ;
+xor: '^' ;
+bor: '|' ;
+and: '&&' ;
+or: '||' ;
+que: '?' ;
+
 vartype_plus
     :
-	basetype ('[' Integerliteral ']')*('[' ']')*
+	basetype (lefbra Integerliteral rigbra)*(lefbra rigbra)*
     ;
 
 vartype
     :
-	basetype ('[' ']')*
+	basetype (lefbra rigbra)*
     ;
 
 basetype

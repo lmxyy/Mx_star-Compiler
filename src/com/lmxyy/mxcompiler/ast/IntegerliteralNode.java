@@ -1,17 +1,17 @@
 package com.lmxyy.mxcompiler.ast;
 
 public class IntegerliteralNode extends TermNode {
-    private int val;
+    private Integer val;
     private Location location;
 
-    public IntegerliteralNode(int _val) {
+    public IntegerliteralNode(Integer _val) {
         val = _val;
     }
     public void setLocation(Location _location) {
         location = _location;
     }
 
-    public int getVal() {
+    public Integer getVal() {
         return val;
     }
 
