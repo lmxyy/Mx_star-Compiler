@@ -4,7 +4,8 @@ import com.lmxyy.mxcompiler.ast.Visitor;
 
 import java.io.PrintStream;
 
-public class ASTPrinter implements Visitor {
+// public class ASTPrinter implements Visitor {
+public class ASTPrinter {
     private static final String IDENT = "    ";
     private StringBuilder builder = new StringBuilder();
     private PrintStream out;
