@@ -1,2 +1,2 @@
 #!/usr/bin/env bash 
-grun Expr prog -gui ../../../../../testcase/$1.in
+java org.antlr.v4.gui.TestRig Mx_star prog -gui < ../../../../../testcase/$1.mx

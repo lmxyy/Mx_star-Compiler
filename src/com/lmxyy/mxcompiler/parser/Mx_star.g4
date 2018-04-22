@@ -11,7 +11,7 @@ prog
 
 progsec
     :
-    defclass|defvar|defun
+    defclass|defvar ';'|defun
     ;
 
 defclass
@@ -19,9 +19,9 @@ defclass
 	Class Identifier 
 	'{'
 	classmem*
-    constructor?
+	constructor?
 	classmem*
-    '}'
+	'}'
     ;
 
 constructor
