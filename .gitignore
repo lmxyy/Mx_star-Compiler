@@ -14,3 +14,4 @@ Mx_star-Compiler.iml
 
 # JAVA:
 *.class
+out/
