@@ -4,6 +4,7 @@ import com.lmxyy.mxcompiler.ast.ProgNode;
 import com.lmxyy.mxcompiler.frontend.ASTBuilder;
 import com.lmxyy.mxcompiler.parser.Mx_starLexer;
 import com.lmxyy.mxcompiler.parser.Mx_starParser;
+import com.lmxyy.mxcompiler.parser.SyntaxErrorListener;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -27,9 +28,15 @@ public class Compiler {
         Mx_starLexer lexer = new Mx_starLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         Mx_starParser parser = new Mx_starParser(tokens);
-        ParseTree tree = parser.prog();
-        ASTBuilder builder = new ASTBuilder();
-        ast = (ProgNode) builder.visit(tree);
+        parser.removeErrorListeners();
+        parser.addErrorListener(new SyntaxErrorListener());
+        try {
+            ParseTree tree = parser.prog();
+            ASTBuilder builder = new ASTBuilder();
+            ast = (ProgNode) builder.visit(tree);
+        } catch (Error error) {
+            throw error;
+        }
     }
 
     public void run() throws Exception {

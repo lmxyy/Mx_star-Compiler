@@ -1,15 +1,15 @@
-int main()
-{
-  println("Hello, world!");
-  return 0;
+
+int main() {
+    A x = new A;
 }
+
 
 
 /*!! metadata:
 === comment ===
-hello-5090379042-jiaxiao.mx
+var-3-5120309049-liaochao.mx
 === assert ===
-success_compile
+failure_compile
 === phase ===
 semantic pretest
 === is_public ===
@@ -17,4 +17,3 @@ True
 
 !!*/
 
-'

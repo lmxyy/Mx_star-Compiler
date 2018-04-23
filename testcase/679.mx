@@ -1,15 +1,16 @@
-int main()
-{
-  println("Hello, world!");
-  return 0;
+
+int main() {
+    string str = "sjtu";
+    str++;
 }
+
 
 
 /*!! metadata:
 === comment ===
-hello-5090379042-jiaxiao.mx
+incop-1-5120309049-liaochao.mx
 === assert ===
-success_compile
+failure_compile
 === phase ===
 semantic pretest
 === is_public ===
@@ -17,4 +18,3 @@ True
 
 !!*/
 
-'
