@@ -70,7 +70,9 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
         List <DefvarNode> vars = new ArrayList<>();
         for (ParserRuleContext var:ctx.defvarassignment()) {
             String name = ((Mx_starParser.DefvarassignmentContext)var).Identifier().getText();
-            ExpressionNode expr = (ExpressionNode) visit(((Mx_starParser.DefvarassignmentContext)var).expression());
+            ExpressionNode expr = null;
+            if (((Mx_starParser.DefvarassignmentContext)var).expression() != null)
+                expr = (ExpressionNode) visit(((Mx_starParser.DefvarassignmentContext)var).expression());
             vars.add(new DefvarNode(type,name,expr));
         }
         DefvarlistNode ret = new DefvarlistNode(vars);
@@ -156,7 +158,7 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
         BlockNode block1 = null;
         if (((Mx_starParser.StmtorblockContext)ctx.stmtorblock(0)).stmt() != null) {
             List<Node> stmts = new ArrayList<>();
-            stmts.add((StmtNode)visit(((Mx_starParser.StmtorblockContext)ctx.stmtorblock()).stmt()));
+            stmts.add((Node)visit(((Mx_starParser.StmtorblockContext)ctx.stmtorblock(0)).stmt()));
             block1 = new BlockNode(stmts);
         }
         else block1 = (BlockNode)visit(((Mx_starParser.StmtorblockContext)ctx.stmtorblock(0)).block());
@@ -166,7 +168,7 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
             hasElse = true;
             if (((Mx_starParser.StmtorblockContext)ctx.stmtorblock(1)).stmt() != null) {
                 List<Node> stmts = new ArrayList<>();
-                stmts.add((StmtNode)visit(((Mx_starParser.StmtorblockContext)ctx.stmtorblock(1)).stmt()));
+                stmts.add((Node)visit(((Mx_starParser.StmtorblockContext)ctx.stmtorblock(1)).stmt()));
                 block2 = new BlockNode(stmts);
             }
             else block2 = (BlockNode)visit(((Mx_starParser.StmtorblockContext)ctx.stmtorblock(1)).block());
@@ -180,7 +182,7 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
         BlockNode block = null;
         if (((Mx_starParser.StmtorblockContext)ctx.stmtorblock()).stmt() != null) {
             List<Node> stmts = new ArrayList<>();
-            stmts.add((StmtNode)visit(((Mx_starParser.StmtorblockContext)ctx.stmtorblock()).stmt()));
+            stmts.add((Node)visit(((Mx_starParser.StmtorblockContext)ctx.stmtorblock()).stmt()));
             block = new BlockNode(stmts);
         }
         else block = (BlockNode)visit(((Mx_starParser.StmtorblockContext)ctx.stmtorblock()).block());
@@ -214,7 +216,7 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
         }
         if (((Mx_starParser.StmtorblockContext)ctx.stmtorblock()).stmt() != null) {
             List<Node> stmts = new ArrayList<>();
-            stmts.add((StmtNode)visit(((Mx_starParser.StmtorblockContext)ctx.stmtorblock()).stmt()));
+            stmts.add((Node)visit(((Mx_starParser.StmtorblockContext)ctx.stmtorblock()).stmt()));
             block = new BlockNode(stmts);
         }
         else block = (BlockNode)visit(((Mx_starParser.StmtorblockContext)ctx.stmtorblock()).block());
