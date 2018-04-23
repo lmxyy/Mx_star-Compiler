@@ -1,6 +1,6 @@
 package com.lmxyy.mxcompiler.ast;
 
-public class BooleanliteralNode extends TermNode {
+public class BooleanliteralNode extends LiteralNode {
     private boolean val;
     private Location location;
 

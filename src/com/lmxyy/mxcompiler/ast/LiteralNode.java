@@ -1,4 +1,4 @@
 package com.lmxyy.mxcompiler.ast;
 
-public abstract class LiteralNode extends ExprNode {
+public abstract class LiteralNode extends TermNode {
 }

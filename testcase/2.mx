@@ -1,24 +1,3 @@
-int[] a = new int[4];
-int main()
-{
-    int[] b = new int[4];
-    a=b;
-}
-
-
-
-/*!! metadata:
-=== comment ===
-lvalue2-5110379024-wuhang.mx
-=== assert ===
-success_compile
-=== phase ===
-semantic pretest
-=== is_public ===
-True
-
-!!*/
-
 
 int N = 15000;
 bool[] b = new bool[15001];

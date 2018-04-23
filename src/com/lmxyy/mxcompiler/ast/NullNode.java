@@ -1,6 +1,6 @@
 package com.lmxyy.mxcompiler.ast;
 
-public class NullNode extends TermNode {
+public class NullNode extends LiteralNode {
     private Location location;
 
     public void setLocation(Location _location) {

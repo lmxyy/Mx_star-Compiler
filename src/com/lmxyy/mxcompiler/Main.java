@@ -5,7 +5,7 @@ import com.lmxyy.mxcompiler.compiler.Compiler;
 import java.io.*;
 
 public class Main {
-    private static final String Ver = "    ";
+    private static final String Ver = "0.0.0";
 
     private static void printHelp() {
         System.out.println("Usage: mxcompiler [options] file...");
@@ -27,7 +27,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
-        String inFile = null, outFile = null;
+        String inFile = "/Users/limuyang/Desktop/Mx_star-Compiler/testcase/4.mx", outFile = null;
         boolean isPrintHelp = false, isPrintVersion = false, isPrintConfig = false;
         for (int i = 0; i < args.length; ++i) {
             String arg = args[i];
