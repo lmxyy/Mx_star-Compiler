@@ -124,6 +124,7 @@ assignment
 
 variable
     :
+	This|
 	Identifier|
 	'(' variable ')'|
 	variable '.' Identifier|

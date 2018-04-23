@@ -4,11 +4,13 @@ public class VariableNode extends TermNode {
     private VariableNode var;
     private IdentifierNode id;
     private ExpressionNode expr;
+    private boolean isThis;
 
-    public VariableNode(VariableNode _var,IdentifierNode _id,ExpressionNode _expr) {
+    public VariableNode(VariableNode _var,IdentifierNode _id,ExpressionNode _expr,boolean _isThis) {
         var = _var;
         id = _id;
         expr = _expr;
+        isThis = _isThis;
     }
 
     public VariableNode getVar() {
@@ -19,6 +21,9 @@ public class VariableNode extends TermNode {
     }
     public ExpressionNode getExpr() {
         return expr;
+    }
+    public boolean isThis() {
+        return isThis;
     }
 
     @Override

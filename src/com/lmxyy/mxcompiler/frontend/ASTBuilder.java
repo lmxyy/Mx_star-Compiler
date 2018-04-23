@@ -247,13 +247,16 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
         VariableNode var = null;
         IdentifierNode id = null;
         ExpressionNode expr = null;
+        boolean isThis = false;
+        if (ctx.This() != null)
+            isThis = true;
         if (ctx.variable() != null)
             var = (VariableNode) visit(ctx.variable());
         if (ctx.Identifier() != null)
             id = (IdentifierNode) visit(ctx.Identifier());
         if (ctx.expression() != null)
             expr = (ExpressionNode) visit(ctx.expression());
-        return new VariableNode(var,id,expr);
+        return new VariableNode(var,id,expr,isThis);
     }
 
     @Override
