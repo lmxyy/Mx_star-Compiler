@@ -6,10 +6,10 @@ import java.util.List;
 public class VartypePlusNode extends Node {
     private Type type;
     private String name;
-    private List<Integer> dims;
+    private List<ExpressionNode> dims;
     private Location location;
 
-    public VartypePlusNode(Type _type,String _name,List<Integer> _dims) {
+    public VartypePlusNode(Type _type,String _name,List<ExpressionNode> _dims) {
         type = _type;
         name = _name;
         dims = _dims;
@@ -24,7 +24,7 @@ public class VartypePlusNode extends Node {
     public String getName() {
         return name;
     }
-    public List<Integer> getDims() {
+    public List<ExpressionNode> getDims() {
         return dims;
     }
 

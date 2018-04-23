@@ -3678,9 +3678,11 @@ public class Mx_starParser extends Parser {
 		public LefbraContext lefbra(int i) {
 			return getRuleContext(LefbraContext.class,i);
 		}
-		public List<TerminalNode> Integerliteral() { return getTokens(Mx_starParser.Integerliteral); }
-		public TerminalNode Integerliteral(int i) {
-			return getToken(Mx_starParser.Integerliteral, i);
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
 		}
 		public List<RigbraContext> rigbra() {
 			return getRuleContexts(RigbraContext.class);
@@ -3726,7 +3728,7 @@ public class Mx_starParser extends Parser {
 					setState(520);
 					lefbra();
 					setState(521);
-					match(Integerliteral);
+					expression(0);
 					setState(522);
 					rigbra();
 					}
@@ -4250,7 +4252,7 @@ public class Mx_starParser extends Parser {
 		"\u0200\7 \2\2\u0200e\3\2\2\2\u0201\u0202\7!\2\2\u0202g\3\2\2\2\u0203\u0204"+
 		"\7\"\2\2\u0204i\3\2\2\2\u0205\u0206\7#\2\2\u0206k\3\2\2\2\u0207\u0208"+
 		"\7$\2\2\u0208m\3\2\2\2\u0209\u0210\5r:\2\u020a\u020b\5\66\34\2\u020b\u020c"+
-		"\7\'\2\2\u020c\u020d\58\35\2\u020d\u020f\3\2\2\2\u020e\u020a\3\2\2\2\u020f"+
+		"\5.\30\2\u020c\u020d\58\35\2\u020d\u020f\3\2\2\2\u020e\u020a\3\2\2\2\u020f"+
 		"\u0212\3\2\2\2\u0210\u020e\3\2\2\2\u0210\u0211\3\2\2\2\u0211\u0218\3\2"+
 		"\2\2\u0212\u0210\3\2\2\2\u0213\u0214\5\66\34\2\u0214\u0215\58\35\2\u0215"+
 		"\u0217\3\2\2\2\u0216\u0213\3\2\2\2\u0217\u021a\3\2\2\2\u0218\u0216\3\2"+

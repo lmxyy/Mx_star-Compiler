@@ -195,7 +195,7 @@ que: '?' ;
 
 vartype_plus
     :
-	basetype (lefbra Integerliteral rigbra)*(lefbra rigbra)*
+	basetype (lefbra expression rigbra)*(lefbra rigbra)*
     ;
 
 vartype

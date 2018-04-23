@@ -426,7 +426,7 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
     public Node visitVartype_plus(Mx_starParser.Vartype_plusContext ctx) {
         Type type = null;
         String name = null;
-        List<Integer> dims = new ArrayList<>();
+        List<ExpressionNode> dims = new ArrayList<>();
         int d = 0;
         if (ctx.lefbra() != null) d = ctx.lefbra().size();
         if (((Mx_starParser.BasetypeContext)ctx.basetype()).Int() != null)
@@ -439,9 +439,9 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
             type = new Type(Type.Types.CLASS, false, d);
             name = ((Mx_starParser.BasetypeContext)ctx.basetype()).Identifier().getText();
         }
-        if (ctx.Integerliteral() != null)
-            for (TerminalNode num:ctx.Integerliteral())
-                dims.add(Integer.valueOf(num.getText()));
+        if (ctx.expression() != null)
+            for (ParserRuleContext dim:ctx.expression())
+                dims.add((ExpressionNode) visit(dim));
         VartypePlusNode ret =  new VartypePlusNode(type,name,dims);
         ret.setLocation(Location.fromCtx(ctx));
         return ret;
