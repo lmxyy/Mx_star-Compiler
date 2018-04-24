@@ -1,8 +1,8 @@
 package com.lmxyy.mxcompiler.symbol;
 
-public class Type {
+public class Type extends TypeBase{
     public enum Types {
-        VOID,INT,BOOL,STRING,NULL,CLASS
+        VOID,INT,BOOL,STRING,CLASS,NULL
     }
     private Types type;
     private boolean isFun;
@@ -22,4 +22,6 @@ public class Type {
     public int getDimension() {
         return dimension;
     }
+
+
 }
