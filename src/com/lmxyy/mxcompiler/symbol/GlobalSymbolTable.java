@@ -21,7 +21,7 @@ public class GlobalSymbolTable {
             new ArrayList<>()
     );
     private final static FunctionType stringSubString = new FunctionType(
-            stringType
+            stringType,
             "string.substring",
             new ArrayList<>() {{
                 add(intType);
@@ -104,7 +104,7 @@ public class GlobalSymbolTable {
             new ArrayList<>()
     );
     private final static FunctionType funcToString = new FunctionType(
-            new VartypeNode(new Type(Type.Types.STRING,true,0),"string"),
+            stringType,
             "toString",
             new ArrayList<>() {{
                 add(intType);

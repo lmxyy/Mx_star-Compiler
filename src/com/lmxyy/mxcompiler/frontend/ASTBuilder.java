@@ -3,6 +3,7 @@ import com.lmxyy.mxcompiler.ast.*;
 import com.lmxyy.mxcompiler.parser.Mx_starBaseVisitor;
 import com.lmxyy.mxcompiler.parser.Mx_starParser;
 import com.lmxyy.mxcompiler.symbol.ExprOperator;
+import com.lmxyy.mxcompiler.symbol.GlobalSymbolTable;
 import com.lmxyy.mxcompiler.symbol.Type;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -50,7 +51,7 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
 
     @Override
     public Node visitConstructor(Mx_starParser.ConstructorContext ctx) {
-        VartypeNode type = new VartypeNode(new Type(Type.Types.VOID,true,0),null);
+        VartypeNode type = new VartypeNode(GlobalSymbolTable.voidType);
         String name = ctx.Identifier().getText();
         List <DefvarNode> params = new ArrayList<>();
         params.addAll(((DefvarlistNode)visit(ctx.params())).getVars());
@@ -149,7 +150,9 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
         for (ParserRuleContext param:ctx.expression()) {
             params.add((ExpressionNode)visit(param));
         }
-        return new CallfunNode(name,params);
+        CallfunNode ret = new CallfunNode(name,params);
+        ret.setLocation(Location.fromCtx(ctx));
+        return ret;
     }
 
     @Override
@@ -445,13 +448,13 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
         int d = 0;
         if (ctx.lefbra() != null) d = ctx.lefbra().size();
         if (((Mx_starParser.BasetypeContext)ctx.basetype()).Int() != null)
-            type = new Type(Type.Types.INT,false,d);
+            type = new Type(Type.Types.INT,d);
         else if (((Mx_starParser.BasetypeContext)ctx.basetype()).String() != null)
-            type = new Type(Type.Types.STRING,false,d);
+            type = new Type(Type.Types.STRING,d);
         else if (((Mx_starParser.BasetypeContext)ctx.basetype()).Bool() != null)
-            type = new Type(Type.Types.BOOL,false,d);
+            type = new Type(Type.Types.BOOL,d);
         else if (((Mx_starParser.BasetypeContext)ctx.basetype()).Identifier() != null) {
-            type = new Type(Type.Types.CLASS, false, d);
+            type = new Type(Type.Types.CLASS,d);
             name = ((Mx_starParser.BasetypeContext)ctx.basetype()).Identifier().getText();
         }
         if (ctx.expression() != null)
@@ -469,13 +472,13 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
         int d = 0;
         if (ctx.lefbra() != null) d = ctx.lefbra().size();
         if (((Mx_starParser.BasetypeContext)ctx.basetype()).Int() != null)
-            type = new Type(Type.Types.INT,false,d);
+            type = new Type(Type.Types.INT,d);
         else if (((Mx_starParser.BasetypeContext)ctx.basetype()).String() != null)
-            type = new Type(Type.Types.STRING,false,d);
+            type = new Type(Type.Types.STRING,d);
         else if (((Mx_starParser.BasetypeContext)ctx.basetype()).Bool() != null)
-            type = new Type(Type.Types.BOOL,false,d);
+            type = new Type(Type.Types.BOOL,d);
         else if (((Mx_starParser.BasetypeContext)ctx.basetype()).Identifier() != null) {
-            type = new Type(Type.Types.CLASS, false, d);
+            type = new Type(Type.Types.CLASS, d);
             name = ((Mx_starParser.BasetypeContext)ctx.basetype()).Identifier().getText();
         }
         VartypeNode ret =  new VartypeNode(type,name);

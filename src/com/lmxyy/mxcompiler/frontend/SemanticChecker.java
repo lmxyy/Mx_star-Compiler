@@ -221,7 +221,6 @@ public class SemanticChecker implements Visitor {
                         node.setType(new VartypeNode(
                                 new Type(
                                         varType.getType().getType(),
-                                        varType.getType().isFun(),
                                         varType.getType().getDimension()-1
                                 ),
                                 varType.getName()

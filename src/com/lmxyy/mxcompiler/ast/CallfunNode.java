@@ -11,6 +11,10 @@ public class CallfunNode extends ExprNode {
         params = _params;
     }
 
+    public void setLocation(Location _location) {
+        location = _location;
+    }
+
     public String getName() {
         return name;
     }
