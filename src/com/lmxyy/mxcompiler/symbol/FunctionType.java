@@ -1,27 +1,28 @@
 package com.lmxyy.mxcompiler.symbol;
 
+import com.lmxyy.mxcompiler.ast.VartypeNode;
+
 import java.util.List;
 
-public class FunctionType extends TypeBase {
-    private Type returnType;
+public class FunctionType extends VartypeNode{
     private String name;
-    private List<Type> argTypes;
+    private List<VartypeNode> argTypes;
     private List<String> argNames;
 
-    public FunctionType(Type _returnType,String _name,List<Type> _argTypes,List<String> _argNames) {
-        returnType = _returnType;
+    public FunctionType(VartypeNode _returnType,String _name,List<VartypeNode> _argTypes,List<String> _argNames) {
+        super(_returnType);
         name = _name;
         argTypes = _argTypes;
         argNames = _argNames;
     }
 
-    public Type getReturnType() {
-        return returnType;
+    public VartypeNode getReturnType() {
+        return new VartypeNode(super.getType(),super.getName());
     }
     public String getName() {
         return name;
     }
-    public List<Type> getArgTypes() {
+    public List<VartypeNode> getArgTypes() {
         return argTypes;
     }
     public List<String> getArgNames() {

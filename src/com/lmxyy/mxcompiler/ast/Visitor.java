@@ -10,7 +10,7 @@ public interface Visitor {
     void visit(IfStmtNode node);
     void visit(WhileStmtNode node);
     void visit(ForStmtNode node);
-        void visit(ContinueStmtNode node);
+    void visit(ContinueStmtNode node);
     void visit(BreakStmtNode node);
     void visit(ReturnStmtNode node);
     void visit(BlankStmtNode node);

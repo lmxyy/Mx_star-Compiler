@@ -12,6 +12,10 @@ public class ReturnStmtNode extends StmtNode {
         location = _location;
     }
 
+    public ExpressionNode getExpr() {
+        return expr;
+    }
+
     @Override
     public Location location() {
         return location;

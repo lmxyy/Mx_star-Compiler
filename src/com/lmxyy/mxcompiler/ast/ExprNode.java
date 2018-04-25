@@ -1,11 +1,12 @@
 package com.lmxyy.mxcompiler.ast;
 
-import com.lmxyy.mxcompiler.symbol.Type;
-
 public abstract class ExprNode extends Node {
-    private Type type;
+    private VartypeNode type;
 
-    public Type getType() {
+    public VartypeNode getType() {
         return type;
+    }
+    public void setType(VartypeNode _type) {
+        type = _type;
     }
 }

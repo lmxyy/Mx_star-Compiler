@@ -1,7 +1,5 @@
 package com.lmxyy.mxcompiler.symbol;
 
-import com.lmxyy.mxcompiler.ast.ExpressionNode;
-
 public class ExprOperator {
     public enum Operator {
         SELF,

@@ -144,12 +144,12 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
 
     @Override
     public Node visitCallfun(Mx_starParser.CallfunContext ctx) {
-        VariableNode var = (VariableNode)visit(ctx.variable());
+        String name = ctx.Identifier().getText();
         List<ExpressionNode> params = new ArrayList<>();
         for (ParserRuleContext param:ctx.expression()) {
             params.add((ExpressionNode)visit(param));
         }
-        return new CallfunNode(var,params);
+        return new CallfunNode(name,params);
     }
 
     @Override
@@ -194,25 +194,31 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
     @Override
     public Node visitFor_stmt(Mx_starParser.For_stmtContext ctx) {
         DefvarlistNode init1 = null;
-        ExpressionNode init2 = null;
-        AssignmentNode init3 = null;
+        List<Node> init2 = null;
         ExpressionNode cond = null;
-        AssignmentNode step1 = null;
-        ExpressionNode step2 = null;
+        List<Node> step = null;
         StmtNode block = null;
         if (ctx.forinit() != null) {
             if (((Mx_starParser.ForinitContext) ctx.forinit()).defvar() != null)
                 init1 = (DefvarlistNode) visit(((Mx_starParser.ForinitContext)ctx.forinit()).defvar());
-            else if (((Mx_starParser.ForinitContext) ctx.forinit()).expression() != null)
-                init2 = (ExpressionNode) visit(((Mx_starParser.ForinitContext)ctx.forinit()).expression());
-            else init3 = (AssignmentNode) visit(((Mx_starParser.ForinitContext)ctx.forinit()).assignment());
+            else if (((Mx_starParser.ForinitContext) ctx.forinit()).expressionorassignment() != null) {
+                init2 = new ArrayList<>();
+                for (Mx_starParser.ExpressionorassignmentContext stmt:((Mx_starParser.ForinitContext) ctx.forinit()).expressionorassignment()) {
+                    if (stmt.expression() != null)
+                        init2.add(visit(stmt.expression()));
+                    else init2.add(visit(stmt.assignment()));
+                }
+            }
         }
         if (ctx.expression() != null)
             cond = (ExpressionNode) visit(ctx.expression());
         if (ctx.forstep() != null) {
-            if (((Mx_starParser.ForstepContext) ctx.forstep()).assignment() != null)
-                step1 = (AssignmentNode) visit(((Mx_starParser.ForstepContext) ctx.forstep()).assignment());
-            else step2 = (ExpressionNode) visit(((Mx_starParser.ForstepContext)ctx.forstep()).expression());
+            step = new ArrayList<>();
+            for (Mx_starParser.ExpressionorassignmentContext stmt:((Mx_starParser.ForstepContext) ctx.forstep()).expressionorassignment()) {
+                if (stmt.expression() != null)
+                    step.add(visit(stmt.expression()));
+                else step.add(visit(stmt.assignment()));
+            }
         }
         if (((Mx_starParser.StmtorblockContext)ctx.stmtorblock()).stmt() != null) {
             List<Node> stmts = new ArrayList<>();
@@ -220,7 +226,7 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
             block = new BlockNode(stmts);
         }
         else block = (BlockNode)visit(((Mx_starParser.StmtorblockContext)ctx.stmtorblock()).block());
-        ForStmtNode ret = new ForStmtNode(init1,init2,init3,cond,step1,step2,block);
+        ForStmtNode ret = new ForStmtNode(init1,init2,cond,step,block);
         ret.setLocation(Location.fromCtx(ctx));
         return ret;
     }
@@ -283,7 +289,13 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
             exprs.add((ExprNode) visit(ctx.expression(0)));
             op = new ExprOperator(ExprOperator.Operator.SELF);
         }
+        else if (ctx.mem() != null&&ctx.callfun() != null) {
+            exprs.add((ExprNode) visit(ctx.variable()));
+            exprs.add((ExprNode) visit(ctx.callfun()));
+            op = new ExprOperator(ExprOperator.Operator.MEM);
+        }
         else if (ctx.mem() != null&&ctx.Identifier() != null) {
+            exprs.add((ExprNode) visit(ctx.variable()));
             exprs.add((ExprNode) visit(ctx.Identifier()));
             op = new ExprOperator(ExprOperator.Operator.MEM);
         }

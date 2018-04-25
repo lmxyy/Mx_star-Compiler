@@ -109,6 +109,12 @@ public interface Mx_starVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFor_stmt(Mx_starParser.For_stmtContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Mx_starParser#expressionorassignment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExpressionorassignment(Mx_starParser.ExpressionorassignmentContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Mx_starParser#forinit}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

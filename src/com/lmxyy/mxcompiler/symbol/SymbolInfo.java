@@ -1,13 +1,15 @@
 package com.lmxyy.mxcompiler.symbol;
 
-public class SymbolInfo {
-    private TypeBase type;
+import com.lmxyy.mxcompiler.ast.VartypeNode;
 
-    public SymbolInfo(TypeBase _type) {
+public class SymbolInfo {
+    private VartypeNode type;
+
+    public SymbolInfo(VartypeNode _type) {
         type = _type;
     }
 
-    public TypeBase getType() {
+    public VartypeNode getType() {
         return type;
     }
 }

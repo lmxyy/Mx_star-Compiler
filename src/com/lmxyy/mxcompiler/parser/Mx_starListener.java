@@ -170,6 +170,16 @@ public interface Mx_starListener extends ParseTreeListener {
 	 */
 	void exitFor_stmt(Mx_starParser.For_stmtContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link Mx_starParser#expressionorassignment}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpressionorassignment(Mx_starParser.ExpressionorassignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Mx_starParser#expressionorassignment}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpressionorassignment(Mx_starParser.ExpressionorassignmentContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link Mx_starParser#forinit}.
 	 * @param ctx the parse tree
 	 */

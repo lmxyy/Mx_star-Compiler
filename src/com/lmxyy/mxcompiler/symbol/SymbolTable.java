@@ -1,28 +1,60 @@
 package com.lmxyy.mxcompiler.symbol;
 
+import com.lmxyy.mxcompiler.ast.VartypeNode;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SymbolTable {
     private Map<String,SymbolInfo> map = new LinkedHashMap<>();
     private SymbolTable enclosingScope;
-    private boolean isGlobal = false;
+    private boolean isLoop = false;
+    private boolean isClass = false;
+    private String className = null;
+    private FunctionType inFun = null;
 
     public SymbolTable(SymbolTable _enclosingScope) {
         enclosingScope = _enclosingScope;
+        isLoop = enclosingScope.isLoop;
+        isClass = enclosingScope.isClass;
+        className = enclosingScope.className;
+        inFun = enclosingScope.inFun;
     }
 
     public static SymbolTable creatGlobalSymbalTable() {
         SymbolTable sym = new SymbolTable(null);
-        sym.isGlobal = true;
         return sym;
     }
 
-    public void define(String name,Type type) {
+    public void setLoop() {
+        isLoop = true;
+    }
+    public void setClass(String _className) {
+        isClass = true;
+        className = _className;
+    }
+    public void setInFun(FunctionType fun) {
+        inFun = fun;
+    }
+
+    public void define(String name,VartypeNode type) {
         map.put(name,new SymbolInfo(type));
     }
     public SymbolInfo getCurInfo(String name) {
         return map.get(name);
+    }
+
+    public boolean isLoop() {
+        return isLoop;
+    }
+    public boolean isClass() {
+        return isClass;
+    }
+    public String getClassName() {
+        return className;
+    }
+    public FunctionType getInFun() {
+        return inFun;
     }
 
     public SymbolInfo getInfo(String name) {

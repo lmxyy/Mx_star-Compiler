@@ -13,6 +13,10 @@ public class BlockNode extends StmtNode {
         location = _location;
     }
 
+    public List<Node> getStmts() {
+        return stmts;
+    }
+
     @Override
     public Location location() {
         return location;

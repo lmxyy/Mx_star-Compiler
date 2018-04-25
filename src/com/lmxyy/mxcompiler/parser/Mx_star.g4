@@ -79,7 +79,7 @@ stmt
 
 callfun
     :
-	variable'(' (expression (',' expression )*)? ')'
+	Identifier'(' (expression (',' expression )*)? ')'
     ;
 
 stmtorblock
@@ -103,13 +103,18 @@ for_stmt
 	For '(' forinit? ';' expression? ';' forstep? ')' stmtorblock
     ;
 
+expressionorassignment
+    :
+    (expression|assignment)
+    ;
+
 forinit
     :
-    defvar|expression|assignment
+    defvar|expressionorassignment (',' expressionorassignment)*
     ;
 forstep
     :
-    assignment|expression
+    expressionorassignment (',' expressionorassignment)*
     ;
 
 return_stmt
@@ -146,7 +151,7 @@ expression
 	expression mem Identifier|
 	expression lefbra expression rigbra|
 	variable (sinc|sdec)|
-    (pinc|pdec) variable|
+	(pinc|pdec) variable|
 	(neg|not|comp) expression|
 	New vartype_plus ('(' (expression (',' expression)* )? ')')?|
 	expression (times|divide|mod) expression|

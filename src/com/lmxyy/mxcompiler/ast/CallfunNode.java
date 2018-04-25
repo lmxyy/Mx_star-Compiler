@@ -3,15 +3,16 @@ package com.lmxyy.mxcompiler.ast;
 import java.util.List;
 
 public class CallfunNode extends ExprNode {
-    VariableNode fun;
-    List<ExpressionNode> params;
-    public CallfunNode(VariableNode _fun,List<ExpressionNode> _params) {
-        fun = _fun;
+    private String name;
+    private List<ExpressionNode> params;
+    private Location location;
+    public CallfunNode(String _name,List<ExpressionNode> _params) {
+        name = _name;
         params = _params;
     }
 
-    public VariableNode getFun() {
-        return fun;
+    public String getName() {
+        return name;
     }
     public List<ExpressionNode> getParams() {
         return params;
@@ -19,7 +20,7 @@ public class CallfunNode extends ExprNode {
 
     @Override
     public Location location() {
-        return fun.location();
+        return location;
     }
     @Override
     public void accept(Visitor visitor) {

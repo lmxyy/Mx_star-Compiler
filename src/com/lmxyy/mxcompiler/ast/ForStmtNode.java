@@ -1,22 +1,24 @@
 package com.lmxyy.mxcompiler.ast;
 
+import java.util.List;
+
 public class ForStmtNode extends StmtNode {
     private DefvarlistNode init1;
-    private ExpressionNode init2;
-    private AssignmentNode init3;
+    private List<Node> init2;
     private ExpressionNode cond;
-    private AssignmentNode step1;
-    private ExpressionNode step2;
+    private List<Node> step;
     private StmtNode block;
     private Location location;
 
-    public ForStmtNode(DefvarlistNode _init1,ExpressionNode _init2,AssignmentNode _init3,ExpressionNode _cond,AssignmentNode _step1,ExpressionNode _step2,StmtNode _block) {
+    public ForStmtNode(DefvarlistNode _init1,
+                       List<Node> _init2,
+                       ExpressionNode _cond,
+                       List<Node> _step,
+                       StmtNode _block) {
         init1 = _init1;
         init2 = _init2;
-        init3 = _init3;
         cond = _cond;
-        step1 = _step1;
-        step2 = _step2;
+        step = _step;
     }
     public void setLocation(Location _location) {
         location = _location;
@@ -25,21 +27,16 @@ public class ForStmtNode extends StmtNode {
     public DefvarlistNode getInit1() {
         return init1;
     }
-    public ExpressionNode getInit2() {
+    public List<Node> getInit2() {
         return init2;
-    }
-    public AssignmentNode getInit3() {
-        return init3;
     }
     public ExpressionNode getCond() {
         return cond;
     }
-    public AssignmentNode getStep1() {
-        return step1;
+    public List<Node> getStep() {
+        return step;
     }
-    public ExpressionNode getStep2() {
-        return step2;
-    }
+
     public StmtNode getBlock() {
         return block;
     }
