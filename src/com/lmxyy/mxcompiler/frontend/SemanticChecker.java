@@ -194,7 +194,7 @@ public class SemanticChecker implements Visitor {
             }
             else {
                 VartypeNode classType = globalSymbolTable.resolveType(t.getName());
-                VartypeNode mem = ((ClassType)classType).resolveMem(node.getId().getName());
+                VartypeNode mem = globalSymbolTable.globals.getInfo(classType.getName()+node.getId().getName()).getType();
                 if (mem == null) {
                     // 没有这个成员
                 }
@@ -265,16 +265,17 @@ public class SemanticChecker implements Visitor {
                 return;
             }
             else if (lsh.getType().isClass()) {
-                ClassType classType = (ClassType) globalSymbolTable.resolveType(lsh.getType().getName());
+                VartypeNode classType = globalSymbolTable.resolveType(lsh.getType().getName());
                 VartypeNode type = null;
                 if (rhs instanceof CallfunNode) {
-                    type = classType.resolveMem(((CallfunNode) rhs).getName());
-                    if (type instanceof FunctionType) {
+                    type = globalSymbolTable.globals.getCurInfo(classType.getName()+((CallfunNode) rhs).getName()).getType();
+                    if (type != null&&type instanceof FunctionType) {
                         ((CallfunNode) rhs).getParams().forEach(this::visit);
                         List <VartypeNode> exprTypes = new ArrayList<>();
                         ((CallfunNode) rhs).getParams().forEach(param -> exprTypes.add(param.getType()));
                         if (ParamChecker.isSame(exprTypes,((FunctionType) type).getArgTypes())) {
                             node.setType(type);
+                            return;
                         }
                         else {
                             // 参数不匹配
@@ -285,12 +286,19 @@ public class SemanticChecker implements Visitor {
                     }
                 }
                 else {
-
+                    type = globalSymbolTable.globals.getCurInfo(classType.getName()+((IdentifierNode) rhs).getName()).getType();
+                    if (type != null&&!(type instanceof FunctionType)) {
+                        node.setType(type);
+                        return;
+                    }
+                    else{
+                        // 没有这个成员
+                    }
                 }
             }
             else if (lsh.getType().isString()) {
                 if (rhs instanceof CallfunNode) {
-
+                    
                 }
                 else {
                     // 没有成员

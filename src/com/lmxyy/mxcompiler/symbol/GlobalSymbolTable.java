@@ -142,8 +142,8 @@ public class GlobalSymbolTable {
         return builtinMethodSet.contains(functionType);
     }
 
-    private Map<String, VartypeNode> typeMap = new LinkedHashMap<>();
-    private Map<String, FunctionType> constructorMap = new LinkedHashMap<>();
+    private Map<String,VartypeNode> typeMap = new LinkedHashMap<>();
+    private Map<String,FunctionType> constructorMap = new LinkedHashMap<>();
 
     public SymbolTable globals = SymbolTable.creatGlobalSymbalTable();
 
