@@ -1,13 +1,19 @@
 package com.lmxyy.mxcompiler.utils;
 
-import com.lmxyy.mxcompiler.ast.Location;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SyntaxError extends Error {
-    private Location location;
-    private String msg;
+    public List <String> msgs;
 
-    public SyntaxError(Location _location,String _msg) {
-        location = _location;
-        msg = _msg;
+
+    public SyntaxError() {
+        msgs = new ArrayList<>();
+    }
+
+    public void add(Location location,String msg) {
+        assert location != null;
+        System.err.println("Location: "+location+"\n"+"Syntax Error: "+msg);
+        msgs.add("Location: "+location+"\n"+"Syntax Error: "+msg);
     }
 }

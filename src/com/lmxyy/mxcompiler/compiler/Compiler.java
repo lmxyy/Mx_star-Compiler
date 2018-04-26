@@ -23,25 +23,29 @@ public class Compiler {
         outS = _outS;
     }
 
-    private void buildAST() throws Exception {
+    private boolean buildAST() throws Exception{
+        boolean ret = true;
         CharStream input = CharStreams.fromStream(inS);
         Mx_starLexer lexer = new Mx_starLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         Mx_starParser parser = new Mx_starParser(tokens);
         parser.removeErrorListeners();
         parser.addErrorListener(new SyntaxErrorListener());
-        try {
-            ParseTree tree = parser.prog();
-            ASTBuilder builder = new ASTBuilder();
-            ast = (ProgNode) builder.visit(tree);
-        } catch (Error error) {
-            throw error;
-        }
+        ParseTree tree = parser.prog();
+        if (!(((SyntaxErrorListener)parser.getErrorListeners().get(0)).syntaxError.msgs.isEmpty()))
+            ret = false;
+        ASTBuilder builder = new ASTBuilder();
+        ast = (ProgNode) builder.visit(tree);
+        /*SemanticChecker semanticChecker = new SemanticChecker(new GlobalSymbolTable());
+        semanticChecker.visit(ast);
+        */
+        return ret;
     }
 
-    public void run() throws Exception {
+    public boolean run() throws Exception{
         System.out.println("Compiling...");
-        buildAST();
+        boolean ret = buildAST();
         System.out.println("Compiled");
+        return ret;
     }
 }

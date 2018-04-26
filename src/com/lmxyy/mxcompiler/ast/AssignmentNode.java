@@ -1,6 +1,8 @@
 package com.lmxyy.mxcompiler.ast;
 
 
+import com.lmxyy.mxcompiler.utils.Location;
+
 public class AssignmentNode extends Node {
     VariableNode variable;
     ExpressionNode expr;

@@ -1,6 +1,8 @@
 package com.lmxyy.mxcompiler.ast;
 
 import com.lmxyy.mxcompiler.symbol.Type;
+import com.lmxyy.mxcompiler.utils.Location;
+
 import java.util.List;
 
 public class VartypePlusNode extends Node {

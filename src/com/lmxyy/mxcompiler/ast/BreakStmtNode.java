@@ -1,5 +1,7 @@
 package com.lmxyy.mxcompiler.ast;
 
+import com.lmxyy.mxcompiler.utils.Location;
+
 public class BreakStmtNode extends StmtNode {
     private Location location;
 

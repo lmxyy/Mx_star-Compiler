@@ -1,5 +1,7 @@
 package com.lmxyy.mxcompiler.ast;
 
+import com.lmxyy.mxcompiler.utils.Location;
+
 import java.util.List;
 
 public class ProgNode extends Node {

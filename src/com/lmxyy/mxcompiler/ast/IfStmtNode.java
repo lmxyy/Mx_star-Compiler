@@ -1,5 +1,7 @@
 package com.lmxyy.mxcompiler.ast;
 
+import com.lmxyy.mxcompiler.utils.Location;
+
 public class IfStmtNode extends StmtNode{
     private ExpressionNode cond;
     private StmtNode block1;

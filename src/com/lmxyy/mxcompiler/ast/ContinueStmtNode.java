@@ -1,5 +1,7 @@
 package com.lmxyy.mxcompiler.ast;
 
+import com.lmxyy.mxcompiler.utils.Location;
+
 public class ContinueStmtNode extends StmtNode {
     private Location location;
 

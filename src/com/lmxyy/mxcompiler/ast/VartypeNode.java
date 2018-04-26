@@ -1,5 +1,6 @@
 package com.lmxyy.mxcompiler.ast;
 import com.lmxyy.mxcompiler.symbol.Type;
+import com.lmxyy.mxcompiler.utils.Location;
 
 public class VartypeNode extends Node {
     private Type type;
@@ -37,6 +38,7 @@ public class VartypeNode extends Node {
     public boolean isNull() {
         return type.getType() == Type.Types.NULL&&type.getDimension() == 0;
     }
+    public boolean isVoid() { return type.getType() == Type.Types.VOID&&type.getDimension() == 0; }
     public boolean isClass() { return type.getType() == Type.Types.CLASS&&type.getDimension() == 0; }
     public boolean isUB() { return type.getType() == Type.Types.UB; }
 

@@ -5,8 +5,8 @@ import com.lmxyy.mxcompiler.parser.Mx_starParser;
 import com.lmxyy.mxcompiler.symbol.ExprOperator;
 import com.lmxyy.mxcompiler.symbol.GlobalSymbolTable;
 import com.lmxyy.mxcompiler.symbol.Type;
+import com.lmxyy.mxcompiler.utils.Location;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
 import java.util.List;

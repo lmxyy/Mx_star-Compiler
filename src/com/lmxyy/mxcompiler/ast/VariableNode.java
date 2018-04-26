@@ -1,5 +1,7 @@
 package com.lmxyy.mxcompiler.ast;
 
+import com.lmxyy.mxcompiler.utils.Location;
+
 public class VariableNode extends TermNode {
     private VariableNode var;
     private IdentifierNode id;

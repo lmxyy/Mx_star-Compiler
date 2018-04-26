@@ -1,5 +1,7 @@
 package com.lmxyy.mxcompiler.ast;
 
+import com.lmxyy.mxcompiler.utils.Location;
+
 public class StringliteralNode extends LiteralNode {
     private String val;
     private Location location;

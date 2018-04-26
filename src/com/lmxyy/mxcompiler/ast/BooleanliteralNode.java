@@ -1,5 +1,7 @@
 package com.lmxyy.mxcompiler.ast;
 
+import com.lmxyy.mxcompiler.utils.Location;
+
 public class BooleanliteralNode extends LiteralNode {
     private boolean val;
     private Location location;

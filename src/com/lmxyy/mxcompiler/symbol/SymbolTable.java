@@ -40,7 +40,7 @@ public class SymbolTable {
     public void define(String name,VartypeNode type) {
         map.put(name,new SymbolInfo(type));
     }
-    private SymbolInfo getCurInfo(String name) {
+    public SymbolInfo getCurInfo(String name) {
         return map.get(name);
     }
 

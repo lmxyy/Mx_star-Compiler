@@ -1,5 +1,7 @@
 package com.lmxyy.mxcompiler.ast;
 
+import com.lmxyy.mxcompiler.utils.Location;
+
 public class DefvarNode extends DefNode {
     private VartypeNode type;
     private String name;
