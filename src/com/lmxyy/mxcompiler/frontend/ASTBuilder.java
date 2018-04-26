@@ -280,6 +280,7 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
         List<ExprNode> exprs = new ArrayList<>();
         VartypePlusNode vartype = null;
         ExprOperator op = null;
+        boolean hasPar = false;
         if (ctx.term() != null) {
             exprs.add((ExprNode) visit(ctx.term()));
             op = new ExprOperator(ExprOperator.Operator.SELF);
@@ -288,7 +289,7 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
             exprs.add((ExprNode) visit(ctx.callfun()));
             op = new ExprOperator(ExprOperator.Operator.SELF);
         }
-        else if (ctx.lefpar() != null&&ctx.lefpar() != null&&ctx.expression() != null) {
+        else if (ctx.lefpar() != null&&ctx.lefpar() != null&&ctx.expression() != null&&ctx.New() == null) {
             exprs.add((ExprNode) visit(ctx.expression(0)));
             op = new ExprOperator(ExprOperator.Operator.SELF);
         }
@@ -340,6 +341,8 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
             for (ParserRuleContext expr:ctx.expression())
                 exprs.add((ExpressionNode) visit(expr));
             op = new ExprOperator(ExprOperator.Operator.NEW);
+            if (ctx.lefpar() != null)
+                hasPar = true;
         }
         else if (ctx.times() != null) {
             exprs.add((ExprNode) visit(ctx.expression(0)));
@@ -437,7 +440,7 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
             exprs.add((ExprNode) visit(ctx.expression(2)));
             op = new ExprOperator(ExprOperator.Operator.TRN);
         }
-        return new ExpressionNode(exprs,vartype,op);
+        return new ExpressionNode(exprs,vartype,op,hasPar);
     }
 
     @Override

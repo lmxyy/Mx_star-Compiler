@@ -6,6 +6,7 @@ public class DefclassNode extends DefNode {
     private List<DefvarNode> varMembers;
     private List<DefunNode> funMembers;
     private DefunNode constructor;
+    private boolean ommit = false;
     private Location location;
 
     public DefclassNode(String _name,List <DefvarNode> _varMembers,List <DefunNode> _funMembers,DefunNode _constructor) {
@@ -13,6 +14,9 @@ public class DefclassNode extends DefNode {
         varMembers = _varMembers;
         funMembers = _funMembers;
         constructor = _constructor;
+    }
+    public void setOmmit() {
+        ommit = true;
     }
     public void setLocation(Location _location) {
         location = _location;
@@ -29,6 +33,9 @@ public class DefclassNode extends DefNode {
     }
     public DefunNode getConstructor() {
         return constructor;
+    }
+    public boolean isOmmit() {
+        return ommit;
     }
 
     @Override

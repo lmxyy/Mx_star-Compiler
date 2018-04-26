@@ -153,7 +153,7 @@ expression
 	variable (sinc|sdec)|
 	(pinc|pdec) variable|
 	(neg|not|comp) expression|
-	New vartype_plus ('(' (expression (',' expression)* )? ')')?|
+	New vartype_plus ( lefpar (expression (',' expression)* )? rigpar)?|
 	expression (times|divide|mod) expression|
 	expression (add|sub) expression|
 	expression (lesh|rish) expression|

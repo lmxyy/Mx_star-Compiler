@@ -6,12 +6,16 @@ public class DefunNode extends DefNode {
     private String name;
     private List <DefvarNode> parameterList;
     private BlockNode body;
+    private boolean ommit = false;
 
     public DefunNode(VartypeNode _returnType,String _name,List <DefvarNode> _parameterList,BlockNode _body) {
         returnType = _returnType;
         name = _name;
         parameterList = _parameterList;
         body = _body;
+    }
+    public void setOmmit() {
+        ommit = true;
     }
 
     public VartypeNode getReturnType() {
@@ -25,6 +29,9 @@ public class DefunNode extends DefNode {
     }
     public BlockNode getBody() {
         return body;
+    }
+    public boolean isOmmit() {
+        return ommit;
     }
 
     @Override
