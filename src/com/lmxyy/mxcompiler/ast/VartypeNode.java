@@ -48,4 +48,10 @@ public class VartypeNode extends Node {
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }
+
+    public boolean equals(VartypeNode other) {
+        if (type.getType() == Type.Types.UB) return false;
+        else if (other.type.getType() == Type.Types.UB) return false;
+        else return type.getDimension() == other.getType().getDimension()&&name == other.name;
+    }
 }

@@ -10,7 +10,6 @@ public class SyntaxError extends Error {
     public SyntaxError() {
         msgs = new ArrayList<>();
     }
-
     public void add(Location location,String msg) {
         assert location != null;
         System.err.println("Location: "+location+"\n"+"Syntax Error: "+msg);

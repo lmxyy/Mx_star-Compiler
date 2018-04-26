@@ -2,9 +2,11 @@ package com.lmxyy.mxcompiler.compiler;
 
 import com.lmxyy.mxcompiler.ast.ProgNode;
 import com.lmxyy.mxcompiler.frontend.ASTBuilder;
+import com.lmxyy.mxcompiler.frontend.SemanticChecker;
 import com.lmxyy.mxcompiler.parser.Mx_starLexer;
 import com.lmxyy.mxcompiler.parser.Mx_starParser;
 import com.lmxyy.mxcompiler.parser.SyntaxErrorListener;
+import com.lmxyy.mxcompiler.symbol.GlobalSymbolTable;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -36,9 +38,10 @@ public class Compiler {
             ret = false;
         ASTBuilder builder = new ASTBuilder();
         ast = (ProgNode) builder.visit(tree);
-        /*SemanticChecker semanticChecker = new SemanticChecker(new GlobalSymbolTable());
+        SemanticChecker semanticChecker = new SemanticChecker(new GlobalSymbolTable());
         semanticChecker.visit(ast);
-        */
+        if (!semanticChecker.semanticError.msgs.isEmpty())
+            ret = false;
         return ret;
     }
 
