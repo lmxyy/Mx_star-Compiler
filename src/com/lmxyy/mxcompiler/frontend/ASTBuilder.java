@@ -474,12 +474,18 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
         String name = null;
         int d = 0;
         if (ctx.lefbra() != null) d = ctx.lefbra().size();
-        if (((Mx_starParser.BasetypeContext)ctx.basetype()).Int() != null)
-            type = new Type(Type.Types.INT,d);
-        else if (((Mx_starParser.BasetypeContext)ctx.basetype()).String() != null)
-            type = new Type(Type.Types.STRING,d);
-        else if (((Mx_starParser.BasetypeContext)ctx.basetype()).Bool() != null)
-            type = new Type(Type.Types.BOOL,d);
+        if (((Mx_starParser.BasetypeContext)ctx.basetype()).Int() != null) {
+            type = new Type(Type.Types.INT, d);
+            name = "int";
+        }
+        else if (((Mx_starParser.BasetypeContext)ctx.basetype()).String() != null) {
+            type = new Type(Type.Types.STRING, d);
+            name = "string";
+        }
+        else if (((Mx_starParser.BasetypeContext)ctx.basetype()).Bool() != null) {
+            type = new Type(Type.Types.BOOL, d);
+            name = "bool";
+        }
         else if (((Mx_starParser.BasetypeContext)ctx.basetype()).Identifier() != null) {
             type = new Type(Type.Types.CLASS, d);
             name = ((Mx_starParser.BasetypeContext)ctx.basetype()).Identifier().getText();
@@ -487,6 +493,12 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
         VartypeNode ret =  new VartypeNode(type,name);
         ret.setLocation(Location.fromCtx(ctx));
         return ret;
+    }
+
+    @Override
+    public Node visitFuntype(Mx_starParser.FuntypeContext ctx) {
+        if (ctx.vartype() != null) return visit(ctx.vartype());
+        else return GlobalSymbolTable.voidType;
     }
 
     @Override

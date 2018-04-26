@@ -16,6 +16,7 @@ public class SemanticChecker implements Visitor {
     public SemanticChecker(GlobalSymbolTable _globalSymbolTable) {
         globalSymbolTable = _globalSymbolTable;
         curScope = _globalSymbolTable.globals;
+        semanticError = new SemanticError();
     }
 
     @Override
@@ -332,15 +333,17 @@ public class SemanticChecker implements Visitor {
         node.scope = curScope;
         if (node.getExpr() != null) {
             visit(node.getExpr());
-            if (!node.getExpr().equals(curScope.getInFun())){
+            if (!node.getExpr().getType().equals(curScope.getInFun().getReturnType())){
                 // return的值与表达式不匹配
                 semanticError.expectType(node.getExpr().location(),curScope.getInFun(),node.getExpr().getType());
+                return;
             }
         }
         else{
             if (!((VartypeNode) curScope.getInFun()).isVoid()) {
                 // return的值与表达式不匹配
                 semanticError.expectType(node.location(),curScope.getInFun(),GlobalSymbolTable.voidType);
+                return;
             }
         }
     }

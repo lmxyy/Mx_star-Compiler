@@ -15,10 +15,12 @@ public class SymbolTable {
 
     public SymbolTable(SymbolTable _enclosingScope) {
         enclosingScope = _enclosingScope;
-        isLoop = enclosingScope.isLoop;
-        isClass = enclosingScope.isClass;
-        className = enclosingScope.className;
-        inFun = enclosingScope.inFun;
+        if (enclosingScope != null) {
+            isLoop = enclosingScope.isLoop;
+            isClass = enclosingScope.isClass;
+            className = enclosingScope.className;
+            inFun = enclosingScope.inFun;
+        }
     }
 
     public static SymbolTable creatGlobalSymbalTable() {

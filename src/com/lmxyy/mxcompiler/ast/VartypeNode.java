@@ -1,4 +1,5 @@
 package com.lmxyy.mxcompiler.ast;
+import com.lmxyy.mxcompiler.symbol.FunctionType;
 import com.lmxyy.mxcompiler.symbol.Type;
 import com.lmxyy.mxcompiler.utils.Location;
 
@@ -54,4 +55,9 @@ public class VartypeNode extends Node {
         else if (other.type.getType() == Type.Types.UB) return false;
         else return type.getDimension() == other.getType().getDimension()&&name == other.name;
     }
+    /*public boolean equals(FunctionType other) {
+        if (type.getType() == Type.Types.UB) return false;
+        else if (other.getReturnType().getType() == Type.Types.UB) return false;
+        else return type.getDimension() == other.getType().getDimension()&&name == other.name;
+    }*/
 }
