@@ -6,11 +6,13 @@ public class DefvarNode extends DefNode {
     private VartypeNode type;
     private String name;
     private ExpressionNode init;
+    private boolean ommit;
 
     public DefvarNode(VartypeNode _type,String _name,ExpressionNode _init) {
         type = _type;
         name = _name;
         init = _init;
+        ommit = false;
     }
 
     public VartypeNode getType() {
@@ -21,6 +23,13 @@ public class DefvarNode extends DefNode {
     }
     public ExpressionNode getInit() {
         return init;
+    }
+    public void setOmmit() {
+        ommit = true;
+    }
+
+    public boolean isOmmit() {
+        return ommit;
     }
 
     @Override

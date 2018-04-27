@@ -76,9 +76,16 @@ public class SemanticChecker implements Visitor {
         }
         for (DefNode def:node.getDefs()) {
             if (def instanceof DefclassNode) {
-                if (((DefclassNode) def).isOmmit()) continue;
                 curScope = new SymbolTable(curScope);
                 curScope.setClass(((DefclassNode) def).getName());
+                previsit((DefclassNode) def);
+                curScope = curScope.getEnclosingScope();
+            }
+        }
+        for (DefNode def:node.getDefs()) {
+            if (def instanceof DefclassNode) {
+                if (((DefclassNode) def).isOmmit()) continue;
+                curScope = def.scope;
                 visit(def);
                 curScope = curScope.getEnclosingScope();
             }
@@ -133,19 +140,11 @@ public class SemanticChecker implements Visitor {
                 globalSymbolTable.globals.define(curScope.getClass()+"."+node.getName(),node.getType());
                 curScope.define(node.getName(),node.getType());
             }
-            else curScope.define(node.getName(),node.getType());
-
+            curScope.define(node.getName(),node.getType());
         }
     }
 
-    @Override
-    public void visit(DefvarlistNode node) {
-        node.scope = curScope;
-        node.getVars().forEach(this::visit);
-    }
-
-    @Override
-    public void visit(DefclassNode node) {
+    public void previsit(DefclassNode node) {
         node.scope = curScope;
         for (DefunNode def:node.getFunMembers()) {
             if (globalSymbolTable.resolveType(def.getName()) != null||curScope.getCurInfo(def.getName()) != null) {
@@ -187,14 +186,7 @@ public class SemanticChecker implements Visitor {
                 }
             }
         }
-        node.getVarMembers().forEach(this::visit);
-        for (DefunNode def:node.getFunMembers()) {
-            if (def.isOmmit()) continue;;
-            curScope = new SymbolTable(curScope);
-            curScope.setInFun((FunctionType) curScope.getInfo(def.getName()).getType());
-            visit(def);
-            curScope = curScope.getEnclosingScope();
-        }
+        node.getVarMembers().forEach(this::previsit);
         if (node.getConstructor() == null) {
             FunctionType functionType = new FunctionType(new VartypeNode(null,null),node.getName(),new ArrayList<>(),new ArrayList<>());
             globalSymbolTable.defineConstructor(node.getName(),functionType);
@@ -212,6 +204,7 @@ public class SemanticChecker implements Visitor {
                 else argTypes.add(param.getType());
             }
             if (flag) {
+                node.getConstructor().setOmmit();
                 return;
             }
             else {
@@ -220,10 +213,70 @@ public class SemanticChecker implements Visitor {
                 FunctionType functionType = new FunctionType(new VartypeNode(null,null),node.getName(),argTypes,argNames);
                 globalSymbolTable.defineConstructor(node.getName(),functionType);
             }
+        }
+    }
+
+    @Override
+    public void visit(DefclassNode node) {
+        node.scope = curScope;
+        for (DefvarNode def:node.getVarMembers()) {
+            if (def.isOmmit()) continue;
+            posvisit(def);
+        }
+        for (DefunNode def:node.getFunMembers()) {
+            if (def.isOmmit()) continue;;
+            curScope = new SymbolTable(curScope);
+            curScope.setInFun((FunctionType) curScope.getInfo(def.getName()).getType());
+            visit(def);
+            curScope = curScope.getEnclosingScope();
+        }
+        if (node.getConstructor() != null&&!node.getConstructor().isOmmit()) {
             curScope = new SymbolTable(curScope);
             visit(node.getConstructor());
             curScope = curScope.getEnclosingScope();
         }
+    }
+
+    public void previsit(DefvarNode node) {
+        node.scope = curScope;
+        if (globalSymbolTable.resolveType(node.getName()) != null||curScope.getCurInfo(node.getName()) != null) {
+            semanticError.hasAlreadyBeenDeclared(node.location(),node.getName());
+            node.setOmmit();
+            return;
+        }
+        VartypeNode type = globalSymbolTable.resolveType(node.getType().getName());
+        if (type == null) {
+            semanticError.canNotResolveToTheType(node.location(),node.getType().getName());
+            node.setOmmit();
+            return;
+        }
+        if (!curScope.isClass())
+            curScope.define(node.getName(),node.getType());
+        else {
+            if (curScope.getInFun() == null) {
+                globalSymbolTable.globals.define(curScope.getClass()+"."+node.getName(),node.getType());
+                curScope.define(node.getName(),node.getType());
+            }
+            curScope.define(node.getName(),node.getType());
+        }
+    }
+
+    public void posvisit(DefvarNode node) {
+        node.scope = curScope;
+        if (node.getInit() != null) {
+            visit(node.getInit());
+            if (!(node.getInit().getType().equals(node.getType()))) {
+                semanticError.add(node.location(),"The initializer must match the type of the declaration.");
+                return;
+            }
+        }
+    }
+
+
+    @Override
+    public void visit(DefvarlistNode node) {
+        node.scope = curScope;
+        node.getVars().forEach(this::visit);
     }
 
     @Override
