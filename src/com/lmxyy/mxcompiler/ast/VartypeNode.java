@@ -53,7 +53,7 @@ public class VartypeNode extends Node {
     public boolean equals(VartypeNode other) {
         if (type.getType() == Type.Types.UB) return false;
         else if (other.type.getType() == Type.Types.UB) return false;
-        else if (type.getDimension() == other.getType().getDimension()&&name == other.name)
+        else if (type.getDimension() == other.getType().getDimension()&&name.equals(other.name))
             return true;
         else if (type.getDimension() > 0&&other.getType().getType() == Type.Types.NULL)
             return true;

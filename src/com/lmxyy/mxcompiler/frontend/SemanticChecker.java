@@ -132,7 +132,7 @@ public class SemanticChecker implements Visitor {
         }
         if (node.getInit() != null) {
             visit(node.getInit());
-            if (!node.getInit().getType().equals(node.getType())) {
+            if (!(node.getInit().getType().equals(node.getType()))) {
                 // 不是同一个类型
                 semanticError.add(node.location(),"The initializer must match the type of the declaration.");
                 return;
@@ -212,7 +212,7 @@ public class SemanticChecker implements Visitor {
             curScope = curScope.getEnclosingScope();
         }
         if (node.getConstructor() == null) {
-            FunctionType functionType = new FunctionType(null,node.getName(),new ArrayList<>(),new ArrayList<>());
+            FunctionType functionType = new FunctionType(new VartypeNode(null,null),node.getName(),new ArrayList<>(),new ArrayList<>());
             globalSymbolTable.defineConstructor(node.getName(),functionType);
         }
         else {
@@ -235,7 +235,7 @@ public class SemanticChecker implements Visitor {
             else {
                 for (int i = 0;i < argTypes.size();++i)
                     argNames.add("arg"+i);
-                FunctionType functionType = new FunctionType(null,node.getName(),argTypes,argNames);
+                FunctionType functionType = new FunctionType(new VartypeNode(null,null),node.getName(),argTypes,argNames);
                 globalSymbolTable.defineConstructor(node.getName(),functionType);
             }
             curScope = new SymbolTable(curScope);
