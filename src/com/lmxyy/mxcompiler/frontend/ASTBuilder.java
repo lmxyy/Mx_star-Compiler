@@ -262,7 +262,7 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
         if (ctx.variable() != null)
             var = (VariableNode) visit(ctx.variable());
         if (ctx.Identifier() != null)
-            id = (IdentifierNode) visit(ctx.Identifier());
+            id = new IdentifierNode(ctx.Identifier().getText());
         if (ctx.expression() != null)
             expr = (ExpressionNode) visit(ctx.expression());
         return new VariableNode(var,id,expr,isThis);
@@ -450,12 +450,18 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
         List<ExpressionNode> dims = new ArrayList<>();
         int d = 0;
         if (ctx.lefbra() != null) d = ctx.lefbra().size();
-        if (((Mx_starParser.BasetypeContext)ctx.basetype()).Int() != null)
-            type = new Type(Type.Types.INT,d);
-        else if (((Mx_starParser.BasetypeContext)ctx.basetype()).String() != null)
-            type = new Type(Type.Types.STRING,d);
-        else if (((Mx_starParser.BasetypeContext)ctx.basetype()).Bool() != null)
+        if (((Mx_starParser.BasetypeContext)ctx.basetype()).Int() != null) {
+            type = new Type(Type.Types.INT, d);
+            name = "int";
+        }
+        else if (((Mx_starParser.BasetypeContext)ctx.basetype()).String() != null) {
+            type = new Type(Type.Types.STRING, d);
+            name = "string";
+        }
+        else if (((Mx_starParser.BasetypeContext)ctx.basetype()).Bool() != null) {
             type = new Type(Type.Types.BOOL,d);
+            name = "bool";
+        }
         else if (((Mx_starParser.BasetypeContext)ctx.basetype()).Identifier() != null) {
             type = new Type(Type.Types.CLASS,d);
             name = ((Mx_starParser.BasetypeContext)ctx.basetype()).Identifier().getText();
@@ -524,5 +530,4 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
             return ret;
         }
     }
-
 }

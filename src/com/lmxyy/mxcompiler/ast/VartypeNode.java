@@ -53,11 +53,10 @@ public class VartypeNode extends Node {
     public boolean equals(VartypeNode other) {
         if (type.getType() == Type.Types.UB) return false;
         else if (other.type.getType() == Type.Types.UB) return false;
-        else return type.getDimension() == other.getType().getDimension()&&name == other.name;
+        else if (type.getDimension() == other.getType().getDimension()&&name == other.name)
+            return true;
+        else if (type.getDimension() > 0&&other.getType().getType() == Type.Types.NULL)
+            return true;
+        else return false;
     }
-    /*public boolean equals(FunctionType other) {
-        if (type.getType() == Type.Types.UB) return false;
-        else if (other.getReturnType().getType() == Type.Types.UB) return false;
-        else return type.getDimension() == other.getType().getDimension()&&name == other.name;
-    }*/
 }
