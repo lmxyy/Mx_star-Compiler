@@ -533,7 +533,7 @@ public class SemanticChecker implements Visitor {
             List <VartypeNode> exprTypes = new ArrayList<>();
             node.getParams().forEach(param -> exprTypes.add(param.getType()));
             if (ParamChecker.isSame(exprTypes,((FunctionType) type).getArgTypes())) {
-                node.setType(type);
+                node.setType(((FunctionType) type).getReturnType());
                 return;
             }
             else {
@@ -565,6 +565,8 @@ public class SemanticChecker implements Visitor {
         ExprOperator.Operator op = node.getOp().getOp();
         if (op == ExprOperator.Operator.SELF) {
             node.getExprs().forEach(this::visit);
+            /*if (node.getExprs().get(0) instanceof CallfunNode)
+                node.setType(node.getExprs().get(0));*/
             node.setType(node.getExprs().get(0).getType());
             return;
         }
