@@ -52,6 +52,7 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
     @Override
     public Node visitConstructor(Mx_starParser.ConstructorContext ctx) {
         VartypeNode type = new VartypeNode(GlobalSymbolTable.voidType);
+        type.setLocation(Location.fromCtx(ctx));
         String name = ctx.Identifier().getText();
         List <DefvarNode> params = new ArrayList<>();
         params.addAll(((DefvarlistNode)visit(ctx.params())).getVars());

@@ -100,7 +100,7 @@ public class SemanticChecker implements Visitor {
         }
         SymbolInfo mainFun = globalSymbolTable.globals.getInfo("main");
         if (mainFun == null) {
-            semanticError.add("The program doesn't has main function.");
+            semanticError.add("The program doesn't has a main function.");
         }
         else if (!mainFun.getType().isInt()) {
             semanticError.add("The main function is not int type.");
@@ -182,10 +182,15 @@ public class SemanticChecker implements Visitor {
         }
         node.getVarMembers().forEach(this::previsit);
         if (node.getConstructor() == null) {
-            FunctionType functionType = new FunctionType(new VartypeNode(null,null),node.getName(),new ArrayList<>(),new ArrayList<>());
+            FunctionType functionType = new FunctionType(new VartypeNode(new Type(Type.Types.VOID,0),"void"),node.getName(),new ArrayList<>(),new ArrayList<>());
             globalSymbolTable.defineConstructor(node.getName(),functionType);
         }
         else {
+            if (!node.getConstructor().getName().equals(curScope.getClassName())) {
+                semanticError.add(node.getConstructor().location(),"The name of constructor doesn't match the class.");
+                node.getConstructor().setOmmit();
+                return;
+            }
             List <VartypeNode> argTypes = new ArrayList<>();
             List <String> argNames = new ArrayList<>();
             boolean flag = false;
@@ -204,7 +209,7 @@ public class SemanticChecker implements Visitor {
             else {
                 for (int i = 0;i < argTypes.size();++i)
                     argNames.add("arg"+i);
-                FunctionType functionType = new FunctionType(new VartypeNode(null,null),node.getName(),argTypes,argNames);
+                FunctionType functionType = new FunctionType(new VartypeNode(new Type(Type.Types.VOID,0),"void"),node.getName(),argTypes,argNames);
                 globalSymbolTable.defineConstructor(node.getName(),functionType);
             }
         }
@@ -226,6 +231,7 @@ public class SemanticChecker implements Visitor {
         }
         if (node.getConstructor() != null&&!node.getConstructor().isOmmit()) {
             curScope = new SymbolTable(curScope);
+            curScope.setInFun(new FunctionType(new VartypeNode(new Type(Type.Types.VOID,0),"void"),node.getName(),null,null));
             visit(node.getConstructor());
             curScope = curScope.getEnclosingScope();
         }
