@@ -698,6 +698,11 @@ public class SemanticChecker implements Visitor {
                         return;
                     }
                     else if (rhs.getType().isInt()) {
+                        if (((ExpressionNode) lhs).getOp().getOp() == ExprOperator.Operator.NEW) {
+                            node.setType(GlobalSymbolTable.ubType);
+                            semanticError.add(lhs.location(),"Expect parentheses here.");
+                            return;
+                        }
                         node.setType(new VartypeNode(
                                 new Type(lhs.getType().getType().getType(),lhs.getType().getType().getDimension()-1),
                                 lhs.getType().getName()));

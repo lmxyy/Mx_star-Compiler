@@ -34,7 +34,9 @@ public class ExpressionNode extends ExprNode{
 
     @Override
     public Location location() {
-        return exprs.get(0).location();
+        if (exprs.isEmpty())
+            return vartype.location();
+        else return exprs.get(0).location();
     }
     @Override
     public void accept(Visitor visitor) {
