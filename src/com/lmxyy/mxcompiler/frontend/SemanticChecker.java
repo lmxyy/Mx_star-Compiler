@@ -135,13 +135,7 @@ public class SemanticChecker implements Visitor {
         }
         if (!curScope.isClass())
             curScope.define(node.getName(),node.getType());
-        else {
-            if (curScope.getInFun() == null) {
-                globalSymbolTable.globals.define(curScope.getClass()+"."+node.getName(),node.getType());
-                curScope.define(node.getName(),node.getType());
-            }
-            curScope.define(node.getName(),node.getType());
-        }
+        else curScope.define(node.getName(),node.getType());
     }
 
     public void previsit(DefclassNode node) {
@@ -253,11 +247,8 @@ public class SemanticChecker implements Visitor {
         if (!curScope.isClass())
             curScope.define(node.getName(),node.getType());
         else {
-            if (curScope.getInFun() == null) {
-                globalSymbolTable.globals.define(curScope.getClass()+"."+node.getName(),node.getType());
+                globalSymbolTable.globals.define(curScope.getClassName()+"."+node.getName(),node.getType());
                 curScope.define(node.getName(),node.getType());
-            }
-            curScope.define(node.getName(),node.getType());
         }
     }
 
@@ -458,7 +449,6 @@ public class SemanticChecker implements Visitor {
         }
         else if (node.getVar() != null&&node.getId() != null&&node.getExpr() == null) {
             visit(node.getVar());
-            visit(node.getId());
             VartypeNode t = node.getVar().getType();
             if (t.isUB()) {
                 node.setType(GlobalSymbolTable.ubType);
