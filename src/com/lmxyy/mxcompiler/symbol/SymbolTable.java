@@ -42,8 +42,14 @@ public class SymbolTable {
     public void define(String name,VartypeNode type) {
         map.put(name,new SymbolInfo(type));
     }
+
     public SymbolInfo getCurInfo(String name) {
         return map.get(name);
+    }
+    public VartypeNode getCurTypeInfo(String name) {
+        SymbolInfo ret = getCurInfo(name);
+        if (ret == null) return null;
+        else return ret.getType();
     }
 
     public boolean isLoop() {
@@ -64,6 +70,11 @@ public class SymbolTable {
         if (ret != null) return ret;
         else if (enclosingScope != null) return enclosingScope.getInfo(name);
         else return null;
+    }
+    public VartypeNode getTypeInfo(String name) {
+        SymbolInfo ret = getInfo(name);
+        if (ret == null) return null;
+        else return ret.getType();
     }
 
     public SymbolTable getEnclosingScope() {

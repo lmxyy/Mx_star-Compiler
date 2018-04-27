@@ -92,7 +92,7 @@ public class SemanticChecker implements Visitor {
             else if (def instanceof DefunNode) {
                 if (((DefunNode) def).isOmmit()) continue;
                 curScope = new SymbolTable(curScope);
-                curScope.setInFun((FunctionType) curScope.getInfo(((DefunNode) def).getName()).getType());
+                curScope.setInFun((FunctionType) curScope.getTypeInfo(((DefunNode) def).getName()));
                 visit(def);
                 curScope = curScope.getEnclosingScope();
             }
@@ -220,7 +220,7 @@ public class SemanticChecker implements Visitor {
         for (DefunNode def:node.getFunMembers()) {
             if (def.isOmmit()) continue;;
             curScope = new SymbolTable(curScope);
-            curScope.setInFun((FunctionType) curScope.getInfo(def.getName()).getType());
+            curScope.setInFun((FunctionType) curScope.getTypeInfo(def.getName()));
             visit(def);
             curScope = curScope.getEnclosingScope();
         }
@@ -382,7 +382,7 @@ public class SemanticChecker implements Visitor {
     @Override
     public void visit(IdentifierNode node) {
         node.scope = curScope;
-        VartypeNode type = curScope.getInfo(node.getName()).getType();
+        VartypeNode type = curScope.getTypeInfo(node.getName());
         if (type != null&&!(type instanceof FunctionType)) {
             node.setType(type);
             return;
@@ -421,7 +421,7 @@ public class SemanticChecker implements Visitor {
                 return;
             }
             else {
-                node.setType(globalSymbolTable.globals.getInfo(curScope.getClassName()).getType());
+                node.setType(globalSymbolTable.globals.getTypeInfo(curScope.getClassName()));
                 return;
             }
         }
@@ -461,7 +461,7 @@ public class SemanticChecker implements Visitor {
             }
             else {
                 VartypeNode classType = globalSymbolTable.resolveType(t.getName());
-                VartypeNode mem = globalSymbolTable.globals.getInfo(classType.getName()+"."+node.getId().getName()).getType();
+                VartypeNode mem = globalSymbolTable.globals.getTypeInfo(classType.getName()+"."+node.getId().getName());
                 if (mem == null) {
                     node.setType(GlobalSymbolTable.ubType);
                     semanticError.hasNoMember(node.getVar().location(),t,node.getId().getName());
@@ -519,7 +519,7 @@ public class SemanticChecker implements Visitor {
     @Override
     public void visit(CallfunNode node) {
         node.scope = curScope;
-        VartypeNode type = curScope.getInfo(node.getName()).getType();
+        VartypeNode type = curScope.getTypeInfo(node.getName());
         if (type != null&&type instanceof FunctionType) {
             node.getParams().forEach(this::visit);
             List <VartypeNode> exprTypes = new ArrayList<>();
@@ -571,17 +571,17 @@ public class SemanticChecker implements Visitor {
                 VartypeNode classType = globalSymbolTable.resolveType(lhs.getType().getName());
                 VartypeNode type = null;
                 if (rhs instanceof CallfunNode) {
-                    type = globalSymbolTable.globals.getInfo(classType.getName()+"."+((CallfunNode) rhs).getName()).getType();
+                    type = globalSymbolTable.globals.getTypeInfo(classType.getName()+"."+((CallfunNode) rhs).getName());
                     if (type != null&&type instanceof FunctionType) {
                         ((CallfunNode) rhs).getParams().forEach(this::visit);
                         List <VartypeNode> exprTypes = new ArrayList<>();
                         ((CallfunNode) rhs).getParams().forEach(param -> exprTypes.add(param.getType()));
                         if (ParamChecker.isSame(exprTypes,((FunctionType) type).getArgTypes())) {
-                            node.setType(type);
+                            node.setType(((FunctionType) type).getReturnType());
                             return;
                         }
                         else {
-                            node.setType(type);
+                            node.setType(((FunctionType) type).getReturnType());
                             semanticError.parameterListDoesNotMatch(rhs.location());
                             return;
                         }
@@ -593,7 +593,7 @@ public class SemanticChecker implements Visitor {
                     }
                 }
                 else {
-                    type = globalSymbolTable.globals.getInfo(classType.getName()+((IdentifierNode) rhs).getName()).getType();
+                    type = globalSymbolTable.globals.getTypeInfo(classType.getName()+((IdentifierNode) rhs).getName());
                     if (type != null&&!(type instanceof FunctionType)) {
                         node.setType(type);
                         return;
@@ -607,7 +607,7 @@ public class SemanticChecker implements Visitor {
             }
             else if (lhs.getType().isString()) {
                 if (rhs instanceof CallfunNode) {
-                    VartypeNode type = globalSymbolTable.globals.getInfo("string."+((CallfunNode) rhs).getName()).getType();
+                    VartypeNode type = globalSymbolTable.globals.getTypeInfo("string."+((CallfunNode) rhs).getName());
                     if (type == null) {
                         node.setType(GlobalSymbolTable.ubType);
                         semanticError.hasNoMember(rhs.location(),lhs.getType(),((CallfunNode) rhs).getName());
@@ -636,7 +636,7 @@ public class SemanticChecker implements Visitor {
             }
             else if (lhs.getType().getType().getDimension() > 0) {
                 if (rhs instanceof CallfunNode) {
-                    VartypeNode type = globalSymbolTable.globals.getInfo("array."+((CallfunNode) rhs).getName()).getType();
+                    VartypeNode type = globalSymbolTable.globals.getTypeInfo("array."+((CallfunNode) rhs).getName());
                     if (type == null) {
                         node.setType(GlobalSymbolTable.ubType);
                         semanticError.hasNoMember(rhs.location(),lhs.getType(),((CallfunNode) rhs).getName());
