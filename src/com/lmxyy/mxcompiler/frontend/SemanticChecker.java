@@ -117,7 +117,7 @@ public class SemanticChecker implements Visitor {
     @Override
     public void visit(DefvarNode node) {
         node.scope = curScope;
-        if (globalSymbolTable.resolveType(node.getName()) != null||curScope.getCurInfo(node.getName()) != null) {
+        if (curScope.getCurInfo(node.getName()) != null) {
             semanticError.hasAlreadyBeenDeclared(node.location(),node.getName());
             return;
         }
@@ -239,7 +239,7 @@ public class SemanticChecker implements Visitor {
 
     public void previsit(DefvarNode node) {
         node.scope = curScope;
-        if (globalSymbolTable.resolveType(node.getName()) != null||curScope.getCurInfo(node.getName()) != null) {
+        if (curScope.getCurInfo(node.getName()) != null) {
             semanticError.hasAlreadyBeenDeclared(node.location(),node.getName());
             node.setOmmit();
             return;
