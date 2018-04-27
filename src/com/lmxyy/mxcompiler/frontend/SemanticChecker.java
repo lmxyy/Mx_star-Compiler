@@ -25,7 +25,6 @@ public class SemanticChecker implements Visitor {
         for (DefNode def:node.getDefs()) {
             if (def instanceof DefclassNode) {
                 if (globalSymbolTable.resolveType(((DefclassNode) def).getName()) != null) {
-                    // 类定义重复
                     semanticError.hasAlreadyBeenDeclared(def.location(),((DefclassNode) def).getName());
                     ((DefclassNode) def).setOmmit();
                 }
@@ -40,12 +39,10 @@ public class SemanticChecker implements Visitor {
         for (DefNode def:node.getDefs()) {
             if (def instanceof DefunNode) {
                 if (globalSymbolTable.resolveType(((DefunNode) def).getName()) != null||curScope.getInfo(((DefunNode) def).getName()) != null) {
-                    // 函数定义重名
                     semanticError.hasAlreadyBeenDeclared(def.location(),((DefunNode) def).getName());
                     ((DefunNode) def).setOmmit();
                 }
                 else if (globalSymbolTable.resolveType(((DefunNode) def).getReturnType().getName()) == null) {
-                    // 函数的类型不存在
                     semanticError.canNotResolveToTheType(def.location(),((DefunNode) def).getReturnType().getName());
                     ((DefunNode) def).setOmmit();
                 }
@@ -56,14 +53,12 @@ public class SemanticChecker implements Visitor {
                     for (DefvarNode param:((DefunNode) def).getParameterList()) {
                         VartypeNode t = globalSymbolTable.resolveType(param.getType().getName());
                         if (t == null) {
-                            // 参数类型没见过
                             semanticError.canNotResolveToTheType(param.location(),param.getType().getName());
                             flag = true; break;
                         }
                         else argTypes.add(param.getType());
                     }
                     if (flag) {
-                        // 参数里面有未知类型
                         ((DefunNode) def).setOmmit();
                     }
                     else {
@@ -98,11 +93,9 @@ public class SemanticChecker implements Visitor {
         }
         SymbolInfo mainFun = globalSymbolTable.globals.getInfo("main");
         if (mainFun == null) {
-            // 无main函数
             semanticError.add("The program doesn't has main function.");
         }
         else if (!mainFun.getType().isInt()) {
-            // main函数类型不是int
             semanticError.add("The main function is not int type.");
         }
     }
@@ -120,20 +113,17 @@ public class SemanticChecker implements Visitor {
     public void visit(DefvarNode node) {
         node.scope = curScope;
         if (globalSymbolTable.resolveType(node.getName()) != null||curScope.getCurInfo(node.getName()) != null) {
-            // 变量重名
             semanticError.hasAlreadyBeenDeclared(node.location(),node.getName());
             return;
         }
         VartypeNode type = globalSymbolTable.resolveType(node.getType().getName());
         if (type == null) {
-            // 无此类型
             semanticError.canNotResolveToTheType(node.location(),node.getType().getName());
             return;
         }
         if (node.getInit() != null) {
             visit(node.getInit());
             if (!(node.getInit().getType().equals(node.getType()))) {
-                // 不是同一个类型
                 semanticError.add(node.location(),"The initializer must match the type of the declaration.");
                 return;
             }
@@ -161,12 +151,10 @@ public class SemanticChecker implements Visitor {
         node.scope = curScope;
         for (DefunNode def:node.getFunMembers()) {
             if (globalSymbolTable.resolveType(def.getName()) != null||curScope.getCurInfo(def.getName()) != null) {
-                // 函数定义重名
                 semanticError.hasAlreadyBeenDeclared(def.location(),def.getName());
                 def.setOmmit();
             }
             else if (globalSymbolTable.resolveType(def.getReturnType().getName()) == null) {
-                // 函数的类型不存在
                 semanticError.canNotResolveToTheType(def.location(),def.getReturnType().getName());
                 def.setOmmit();
             }
@@ -177,14 +165,12 @@ public class SemanticChecker implements Visitor {
                 for (DefvarNode param:((DefunNode) def).getParameterList()) {
                     VartypeNode t = globalSymbolTable.resolveType(param.getType().getName());
                     if (t == null) {
-                        // 变量类型不存在
                         semanticError.canNotResolveToTheType(param.location(),param.getType().getName());
                         flag = true; break;
                     }
                     else argTypes.add(param.getType());
                 }
                 if (flag) {
-                    // 参数里面有未知类型
                     def.setOmmit();
                 }
                 else {
@@ -222,14 +208,12 @@ public class SemanticChecker implements Visitor {
             for (DefvarNode param:node.getConstructor().getParameterList()) {
                 VartypeNode t = globalSymbolTable.resolveType(param.getType().getName());
                 if (t == null) {
-                    // 参数里有未知类型
                     semanticError.canNotResolveToTheType(param.location(),param.getType().getName());
                     flag = true; break;
                 }
                 else argTypes.add(param.getType());
             }
             if (flag) {
-                // 参数里面有未知类型
                 return;
             }
             else {
@@ -247,14 +231,12 @@ public class SemanticChecker implements Visitor {
     @Override
     public void visit(VartypeNode node) {
         node.scope = curScope;
-        // 理论上到不了这里
         assert false;
     }
 
     @Override
     public void visit(VartypePlusNode node) {
         node.scope = curScope;
-        // 理论上到不了这里
         assert false;
     }
 
@@ -263,7 +245,6 @@ public class SemanticChecker implements Visitor {
         node.scope = curScope;
         visit(node.getCond());
         if (!node.getCond().getType().isBool()) {
-            // 条件表达式里的值不是bool
             semanticError.expectType(node.getCond().location(),GlobalSymbolTable.boolType,node.getCond().getType());
         }
         curScope = new SymbolTable(curScope);
@@ -280,7 +261,6 @@ public class SemanticChecker implements Visitor {
         node.scope = curScope;
         visit(node.getCond());
         if (!node.getCond().getType().isBool()) {
-            // 条件表达式的值不是bool
             semanticError.expectType(node.getCond().location(),GlobalSymbolTable.boolType,node.getCond().getType());
         }
         curScope = new SymbolTable(curScope);
@@ -300,7 +280,6 @@ public class SemanticChecker implements Visitor {
         if (node.getCond() != null) {
             visit(node.getCond());
             if (!node.getCond().getType().isBool()) {
-                // 条件表达式值不是bool
                 semanticError.expectType(node.getCond().location(),GlobalSymbolTable.boolType,node.getCond().getType());
             }
         }
@@ -316,7 +295,6 @@ public class SemanticChecker implements Visitor {
     public void visit(ContinueStmtNode node) {
         node.scope = curScope;
         if (!curScope.isLoop()) {
-            // 未在循环之中
             semanticError.add(node.location(),"Continue statement should only exist inside a loop.");
         }
     }
@@ -324,7 +302,6 @@ public class SemanticChecker implements Visitor {
     public void visit(BreakStmtNode node) {
         node.scope = curScope;
         if (!curScope.isLoop()) {
-            // 未在循环之中
             semanticError.add(node.location(),"Break statement should only exist inside a loop.");
         }
     }
@@ -334,14 +311,12 @@ public class SemanticChecker implements Visitor {
         if (node.getExpr() != null) {
             visit(node.getExpr());
             if (!node.getExpr().getType().equals(curScope.getInFun().getReturnType())){
-                // return的值与表达式不匹配
                 semanticError.expectType(node.getExpr().location(),curScope.getInFun(),node.getExpr().getType());
                 return;
             }
         }
         else{
             if (!((VartypeNode) curScope.getInFun()).isVoid()) {
-                // return的值与表达式不匹配
                 semanticError.expectType(node.location(),curScope.getInFun(),GlobalSymbolTable.voidType);
                 return;
             }
@@ -400,7 +375,6 @@ public class SemanticChecker implements Visitor {
         node.scope = curScope;
         if (node.isThis()) {
             if (!curScope.isClass()) {
-                // 在非类里面调用了this
                 node.setType(GlobalSymbolTable.ubType);
                 semanticError.add(node.location(),"\"this\" can only be used in class.");
                 return;
@@ -444,13 +418,11 @@ public class SemanticChecker implements Visitor {
                 node.setType(GlobalSymbolTable.ubType);
                 semanticError.hasNoMember(node.getVar().location(),t,node.getId().getName());
                 return;
-                // 属于基本类，无mem
             }
             else {
                 VartypeNode classType = globalSymbolTable.resolveType(t.getName());
                 VartypeNode mem = globalSymbolTable.globals.getInfo(classType.getName()+"."+node.getId().getName()).getType();
                 if (mem == null) {
-                    // 没有这个成员
                     node.setType(GlobalSymbolTable.ubType);
                     semanticError.hasNoMember(node.getVar().location(),t,node.getId().getName());
                     return;
@@ -471,14 +443,12 @@ public class SemanticChecker implements Visitor {
             }
             else {
                 if (varType.getType().getDimension() == 0) {
-                    // 属于变量，非数组
                     node.setType(GlobalSymbolTable.ubType);
                     semanticError.isNotArray(node.getExpr().location(),varType);
                     return;
                 }
                 else {
                     if (!exprType.isInt()) {
-                        // 数组维数不是整数
                         node.setType(new VartypeNode(
                                 new Type(
                                         varType.getType().getType(),
@@ -503,7 +473,6 @@ public class SemanticChecker implements Visitor {
             }
         }
         else {
-            // 一般到不了这里
             assert false;
         }
     }
@@ -520,14 +489,12 @@ public class SemanticChecker implements Visitor {
                 return;
             }
             else {
-                // 参数不匹配
                 node.setType(type);
                 semanticError.parameterListDoesNotMatch(node.location());
                 return;
             }
         }
         else {
-            // 调用的函数不存在
             node.setType(GlobalSymbolTable.ubType);
             semanticError.canNotResolveToTheIdentifier(node.location(),node.getName());
             return;
@@ -539,7 +506,6 @@ public class SemanticChecker implements Visitor {
         visit(node.getVariable());
         visit(node.getExpr());
         if (!node.getVariable().getType().equals(node.getExpr().getType())) {
-            // 二者类型不一致
             semanticError.expectType(node.location(),node.getVariable().getType(),node.getExpr().getType());
             return;
         }
@@ -575,14 +541,12 @@ public class SemanticChecker implements Visitor {
                             return;
                         }
                         else {
-                            // 参数不匹配
                             node.setType(type);
                             semanticError.parameterListDoesNotMatch(rhs.location());
                             return;
                         }
                     }
                     else {
-                        // 没有这个成员函数
                         node.setType(GlobalSymbolTable.ubType);
                         semanticError.hasNoMember(rhs.location(),lhs.getType(),((CallfunNode) rhs).getName());
                         return;
@@ -595,7 +559,6 @@ public class SemanticChecker implements Visitor {
                         return;
                     }
                     else{
-                        // 没有这个成员
                         node.setType(GlobalSymbolTable.ubType);
                         semanticError.hasNoMember(rhs.location(),lhs.getType(),((IdentifierNode) rhs).getName());
                         return;
@@ -606,7 +569,6 @@ public class SemanticChecker implements Visitor {
                 if (rhs instanceof CallfunNode) {
                     VartypeNode type = globalSymbolTable.globals.getInfo("string."+((CallfunNode) rhs).getName()).getType();
                     if (type == null) {
-                        // 不是string内置函数，无此成员函数
                         node.setType(GlobalSymbolTable.ubType);
                         semanticError.hasNoMember(rhs.location(),lhs.getType(),((CallfunNode) rhs).getName());
                         return;
@@ -620,7 +582,6 @@ public class SemanticChecker implements Visitor {
                             return;
                         }
                         else {
-                            // 参数不匹配
                             node.setType(type);
                             semanticError.parameterListDoesNotMatch(rhs.location());
                             return;
@@ -637,7 +598,6 @@ public class SemanticChecker implements Visitor {
                 if (rhs instanceof CallfunNode) {
                     VartypeNode type = globalSymbolTable.globals.getInfo("array."+((CallfunNode) rhs).getName()).getType();
                     if (type == null) {
-                        // 不是array内置函数，无此成员函数
                         node.setType(GlobalSymbolTable.ubType);
                         semanticError.hasNoMember(rhs.location(),lhs.getType(),((CallfunNode) rhs).getName());
                         return;
@@ -654,7 +614,6 @@ public class SemanticChecker implements Visitor {
                             node.setType(type);
                             semanticError.parameterListDoesNotMatch(rhs.location());
                             return;
-                            // 参数不匹配
                         }
                     }
                 }
@@ -662,11 +621,9 @@ public class SemanticChecker implements Visitor {
                     node.setType(GlobalSymbolTable.ubType);
                     semanticError.hasNoMember(rhs.location(),lhs.getType(),((IdentifierNode) rhs).getName());
                     return;
-                    // 没有成员
                 }
             }
             else {
-                // 没有成员
                 node.setType(GlobalSymbolTable.ubType);
                 if (rhs instanceof CallfunNode)
                     semanticError.hasNoMember(rhs.location(),lhs.getType(),((CallfunNode) rhs).getName());
@@ -683,7 +640,6 @@ public class SemanticChecker implements Visitor {
             }
             else {
                 if (lhs.getType().getType().getDimension() == 0) {
-                    // 这是个变量，没有数组操作
                     node.setType(GlobalSymbolTable.ubType);
                     semanticError.isNotArray(rhs.location(),lhs.getType());
                 }
@@ -700,7 +656,6 @@ public class SemanticChecker implements Visitor {
                         return;
                     }
                     else {
-                        // 数组维数类型不是int
                         node.setType(new VartypeNode(
                                 new Type(lhs.getType().getType().getType(),lhs.getType().getType().getDimension()-1),
                                 lhs.getType().getName()));
@@ -723,7 +678,6 @@ public class SemanticChecker implements Visitor {
                 return;
             }
             else {
-                // 运算数不是int
                 node.setType(GlobalSymbolTable.intType);
                 semanticError.expectType(expr.location(),GlobalSymbolTable.intType,expr.getType());
             }
@@ -740,7 +694,6 @@ public class SemanticChecker implements Visitor {
                 return;
             }
             else {
-                // 运算数不是bool
                 node.setType(GlobalSymbolTable.boolType);
                 semanticError.expectType(expr.location(),GlobalSymbolTable.boolType,expr.getType());
             }
@@ -750,7 +703,6 @@ public class SemanticChecker implements Visitor {
             if (vartype.getType().getDimension() == 0) {
                 if (vartype.getType().getType() == Type.Types.CLASS) {
                     if (globalSymbolTable.resolveType(vartype.getName()) == null) {
-                        // 该类不存在
                         node.setType(GlobalSymbolTable.ubType);
                         semanticError.canNotResolveToTheType(vartype.location(),vartype.getName());
                         return;
@@ -758,7 +710,6 @@ public class SemanticChecker implements Visitor {
                     else {
                         FunctionType constructor = globalSymbolTable.resolveConstructor(vartype.getName());
                         if (constructor == null) {
-                            // 找不到constructor
                             node.setType(new VartypeNode(vartype.getType(),vartype.getName()));
                             semanticError.add(vartype.location(),"Cannot get the constructor.");
                             return;
@@ -771,7 +722,6 @@ public class SemanticChecker implements Visitor {
                             return;
                         }
                         else {
-                            // 参数不匹配
                             node.setType(new VartypeNode(vartype.getType(),vartype.getName()));
                             semanticError.parameterListDoesNotMatch(vartype.location());
                             return;
@@ -779,7 +729,6 @@ public class SemanticChecker implements Visitor {
                     }
                 }
                 else {
-                    // 基本类型不能new
                     node.setType(GlobalSymbolTable.intType);
                     semanticError.add(vartype.location(),"Primitive types cannot use new operator.");
                     return;
@@ -787,14 +736,12 @@ public class SemanticChecker implements Visitor {
             }
             else {
                 if (globalSymbolTable.resolveType(vartype.getName()) == null) {
-                    // 数组类型的基类不存在
                     node.setType(GlobalSymbolTable.ubType);
                     semanticError.canNotResolveToTheType(vartype.location(),vartype.getName());
                     return;
                 }
                 else {
                     if (node.isHasPar()) {
-                        // 数组变量后面不能带括号，无参数
                         node.setType(new VartypeNode(vartype.getType(), vartype.getName()));
                         semanticError.add(vartype.location(),"Parentheses cannot follow the array constructor.");
                         return;
@@ -820,7 +767,6 @@ public class SemanticChecker implements Visitor {
                 return;
             }
             else if (!lhs.getType().equals(rhs.getType())) {
-                // 二者类别不统一
                 node.setType(GlobalSymbolTable.ubType);
                 semanticError.areNotTheSameType(rhs.location(),lhs.getType(),rhs.getType());
                 return;
@@ -846,7 +792,6 @@ public class SemanticChecker implements Visitor {
                         return;
                     }
                     else {
-                        // 运算符不支持该类型
                         node.setType(GlobalSymbolTable.ubType);
                         semanticError.doNotSupportTheOperation(rhs.location(),lhs.getType());
                         return;
@@ -878,7 +823,6 @@ public class SemanticChecker implements Visitor {
                 return;
             }
             else if (!lhs.getType().equals(rhs.getType())) {
-                // 二者类别不统一
                 node.setType(GlobalSymbolTable.ubType);
                 semanticError.areNotTheSameType(rhs.location(),lhs.getType(),rhs.getType());
                 return;
@@ -889,7 +833,6 @@ public class SemanticChecker implements Visitor {
                     return;
                 }
                 else {
-                    // 运算符不支持该类型
                     node.setType(GlobalSymbolTable.ubType);
                     semanticError.doNotSupportTheOperation(rhs.location(),lhs.getType());
                     return;
@@ -910,14 +853,12 @@ public class SemanticChecker implements Visitor {
                         return;
                     }
                     else {
-                        // 三目运算符后两维类型不一样
                         node.setType(GlobalSymbolTable.ubType);
                         semanticError.areNotTheSameType(mhs.location(),mhs.getType(),rhs.getType());
                         return;
                     }
                 }
                 else {
-                    // 三目运算符条件不是bool
                     node.setType(mhs.getType());
                     semanticError.expectType(lhs.location(),GlobalSymbolTable.boolType,lhs.getType());
                     return;
@@ -925,7 +866,6 @@ public class SemanticChecker implements Visitor {
             }
         }
         else {
-            // 一般不会到这里来
             assert false;
         }
     }
