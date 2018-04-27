@@ -295,6 +295,7 @@ public class SemanticChecker implements Visitor {
         if (node.isHasElse()) {
             curScope = new SymbolTable(curScope);
             visit(node.getBlock2());
+            curScope = curScope.getEnclosingScope();
         }
     }
 
