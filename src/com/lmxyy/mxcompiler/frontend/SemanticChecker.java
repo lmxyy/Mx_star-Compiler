@@ -60,7 +60,7 @@ public class SemanticChecker implements Visitor {
                             semanticError.canNotResolveToTheType(param.location(),param.getType().getName());
                             flag = true; break;
                         }
-                        else argTypes.add(t);
+                        else argTypes.add(param.getType());
                     }
                     if (flag) {
                         // 参数里面有未知类型
@@ -181,7 +181,7 @@ public class SemanticChecker implements Visitor {
                         semanticError.canNotResolveToTheType(param.location(),param.getType().getName());
                         flag = true; break;
                     }
-                    else argTypes.add(t);
+                    else argTypes.add(param.getType());
                 }
                 if (flag) {
                     // 参数里面有未知类型
@@ -226,7 +226,7 @@ public class SemanticChecker implements Visitor {
                     semanticError.canNotResolveToTheType(param.location(),param.getType().getName());
                     flag = true; break;
                 }
-                else argTypes.add(t);
+                else argTypes.add(param.getType());
             }
             if (flag) {
                 // 参数里面有未知类型
