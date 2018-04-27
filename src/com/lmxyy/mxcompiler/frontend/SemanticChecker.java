@@ -594,7 +594,7 @@ public class SemanticChecker implements Visitor {
                     return;
                 }
             }
-            else if (lhs.getType().getType().getDimension() == 1) {
+            else if (lhs.getType().getType().getDimension() > 0) {
                 if (rhs instanceof CallfunNode) {
                     VartypeNode type = globalSymbolTable.globals.getInfo("array."+((CallfunNode) rhs).getName()).getType();
                     if (type == null) {
