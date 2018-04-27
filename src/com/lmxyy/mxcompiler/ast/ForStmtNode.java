@@ -21,6 +21,7 @@ public class ForStmtNode extends StmtNode {
         init2 = _init2;
         cond = _cond;
         step = _step;
+        block = _block;
     }
     public void setLocation(Location _location) {
         location = _location;

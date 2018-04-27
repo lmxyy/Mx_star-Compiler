@@ -421,7 +421,7 @@ public class SemanticChecker implements Visitor {
                 return;
             }
         }
-        else if (node.getVar() != null&&node.getId() != null&&node.getExpr() == null) {
+        else if (node.getVar() != null&&node.getId() == null&&node.getExpr() == null) {
             visit(node.getVar());
             if (node.getVar().getType().isUB()) {
                 node.setType(GlobalSymbolTable.ubType);
@@ -461,7 +461,7 @@ public class SemanticChecker implements Visitor {
                 }
             }
         }
-        else if (node.getVar() != null&&node.getId() != null&&node.getExpr() == null) {
+        else if (node.getVar() != null&&node.getId() == null&&node.getExpr() != null) {
             visit(node.getVar());
             visit(node.getExpr());
             VartypeNode varType = node.getVar().getType(),exprType = node.getExpr().getType();
@@ -819,7 +819,7 @@ public class SemanticChecker implements Visitor {
                 node.setType(GlobalSymbolTable.ubType);
                 return;
             }
-            else if (!lhs.getType().equals(rhs)) {
+            else if (!lhs.getType().equals(rhs.getType())) {
                 // 二者类别不统一
                 node.setType(GlobalSymbolTable.ubType);
                 semanticError.areNotTheSameType(rhs.location(),lhs.getType(),rhs.getType());
@@ -877,7 +877,7 @@ public class SemanticChecker implements Visitor {
                 node.setType(GlobalSymbolTable.ubType);
                 return;
             }
-            else if (!lhs.getType().equals(rhs)) {
+            else if (!lhs.getType().equals(rhs.getType())) {
                 // 二者类别不统一
                 node.setType(GlobalSymbolTable.ubType);
                 semanticError.areNotTheSameType(rhs.location(),lhs.getType(),rhs.getType());

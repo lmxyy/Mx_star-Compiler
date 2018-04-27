@@ -9,7 +9,7 @@ public class ParamChecker {
         if (a.size() != b.size()) return false;
         int len = a.size();
         for (int i = 0;i < len;++i)
-            if (!a.get(i).equals(b.get(i))) return false;
+            if (!(a.get(i).equals(b.get(i)))) return false;
         return true;
     }
 }
