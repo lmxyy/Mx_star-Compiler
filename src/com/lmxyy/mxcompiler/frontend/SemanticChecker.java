@@ -388,6 +388,7 @@ public class SemanticChecker implements Visitor {
             return;
         }
         else {
+            node.setType(GlobalSymbolTable.ubType);
             semanticError.canNotResolveToTheIdentifier(node.location(),node.getName());
         }
     }
@@ -838,6 +839,18 @@ public class SemanticChecker implements Visitor {
                     }
                 }
                 else if (lhs.getType().isBool()) {
+                    if (op == ExprOperator.Operator.EQU||op == ExprOperator.Operator.NEQ) {
+                        node.setType(GlobalSymbolTable.boolType);
+                        return;
+                    }
+                    else {
+                        node.setType(GlobalSymbolTable.ubType);
+                        semanticError.doNotSupportTheOperation(rhs.location(),lhs.getType());
+                        return;
+                    }
+                }
+                else if (lhs.getType().isClass()||rhs.getType().isClass()
+                        ||lhs.getType().getType().getDimension() > 0||rhs.getType().getType().getDimension() > 0) {
                     if (op == ExprOperator.Operator.EQU||op == ExprOperator.Operator.NEQ) {
                         node.setType(GlobalSymbolTable.boolType);
                         return;

@@ -57,6 +57,12 @@ public class VartypeNode extends Node {
             return true;
         else if (type.getDimension() > 0&&other.getType().getType() == Type.Types.NULL)
             return true;
+        else if (other.type.getDimension() > 0&&type.getType() == Type.Types.NULL)
+            return true;
+        else if (isClass()&&other.getType().getType() == Type.Types.NULL)
+            return true;
+        else if (other.isClass()&&type.getType() == Type.Types.NULL)
+            return true;
         else return false;
     }
 }
