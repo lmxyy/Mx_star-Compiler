@@ -104,9 +104,7 @@ public class SemanticChecker implements Visitor {
     public void visit(DefunNode node) {
         node.scope = curScope;
         node.getParameterList().forEach(this::visit);
-        curScope = new SymbolTable(curScope);
         visit(node.getBody());
-        curScope = curScope.getEnclosingScope();
     }
 
     @Override
@@ -285,10 +283,7 @@ public class SemanticChecker implements Visitor {
         }
         if (node.getStep() != null)
             node.getStep().forEach(this::visit);
-        curScope = new SymbolTable(curScope);
-        curScope.setLoop();
         visit(node.getBlock());
-        curScope = curScope.getEnclosingScope();
     }
 
     @Override
@@ -332,6 +327,8 @@ public class SemanticChecker implements Visitor {
         for (Node stmt:node.getStmts()) {
             if (stmt instanceof ForStmtNode||stmt instanceof BlockNode) {
                 curScope = new SymbolTable(curScope);
+                if (stmt instanceof ForStmtNode)
+                    curScope.setLoop();
                 visit(stmt);
                 curScope = curScope.getEnclosingScope();
             }

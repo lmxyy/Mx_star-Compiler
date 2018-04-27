@@ -294,7 +294,7 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
             op = new ExprOperator(ExprOperator.Operator.SELF);
         }
         else if (ctx.mem() != null&&ctx.callfun() != null) {
-            exprs.add((ExprNode) visit(ctx.variable()));
+            exprs.add((ExprNode) visit(ctx.expression(0)));
             exprs.add((ExprNode) visit(ctx.callfun()));
             op = new ExprOperator(ExprOperator.Operator.MEM);
         }
