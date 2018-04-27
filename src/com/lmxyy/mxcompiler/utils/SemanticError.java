@@ -43,7 +43,7 @@ public class SemanticError extends Error {
         String str = type.getName();
         for (int i = 1;i < type.getType().getDimension();++i)
             str += "[]";
-        add(location,str+" has no member. \""+name+"\".");
+        add(location,str+" has no member \""+name+"\".");
     }
     public void isNotArray(Location location,VartypeNode type) {
         String str = type.getName();

@@ -2,6 +2,7 @@ package com.lmxyy.mxcompiler.utils;
 
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class Location {
     private final int row,col;
@@ -17,6 +18,10 @@ public class Location {
     static public Location fromCtx(ParserRuleContext ctx) {
         return new Location(ctx.getStart());
     }
+    static public Location fromCtx(TerminalNode ctx) {
+        return new Location(ctx.getSymbol());
+    }
+
 
     public int getRow(){
         return row;

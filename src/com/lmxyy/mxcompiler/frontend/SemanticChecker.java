@@ -421,7 +421,7 @@ public class SemanticChecker implements Visitor {
                 return;
             }
             else {
-                node.setType(globalSymbolTable.globals.getTypeInfo(curScope.getClassName()));
+                node.setType(globalSymbolTable.resolveType(curScope.getClassName()));
                 return;
             }
         }
@@ -593,7 +593,7 @@ public class SemanticChecker implements Visitor {
                     }
                 }
                 else {
-                    type = globalSymbolTable.globals.getTypeInfo(classType.getName()+((IdentifierNode) rhs).getName());
+                    type = globalSymbolTable.globals.getTypeInfo(classType.getName()+"."+((IdentifierNode) rhs).getName());
                     if (type != null&&!(type instanceof FunctionType)) {
                         node.setType(type);
                         return;

@@ -261,8 +261,10 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
             isThis = true;
         if (ctx.variable() != null)
             var = (VariableNode) visit(ctx.variable());
-        if (ctx.Identifier() != null)
+        if (ctx.Identifier() != null) {
             id = new IdentifierNode(ctx.Identifier().getText());
+            id.setLocation(Location.fromCtx(ctx.Identifier()));
+        }
         if (ctx.expression() != null)
             expr = (ExpressionNode) visit(ctx.expression());
         return new VariableNode(var,id,expr,isThis);
@@ -299,8 +301,10 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
             op = new ExprOperator(ExprOperator.Operator.MEM);
         }
         else if (ctx.mem() != null&&ctx.Identifier() != null) {
-            exprs.add((ExprNode) visit(ctx.variable()));
-            exprs.add((ExprNode) visit(ctx.Identifier()));
+            exprs.add((ExprNode) visit(ctx.expression(0)));
+            IdentifierNode id = new IdentifierNode(ctx.Identifier().getText());
+            id.setLocation(Location.fromCtx(ctx.Identifier()));
+            exprs.add((ExprNode) id);
             op = new ExprOperator(ExprOperator.Operator.MEM);
         }
         else if (ctx.lefbra() != null&&ctx.rigbra() != null&&ctx.expression() != null) {
