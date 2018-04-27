@@ -571,7 +571,7 @@ public class SemanticChecker implements Visitor {
                 VartypeNode classType = globalSymbolTable.resolveType(lhs.getType().getName());
                 VartypeNode type = null;
                 if (rhs instanceof CallfunNode) {
-                    type = globalSymbolTable.globals.getInfo(classType.getName()+((CallfunNode) rhs).getName()).getType();
+                    type = globalSymbolTable.globals.getInfo(classType.getName()+"."+((CallfunNode) rhs).getName()).getType();
                     if (type != null&&type instanceof FunctionType) {
                         ((CallfunNode) rhs).getParams().forEach(this::visit);
                         List <VartypeNode> exprTypes = new ArrayList<>();
