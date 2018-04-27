@@ -17,17 +17,17 @@ public class GlobalSymbolTable {
     private final static FunctionType stringLength = new FunctionType(
             intType,
             "string.length",
-            new ArrayList<>(),
-            new ArrayList<>()
+            new ArrayList<VartypeNode>(),
+            new ArrayList<String>()
     );
     private final static FunctionType stringSubString = new FunctionType(
             stringType,
             "string.substring",
-            new ArrayList<>() {{
+            new ArrayList<VartypeNode>() {{
                 add(intType);
                 add(intType);
             }},
-            new ArrayList<>() {{
+            new ArrayList<String>() {{
                 add("arg0");
                 add("arg1");
             }}
@@ -35,16 +35,16 @@ public class GlobalSymbolTable {
     private final static FunctionType stringParseInt = new FunctionType(
             intType,
             "string.parseInt",
-            new ArrayList<>(),
-            new ArrayList<>()
+            new ArrayList<VartypeNode>(),
+            new ArrayList<String>()
     );
     private final static FunctionType stringOrd = new FunctionType(
             intType,
             "string.ord",
-            new ArrayList<>() {{
+            new ArrayList<VartypeNode>() {{
                 add(intType);
             }},
-            new ArrayList<>() {{
+            new ArrayList<String>() {{
                 add("arg0");
             }}
     );
@@ -61,8 +61,8 @@ public class GlobalSymbolTable {
     private final static FunctionType arraySize = new FunctionType(
             intType,
             "array.size",
-            new ArrayList<>(),
-            new ArrayList<>()
+            new ArrayList<VartypeNode>(),
+            new ArrayList<String>()
     );
     private final static Map<String,FunctionType> arrayBuiltinMethods  = Collections.unmodifiableMap(
             new HashMap<String,FunctionType>() {{
@@ -74,42 +74,42 @@ public class GlobalSymbolTable {
     private final static FunctionType funcPrint = new FunctionType(
             voidType,
             "print",
-            new ArrayList<>() {{
+            new ArrayList<VartypeNode>() {{
                 add(stringType);
             }},
-            new ArrayList<>() {{
+            new ArrayList<String>() {{
                 add("arg0");
             }}
     );
     private final static FunctionType funcPrintln = new FunctionType(
             voidType,
             "println",
-            new ArrayList<>() {{
+            new ArrayList<VartypeNode>() {{
                 add(stringType);
             }},
-            new ArrayList<>() {{
+            new ArrayList<String>() {{
                 add("arg0");
             }}
     );
     private final static FunctionType funcGetString = new FunctionType(
             stringType,
             "getString",
-            new ArrayList<>(),
-            new ArrayList<>()
+            new ArrayList<VartypeNode>(),
+            new ArrayList<String>()
     );
     private final static FunctionType funcGetInt = new FunctionType(
             intType,
             "getInt",
-            new ArrayList<>(),
-            new ArrayList<>()
+            new ArrayList<VartypeNode>(),
+            new ArrayList<String>()
     );
     private final static FunctionType funcToString = new FunctionType(
             stringType,
             "toString",
-            new ArrayList<>() {{
+            new ArrayList<VartypeNode>() {{
                 add(intType);
             }},
-            new ArrayList<>() {{
+            new ArrayList<String>() {{
                 add("arg0");
             }}
     );
@@ -124,7 +124,7 @@ public class GlobalSymbolTable {
     );
 
     private final Set<FunctionType> builtinMethodSet = Collections.unmodifiableSet(
-            new HashSet<>() {{
+            new HashSet<FunctionType>() {{
                 add(stringLength);
                 add(stringSubString);
                 add(stringParseInt);
