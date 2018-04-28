@@ -46,9 +46,9 @@ public class Compiler {
     }
 
     public boolean run() throws Exception{
-        System.out.println("Compiling...");
+        System.err.println("Compiling...");
         boolean ret = buildAST();
-        System.out.println("Compiled");
+        System.err.println("Compiled");
         return ret;
     }
 }
