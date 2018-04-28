@@ -14,6 +14,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class Compiler {
     private InputStream inS;
@@ -46,9 +48,9 @@ public class Compiler {
     }
 
     public boolean run() throws Exception{
-        System.err.println("Compiling...");
+        SimpleDateFormat formatter = new SimpleDateFormat("E MMM dd HH:mm:ss",Locale.US);
+        System.err.println("Compilation started at "+formatter.format(new java.util.Date()));
         boolean ret = buildAST();
-        System.err.println("Compiled");
         return ret;
     }
 }

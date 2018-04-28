@@ -3,6 +3,9 @@ package com.lmxyy.mxcompiler;
 import com.lmxyy.mxcompiler.compiler.Compiler;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class Main {
     private static final String Ver = "0.0.1";
@@ -27,8 +30,8 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
-        // String inFile = "/Users/limuyang/Desktop/Mx_star-Compiler/testcase/607.mx", outFile = null;
-        String inFile = null,outFile = null;
+        // String inFile = "/Users/limuyang/Desktop/Mx_star-Compiler/testcase/646.mx", outFile = null;
+        // String inFile = null,outFile = null;
         boolean isPrintHelp = false, isPrintVersion = false, isPrintConfig = false;
         for (int i = 0; i < args.length; ++i) {
             String arg = args[i];
@@ -70,7 +73,23 @@ public class Main {
         else outS = new PrintStream(new FileOutputStream(outFile));
 
         Compiler compiler = new Compiler(inS,outS);
-        if (!compiler.run())
+        SimpleDateFormat formatter = new SimpleDateFormat("E MMM dd HH:mm:ss",Locale.US);
+        try {
+            if (!compiler.run()) {
+                System.err.println("Compilation exited abnormally at "+formatter.format(new Date()));
+                System.exit(1);
+            }
+            else {
+                System.err.println("Compilation exited normally at "+formatter.format(new Date()));
+            }
+        }
+        catch (Error error) {
+            System.err.println("Compilation exited abnormally at "+formatter.format(new Date()));
             System.exit(1);
+        }
+        catch (Exception exception) {
+            System.err.println("Compilation exited abnormally at "+formatter.format(new Date()));
+            System.exit(1);
+        }
     }
 }
