@@ -80,7 +80,7 @@ public class Main {
                 System.exit(1);
             }
             else {
-                System.err.println("Compilation exited normally at "+formatter.format(new Date()));
+                System.err.println("Compilation finished at "+formatter.format(new Date()));
             }
         }
         catch (Error error) {
