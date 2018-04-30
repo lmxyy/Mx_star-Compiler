@@ -646,7 +646,7 @@ public class SemanticChecker implements Visitor {
             }
             else if (lhs.getType().getType().getDimension() > 0) {
                 if (rhs instanceof CallfunNode) {
-                    VartypeNode type = globalSymbolTable.globals.getTypeInfo("array."+((CallfunNode) rhs).getName());
+                    VartypeNode type = globalSymbolTable.globals.getTypeInfo("#array."+((CallfunNode) rhs).getName());
                     if (type == null) {
                         node.setType(GlobalSymbolTable.ubType);
                         semanticError.hasNoMember(rhs.location(),lhs.getType(),((CallfunNode) rhs).getName());

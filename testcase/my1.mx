@@ -5,7 +5,7 @@ int main() {
 }
 
 class A{
-    int a;
+    int a = c;
     void fun() {
     	 a = c;
     }
