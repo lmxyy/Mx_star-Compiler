@@ -62,13 +62,19 @@ public class SemanticChecker implements Visitor {
                         ((DefunNode) def).setOmmit();
                     }
                     else {
-                        for (int i = 0;i < argTypes.size();++i)
-                            argNames.add("arg"+i);
-                        FunctionType functionType = new FunctionType
-                                (((DefunNode) def).getReturnType()
-                                ,((DefunNode) def).getName()
-                                ,argTypes,argNames);
-                        curScope.define(functionType.getName(),functionType);
+                        if (((DefunNode) def).isInline()&&((DefunNode) def).getName() == "main") {
+                            ((DefunNode) def).setOmmit();
+                            semanticError.add(def.location(),"Cannot inline the main function.");
+                        }
+                        else {
+                            for (int i = 0; i < argTypes.size(); ++i)
+                                argNames.add("arg" + i);
+                            FunctionType functionType = new FunctionType
+                                    (((DefunNode) def).getReturnType()
+                                            , ((DefunNode) def).getName()
+                                            , argTypes, argNames);
+                            curScope.define(functionType.getName(), functionType);
+                        }
                     }
                 }
             }
@@ -99,7 +105,7 @@ public class SemanticChecker implements Visitor {
             else visit(def);
         }
         SymbolInfo mainFun = globalSymbolTable.globals.getInfo("main");
-        if (mainFun == null) {
+        if (mainFun == null||!(mainFun.getType() instanceof FunctionType)) {
             semanticError.add("The program doesn't has a main function.");
         }
         else if (!mainFun.getType().isInt()) {
@@ -117,7 +123,7 @@ public class SemanticChecker implements Visitor {
     @Override
     public void visit(DefvarNode node) {
         node.scope = curScope;
-        if (curScope.getCurInfo(node.getName()) != null) {
+        if (curScope.getCurInfo(node.getName()) != null||globalSymbolTable.resolveType(node.getName()) != null) {
             semanticError.hasAlreadyBeenDeclared(node.location(),node.getName());
             return;
         }
@@ -239,7 +245,7 @@ public class SemanticChecker implements Visitor {
 
     public void previsit(DefvarNode node) {
         node.scope = curScope;
-        if (curScope.getCurInfo(node.getName()) != null) {
+        if (curScope.getCurInfo(node.getName()) != null||globalSymbolTable.resolveType(node.getName()) != null) {
             semanticError.hasAlreadyBeenDeclared(node.location(),node.getName());
             node.setOmmit();
             return;

@@ -51,13 +51,14 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
 
     @Override
     public Node visitConstructor(Mx_starParser.ConstructorContext ctx) {
+        boolean inline = ctx.Inline() != null;
         VartypeNode type = new VartypeNode(GlobalSymbolTable.voidType);
         type.setLocation(Location.fromCtx(ctx));
         String name = ctx.Identifier().getText();
         List <DefvarNode> params = new ArrayList<>();
         params.addAll(((DefvarlistNode)visit(ctx.params())).getVars());
         BlockNode block = (BlockNode) visit(ctx.block());
-        return new DefunNode(type,name,params,block);
+        return new DefunNode(inline,type,name,params,block);
     }
 
     @Override
@@ -84,12 +85,13 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
 
     @Override
     public Node visitDefun(Mx_starParser.DefunContext ctx) {
+        boolean inline = ctx.Inline() != null;
         VartypeNode type = (VartypeNode)visit(ctx.funtype());
         String name = ctx.Identifier().getText();
         List <DefvarNode> params = new ArrayList<>();
         params.addAll(((DefvarlistNode)visit(ctx.params())).getVars());
         BlockNode block = (BlockNode) visit(ctx.block());
-        return new DefunNode(type,name,params,block);
+        return new DefunNode(inline,type,name,params,block);
     }
 
     @Override

@@ -1,11 +1,12 @@
 A b;
 int c = b.a;
+int a = 1,d,f = 666;
 
 int main() {
 }
 
 class A{
-    int a = c;
+    int a = c,b,c,d;
     void fun() {
     	 a = c;
     }
