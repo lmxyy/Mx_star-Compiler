@@ -26,7 +26,7 @@ defclass
 
 constructor
     :
-    (Identifier '(' params ')' block)
+	Inline? (Identifier '(' params ')' block)
     ;
 
 classmem
@@ -46,7 +46,7 @@ defvarassignment
 
 defun
     :
-	funtype Identifier '(' params ')' block
+	Inline? funtype Identifier '(' params ')' block
     ;
 
 params
@@ -411,6 +411,11 @@ This
 	'this'
     ;
 
+Inline
+    :
+	'inline'
+    ;
+
 Identifier
     :
 	LETTER
@@ -419,3 +424,12 @@ Identifier
 	    DIGIT
 	)*
     ;
+
+
+
+
+
+
+
+
+
