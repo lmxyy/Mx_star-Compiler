@@ -37,6 +37,7 @@ public class SemanticError extends Error {
             str1 += "[]";
         for (int i = 1;i < type2.getType().getDimension();++i)
             str2 += "[]";
+        if (type2.isUB()) str2 = "unknown";
         add(location,"Expect "+str1+" type, but get "+str2+" type.");
     }
     public void hasNoMember(Location location,VartypeNode type,String name) {
@@ -60,7 +61,7 @@ public class SemanticError extends Error {
             str1 += "[]";
         for (int i = 1;i < type2.getType().getDimension();++i)
             str2 += "[]";
-        add(location,str1+"\" type and "+str2+" are not the same type.");
+        add(location,str1+" type and "+str2+" are not the same type.");
     }
     public void doNotSupportTheOperation(Location location,VartypeNode type) {
         String str = type.getName();

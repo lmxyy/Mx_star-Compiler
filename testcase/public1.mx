@@ -1,0 +1,8 @@
+int main()
+{
+    int [] a = null;
+    int [][] b = null;
+    if (null == null)
+	a = null;
+    else b = null;
+}

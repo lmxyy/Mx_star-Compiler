@@ -558,6 +558,10 @@ public class SemanticChecker implements Visitor {
     public void visit(AssignmentNode node) {
         node.scope = curScope;
         visit(node.getVariable());
+        if (node.getVariable().isThis()) {
+            semanticError.add(node.location(),"\"this\" is not a left operand.");
+            return;
+        }
         visit(node.getExpr());
         if (!node.getVariable().getType().equals(node.getExpr().getType())) {
             semanticError.expectType(node.location(),node.getVariable().getType(),node.getExpr().getType());
@@ -571,8 +575,6 @@ public class SemanticChecker implements Visitor {
         ExprOperator.Operator op = node.getOp().getOp();
         if (op == ExprOperator.Operator.SELF) {
             node.getExprs().forEach(this::visit);
-            /*if (node.getExprs().get(0) instanceof CallfunNode)
-                node.setType(node.getExprs().get(0));*/
             node.setType(node.getExprs().get(0).getType());
             return;
         }
@@ -871,6 +873,17 @@ public class SemanticChecker implements Visitor {
                 }
                 else if (lhs.getType().isClass()||rhs.getType().isClass()
                         ||lhs.getType().getType().getDimension() > 0||rhs.getType().getType().getDimension() > 0) {
+                    if (op == ExprOperator.Operator.EQU||op == ExprOperator.Operator.NEQ) {
+                        node.setType(GlobalSymbolTable.boolType);
+                        return;
+                    }
+                    else {
+                        node.setType(GlobalSymbolTable.ubType);
+                        semanticError.doNotSupportTheOperation(rhs.location(),lhs.getType());
+                        return;
+                    }
+                }
+                else if (lhs.getType().isNull()&&rhs.getType().isNull()) {
                     if (op == ExprOperator.Operator.EQU||op == ExprOperator.Operator.NEQ) {
                         node.setType(GlobalSymbolTable.boolType);
                         return;

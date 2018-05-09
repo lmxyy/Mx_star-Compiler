@@ -260,8 +260,11 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
         IdentifierNode id = null;
         ExpressionNode expr = null;
         boolean isThis = false;
-        if (ctx.This() != null)
+        Location location = null;
+        if (ctx.This() != null) {
             isThis = true;
+            location = Location.fromCtx(ctx.This());
+        }
         if (ctx.variable() != null)
             var = (VariableNode) visit(ctx.variable());
         if (ctx.Identifier() != null) {
@@ -270,7 +273,9 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
         }
         if (ctx.expression() != null)
             expr = (ExpressionNode) visit(ctx.expression());
-        return new VariableNode(var,id,expr,isThis);
+        VariableNode ret = new VariableNode(var,id,expr,isThis);
+        ret.setLocation(location);
+        return ret;
     }
 
     @Override

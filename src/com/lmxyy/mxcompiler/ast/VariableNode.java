@@ -7,6 +7,11 @@ public class VariableNode extends TermNode {
     private IdentifierNode id;
     private ExpressionNode expr;
     private boolean isThis;
+    private Location location;
+
+    public void setLocation(Location _location) {
+        location = _location;
+    }
 
     public VariableNode(VariableNode _var,IdentifierNode _id,ExpressionNode _expr,boolean _isThis) {
         var = _var;
@@ -31,7 +36,8 @@ public class VariableNode extends TermNode {
     @Override
     public Location location() {
         if (var != null) return var.location();
-        else return id.location();
+        else if (id != null) return id.location();
+        else return location;
     }
     @Override
     public void accept(Visitor visitor) {
