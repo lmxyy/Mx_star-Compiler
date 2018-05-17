@@ -565,6 +565,10 @@ public class SemanticChecker implements Visitor {
                     return;
                 }
             }
+            else {
+                semanticError.add(node.getVariable().location(),"Left value is invalid.");
+                return;
+            }
         }
         else if (node.getVariable().getOp().getOp() != ExprOperator.Operator.MEM
                 &&node.getVariable().getOp().getOp() != ExprOperator.Operator.ARRAY) {
