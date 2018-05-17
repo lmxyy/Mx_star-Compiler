@@ -576,7 +576,7 @@ public class SemanticChecker implements Visitor {
             return;
         }
         else if (node.getVariable().getOp().getOp() == ExprOperator.Operator.MEM) {
-            if (node.getVariable().getExprs().get(2) instanceof CallfunNode) {
+            if (node.getVariable().getExprs().get(1) instanceof CallfunNode) {
                 semanticError.add(node.getVariable().location(),"Left value is invalid.");
                 return;
             }
