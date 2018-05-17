@@ -4,15 +4,15 @@ package com.lmxyy.mxcompiler.ast;
 import com.lmxyy.mxcompiler.utils.Location;
 
 public class AssignmentNode extends Node {
-    VariableNode variable;
+    ExpressionNode variable;
     ExpressionNode expr;
 
-    public AssignmentNode(VariableNode _variable,ExpressionNode _expr) {
+    public AssignmentNode(ExpressionNode _variable,ExpressionNode _expr) {
         variable = _variable;
         expr = _expr;
     }
 
-    public VariableNode getVariable() {
+    public ExpressionNode getVariable() {
         return variable;
     }
     public ExpressionNode getExpr() {

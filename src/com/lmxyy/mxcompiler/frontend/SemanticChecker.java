@@ -558,9 +558,24 @@ public class SemanticChecker implements Visitor {
     public void visit(AssignmentNode node) {
         node.scope = curScope;
         visit(node.getVariable());
-        if (node.getVariable().isThis()) {
-            semanticError.add(node.location(),"\"this\" is not a left operand.");
+        if (node.getVariable().getOp().getOp() == ExprOperator.Operator.SELF){
+            if (node.getVariable().getExprs().get(0) instanceof VariableNode) {
+                if (((VariableNode) node.getVariable().getExprs().get(0)).isThis()){
+                    semanticError.add(node.getVariable().location(),"\"this\" is not a left value.");
+                    return;
+                }
+            }
+        }
+        else if (node.getVariable().getOp().getOp() != ExprOperator.Operator.MEM
+                &&node.getVariable().getOp().getOp() != ExprOperator.Operator.ARRAY) {
+            semanticError.add(node.getVariable().location(),"Left value is invalid.");
             return;
+        }
+        else if (node.getVariable().getOp().getOp() == ExprOperator.Operator.MEM) {
+            if (node.getVariable().getExprs().get(2) instanceof CallfunNode) {
+                semanticError.add(node.getVariable().location(),"Left value is invalid.");
+                return;
+            }
         }
         visit(node.getExpr());
         if (!node.getVariable().getType().equals(node.getExpr().getType())) {

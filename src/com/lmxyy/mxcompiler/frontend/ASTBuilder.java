@@ -249,8 +249,8 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
 
     @Override
     public Node visitAssignment(Mx_starParser.AssignmentContext ctx) {
-        VariableNode var = (VariableNode)visit(ctx.variable());
-        ExpressionNode expr = (ExpressionNode)visit(ctx.expression());
+        ExpressionNode var = (ExpressionNode)visit(ctx.expression(0));
+        ExpressionNode expr = (ExpressionNode)visit(ctx.expression(1));
         return new AssignmentNode(var,expr);
     }
 

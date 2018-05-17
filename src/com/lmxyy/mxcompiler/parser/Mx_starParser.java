@@ -1652,11 +1652,11 @@ public class Mx_starParser extends Parser {
 	}
 
 	public static class AssignmentContext extends ParserRuleContext {
-		public VariableContext variable() {
-			return getRuleContext(VariableContext.class,0);
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
 		}
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
 		}
 		public AssignmentContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1685,7 +1685,7 @@ public class Mx_starParser extends Parser {
 			{
 			{
 			setState(325);
-			variable(0);
+			expression(0);
 			setState(326);
 			match(T__6);
 			setState(327);
@@ -4297,7 +4297,7 @@ public class Mx_starParser extends Parser {
 		"\3\2\2\2\u013e\u013f\3\2\2\2\u013f\'\3\2\2\2\u0140\u013e\3\2\2\2\u0141"+
 		"\u0143\79\2\2\u0142\u0144\5\60\31\2\u0143\u0142\3\2\2\2\u0143\u0144\3"+
 		"\2\2\2\u0144\u0145\3\2\2\2\u0145\u0146\7\3\2\2\u0146)\3\2\2\2\u0147\u0148"+
-		"\5,\27\2\u0148\u0149\7\t\2\2\u0149\u014a\5\60\31\2\u014a+\3\2\2\2\u014b"+
+		"\5\60\31\2\u0148\u0149\7\t\2\2\u0149\u014a\5\60\31\2\u014a+\3\2\2\2\u014b"+
 		"\u014c\b\27\1\2\u014c\u0153\7<\2\2\u014d\u0153\7>\2\2\u014e\u014f\7\6"+
 		"\2\2\u014f\u0150\5,\27\2\u0150\u0151\7\7\2\2\u0151\u0153\3\2\2\2\u0152"+
 		"\u014b\3\2\2\2\u0152\u014d\3\2\2\2\u0152\u014e\3\2\2\2\u0153\u015e\3\2"+

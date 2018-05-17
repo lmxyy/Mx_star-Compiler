@@ -124,7 +124,7 @@ return_stmt
 
 assignment
     :
-	(variable '=' expression)
+	(expression '=' expression)
     ;
 
 variable
