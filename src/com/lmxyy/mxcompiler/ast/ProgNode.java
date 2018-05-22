@@ -20,7 +20,7 @@ public class ProgNode extends Node {
         else return defs.get(0).location();
     }
     @Override
-    public void accept(Visitor visitor) {
+    public void accept(ASTVisitor visitor) {
         visitor.visit(this);
     }
 }

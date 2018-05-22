@@ -1,5 +1,6 @@
 package com.lmxyy.mxcompiler.ast;
 
+import com.lmxyy.mxcompiler.ir.BasicBlock;
 import com.lmxyy.mxcompiler.utils.Location;
 
 public class WhileStmtNode extends StmtNode {
@@ -27,7 +28,7 @@ public class WhileStmtNode extends StmtNode {
         return cond.location();
     }
     @Override
-    public void accept(Visitor visitor) {
+    public void accept(ASTVisitor visitor) {
         visitor.visit(this);
     }
 }

@@ -24,7 +24,7 @@ public class AssignmentNode extends Node {
         return variable.location();
     }
     @Override
-    public void accept(Visitor visitor) {
+    public void accept(ASTVisitor visitor) {
         visitor.visit(this);
     }
 }

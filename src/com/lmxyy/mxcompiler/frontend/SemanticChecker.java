@@ -8,7 +8,7 @@ import com.lmxyy.mxcompiler.utils.SemanticError;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SemanticChecker implements Visitor {
+public class SemanticChecker implements ASTVisitor {
     private GlobalSymbolTable globalSymbolTable;
     private SymbolTable curScope;
     public SemanticError semanticError;

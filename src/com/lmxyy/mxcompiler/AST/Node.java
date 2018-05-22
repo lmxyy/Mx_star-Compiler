@@ -7,5 +7,5 @@ public abstract class Node {
     public SymbolTable scope;
     public Node() {}
     abstract public Location location();
-    abstract public void accept(Visitor visitor);
+    abstract public void accept(ASTVisitor visitor);
 }

@@ -21,7 +21,7 @@ public class IdentifierNode extends ExprNode {
         return location;
     }
     @Override
-    public void accept(Visitor visitor) {
+    public void accept(ASTVisitor visitor) {
         visitor.visit(this);
     }
 }

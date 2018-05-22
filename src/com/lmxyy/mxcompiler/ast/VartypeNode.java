@@ -1,12 +1,18 @@
 package com.lmxyy.mxcompiler.ast;
-import com.lmxyy.mxcompiler.symbol.FunctionType;
 import com.lmxyy.mxcompiler.symbol.Type;
+import com.lmxyy.mxcompiler.utils.CompilerOption;
 import com.lmxyy.mxcompiler.utils.Location;
 
 public class VartypeNode extends Node {
     private Type type;
     private String name;
     private Location location;
+
+    public int getRegisterSize() {
+        if (isBool()) return CompilerOption.getSizeBool();
+        else if (isInt()) return CompilerOption.getSizeInt();
+        else return CompilerOption.getSizePointer();
+    }
 
     public VartypeNode(Type _type,String _name) {
         type = _type;
@@ -46,7 +52,7 @@ public class VartypeNode extends Node {
     @Override
     public Location location() { return location; }
     @Override
-    public void accept(Visitor visitor) {
+    public void accept(ASTVisitor visitor) {
         visitor.visit(this);
     }
 

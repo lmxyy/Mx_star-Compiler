@@ -33,7 +33,7 @@ public class VartypePlusNode extends Node {
     @Override
     public Location location() { return location; }
     @Override
-    public void accept(Visitor visitor) {
+    public void accept(ASTVisitor visitor) {
         visitor.visit(this);
     }
 }

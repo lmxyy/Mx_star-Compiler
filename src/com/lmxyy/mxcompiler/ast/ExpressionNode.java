@@ -1,5 +1,7 @@
 package com.lmxyy.mxcompiler.ast;
 
+import com.lmxyy.mxcompiler.ir.BasicBlock;
+import com.lmxyy.mxcompiler.ir.IntValue;
 import com.lmxyy.mxcompiler.symbol.ExprOperator;
 import com.lmxyy.mxcompiler.utils.Location;
 
@@ -11,6 +13,7 @@ public class ExpressionNode extends ExprNode{
     private VartypePlusNode vartype;
     private ExprOperator op;
     private boolean hasPar;
+    public BasicBlock basicBlockTrue = null,basicBlockFalse = null;
 
     public ExpressionNode(List<ExprNode> _exprs,VartypePlusNode _vartype,ExprOperator _op,boolean _hasPar) {
         exprs = _exprs;
@@ -39,7 +42,7 @@ public class ExpressionNode extends ExprNode{
         else return exprs.get(0).location();
     }
     @Override
-    public void accept(Visitor visitor) {
+    public void accept(ASTVisitor visitor) {
         visitor.visit(this);
     }
 }

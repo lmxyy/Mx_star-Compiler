@@ -40,7 +40,7 @@ public class VariableNode extends TermNode {
         else return location;
     }
     @Override
-    public void accept(Visitor visitor) {
+    public void accept(ASTVisitor visitor) {
         visitor.visit(this);
     }
 }

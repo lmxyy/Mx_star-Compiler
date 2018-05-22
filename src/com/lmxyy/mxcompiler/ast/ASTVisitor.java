@@ -1,6 +1,6 @@
 package com.lmxyy.mxcompiler.ast;
 
-public interface Visitor {
+public interface ASTVisitor {
     void visit(DefunNode node);
     void visit(DefvarNode node);
     void visit(DefclassNode node);

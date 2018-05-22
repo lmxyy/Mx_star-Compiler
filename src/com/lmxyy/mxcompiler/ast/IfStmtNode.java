@@ -1,5 +1,6 @@
 package com.lmxyy.mxcompiler.ast;
 
+import com.lmxyy.mxcompiler.ir.BasicBlock;
 import com.lmxyy.mxcompiler.utils.Location;
 
 public class IfStmtNode extends StmtNode{
@@ -34,7 +35,7 @@ public class IfStmtNode extends StmtNode{
     }
 
     @Override
-    public void accept(Visitor visitor) {
+    public void accept(ASTVisitor visitor) {
         visitor.visit(this);
     }
 }

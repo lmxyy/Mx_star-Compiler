@@ -38,7 +38,7 @@ public class DefvarNode extends DefNode {
     }
 
     @Override
-    public void accept(Visitor visitor) {
+    public void accept(ASTVisitor visitor) {
         visitor.visit(this);
     }
 }
