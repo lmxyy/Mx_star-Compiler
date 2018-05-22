@@ -792,7 +792,7 @@ public class SemanticChecker implements ASTVisitor {
                     else {
                         FunctionType constructor = globalSymbolTable.resolveConstructor(vartype.getName());
                         if (constructor == null) {
-                            node.setType(new VartypeNode(vartype.getType(),vartype.getName()));
+                            node.setType(vartype.toVartypeNode());
                             semanticError.add(vartype.location(),"Cannot get the constructor.");
                             return;
                         }
@@ -800,11 +800,11 @@ public class SemanticChecker implements ASTVisitor {
                         List <VartypeNode> exprTypes = new ArrayList<>();
                         node.getExprs().forEach(param -> exprTypes.add(param.getType()));
                         if (ParamChecker.isSame(exprTypes,constructor.getArgTypes())) {
-                            node.setType(new VartypeNode(vartype.getType(),vartype.getName()));
+                            node.setType(vartype.toVartypeNode());
                             return;
                         }
                         else {
-                            node.setType(new VartypeNode(vartype.getType(),vartype.getName()));
+                            node.setType(vartype.toVartypeNode());
                             semanticError.parameterListDoesNotMatch(vartype.location());
                             return;
                         }
@@ -824,12 +824,12 @@ public class SemanticChecker implements ASTVisitor {
                 }
                 else {
                     if (node.isHasPar()) {
-                        node.setType(new VartypeNode(vartype.getType(), vartype.getName()));
+                        node.setType(vartype.toVartypeNode());
                         semanticError.add(vartype.location(),"Parentheses cannot follow the array constructor.");
                         return;
                     }
                     else {
-                        node.setType(new VartypeNode(vartype.getType(), vartype.getName()));
+                        node.setType(vartype.toVartypeNode());
                         return;
                     }
                 }

@@ -11,7 +11,7 @@ prog
 
 progsec
     :
-    defclass|defvar ';'|defun
+	defclass|defvar ';'|defun
     ;
 
 defclass
@@ -31,7 +31,7 @@ constructor
 
 classmem
     :
-    defvar ';'|defun
+	defvar ';'|defun
     ;
 
 defvar
@@ -41,7 +41,7 @@ defvar
 
 defvarassignment
     :
-    Identifier ('=' expression)?
+	Identifier ('=' expression)?
     ;
 
 defun
@@ -84,7 +84,7 @@ callfun
 
 stmtorblock
     :
-    stmt|block
+	stmt|block
     ;
 
 if_stmt
@@ -105,16 +105,16 @@ for_stmt
 
 expressionorassignment
     :
-    (expression|assignment)
+	(expression|assignment)
     ;
 
 forinit
     :
-    defvar|expressionorassignment (',' expressionorassignment)*
+	defvar|expressionorassignment (',' expressionorassignment)*
     ;
 forstep
     :
-    expressionorassignment (',' expressionorassignment)*
+	expressionorassignment (',' expressionorassignment)*
     ;
 
 return_stmt

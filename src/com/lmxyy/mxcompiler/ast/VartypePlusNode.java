@@ -30,6 +30,13 @@ public class VartypePlusNode extends Node {
         return dims;
     }
 
+    public VartypeNode toVartypeNode() {
+        return new VartypeNode(type,name);
+    }
+    public int getRegisterSize() {
+        return toVartypeNode().getRegisterSize();
+    }
+
     @Override
     public Location location() { return location; }
     @Override

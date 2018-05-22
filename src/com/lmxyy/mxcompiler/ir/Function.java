@@ -2,12 +2,14 @@ package com.lmxyy.mxcompiler.ir;
 
 import com.lmxyy.mxcompiler.symbol.FunctionType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Function {
     FunctionType type;
     public BasicBlock startBasicBlock = null,exitBasicBlock = null;
-    public List<Return> retInstruction;
+    public List<VirtualRegister> argVarRegList = new ArrayList<>();
+    public List<Return> retInstruction = new ArrayList<>();
 
     public Function(FunctionType _type) {
         type = _type;

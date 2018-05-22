@@ -2,6 +2,7 @@ package com.lmxyy.mxcompiler.frontend;
 
 import com.lmxyy.mxcompiler.ast.*;
 import com.lmxyy.mxcompiler.ir.*;
+import com.lmxyy.mxcompiler.symbol.ExprOperator;
 import com.lmxyy.mxcompiler.symbol.FunctionType;
 import com.lmxyy.mxcompiler.symbol.GlobalSymbolTable;
 import com.lmxyy.mxcompiler.symbol.SymbolInfo;
@@ -17,6 +18,28 @@ public class IRBuilder implements ASTVisitor {
 
     public IRBuilder(GlobalSymbolTable _globalSymbolTable) {
         globalSymbolTable = _globalSymbolTable;
+    }
+
+    private boolean needMemoryAccess(Node node) {
+        if (node instanceof VariableNode) {
+            if (((VariableNode) node).getExpr() != null) return true;
+            else if (((VariableNode) node).getVar() != null&&((VariableNode) node).getId() != null) return true;
+            else return false;
+        }
+        else if (node instanceof ExpressionNode) {
+            if (((ExpressionNode) node).getOp().getOp() == ExprOperator.Operator.MEM) return true;
+            else if (((ExpressionNode) node).getOp().getOp() == ExprOperator.Operator.ARRAY) return true;
+            return false;
+        }
+        else return false;
+    }
+    private void assign(boolean needMem,int size,Register addr,int offset,ExprNode rhs) {
+        if (needMem) {
+
+        }
+        else {
+            curBasicBlock.append(new Move(curBasicBlock,rhs.intValue,addr));
+        }
     }
 
     @Override
@@ -57,7 +80,6 @@ public class IRBuilder implements ASTVisitor {
         }
         else curFunction.exitBasicBlock = curFunction.retInstruction.get(0).getBasicBlock();
         // remove unreachable block: to be completed
-
     }
 
     @Override
@@ -65,8 +87,23 @@ public class IRBuilder implements ASTVisitor {
         SymbolInfo info = node.scope.getInfo(node.getName());
         if (node.scope == globalSymbolTable.globals) {
             StaticData data = new StaticSpace(node.getName(),info.getType().getRegisterSize());
-            info.register = data;
-            
+            info.register = data; irRoot.dataList.add(data);
+        }
+        else {
+            if (curBasicBlock.isEnded()) {
+                WarningInfo.uselessStatement(node.location());
+                return;
+            }
+            VirtualRegister reg = new VirtualRegister(node.getName());
+            info.register = reg;
+            if (isFunArg)
+                curFunction.argVarRegList.add(reg);
+            if (node.getInit() != null) {
+                visit(node.getInit());
+                assign(false,node.getInit().getVartype().getRegisterSize(),reg,0,node.getInit());
+            }
+            else if (!isFunArg)
+                curBasicBlock.append(new Move(curBasicBlock,new IntImmediate(0),reg));
         }
     }
 
@@ -77,12 +114,18 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(DefvarlistNode node) {
+        if (node.scope != globalSymbolTable.globals) {
+            if (curBasicBlock.isEnded()) {
+                WarningInfo.uselessStatement(node.location());
+                return;
+            }
+        }
         node.getVars().forEach(var->var.accept(this));
     }
 
     @Override
     public void visit(VartypeNode node) {
-
+        // Do nothing here.
     }
 
     @Override
@@ -222,12 +265,18 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(IdentifierNode node) {
-
+        SymbolInfo info = node.scope.getInfo(node.getName());
+        node.intValue = info.register;
     }
 
     @Override
     public void visit(StringliteralNode node) {
-
+        StaticString staticString = irRoot.stringPool.get(node.getVal());
+        if (staticString == null) {
+            staticString = new StaticString(node.getVal());
+            irRoot.stringPool.put(node.getVal(),staticString);
+        }
+        node.intValue = staticString;
     }
 
     @Override
@@ -262,6 +311,9 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(ExpressionNode node) {
+        if (node.getOp().getOp() == ExprOperator.Operator.SELF) {
+
+        }
 
     }
 
