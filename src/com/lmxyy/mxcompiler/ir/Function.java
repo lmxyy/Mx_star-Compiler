@@ -9,7 +9,7 @@ public class Function {
     FunctionType type;
     public BasicBlock startBasicBlock = null,exitBasicBlock = null;
     public List<VirtualRegister> argVarRegList = new ArrayList<>();
-    public List<Return> retInstruction = new ArrayList<>();
+    public List<ReturnInstruction> retInstruction = new ArrayList<>();
 
     public Function(FunctionType _type) {
         type = _type;

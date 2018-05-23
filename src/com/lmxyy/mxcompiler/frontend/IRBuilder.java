@@ -38,7 +38,7 @@ public class IRBuilder implements ASTVisitor {
 
         }
         else {
-            curBasicBlock.append(new Move(curBasicBlock,rhs.intValue,addr));
+            curBasicBlock.append(new MoveInstruction(curBasicBlock,rhs.intValue,addr));
         }
     }
 
@@ -56,9 +56,9 @@ public class IRBuilder implements ASTVisitor {
         visit(node.getBody());
         if (!curBasicBlock.isEnded()) {
             if (node.getReturnType().isVoid())
-                curBasicBlock.end(new Return(curBasicBlock,null));
+                curBasicBlock.end(new ReturnInstruction(curBasicBlock,null));
             else {
-                curBasicBlock.end(new Return(curBasicBlock, new IntImmediate(0)));
+                curBasicBlock.end(new ReturnInstruction(curBasicBlock, new IntImmediate(0)));
                 WarningInfo.add(node.location(),"The function doesn't have a return value.");
             }
         }
@@ -69,11 +69,11 @@ public class IRBuilder implements ASTVisitor {
             Register newRetVal = null;
             if (!node.getReturnType().isVoid())
                 newRetVal = new VirtualRegister("$returnValue");
-            for (Return ret:curFunction.retInstruction) {
+            for (ReturnInstruction ret:curFunction.retInstruction) {
                 BasicBlock basicBlock = ret.getBasicBlock();
                 ret.remove();
                 if (ret.getRetVal() != null)
-                    basicBlock.append(new Move(basicBlock,ret.getRetVal(),newRetVal));
+                    basicBlock.append(new MoveInstruction(basicBlock,ret.getRetVal(),newRetVal));
                 basicBlock.end(new Jump(basicBlock,exitBasicBlock));
             }
             curFunction.retInstruction.clear();
@@ -103,7 +103,7 @@ public class IRBuilder implements ASTVisitor {
                 assign(false,node.getInit().getVartype().getRegisterSize(),reg,0,node.getInit());
             }
             else if (!isFunArg)
-                curBasicBlock.append(new Move(curBasicBlock,new IntImmediate(0),reg));
+                curBasicBlock.append(new MoveInstruction(curBasicBlock,new IntImmediate(0),reg));
         }
     }
 
@@ -246,10 +246,10 @@ public class IRBuilder implements ASTVisitor {
     @Override
     public void visit(ReturnStmtNode node) {
         if (node.getExpr() == null)
-            curBasicBlock.end(new Return(curBasicBlock,null));
+            curBasicBlock.end(new ReturnInstruction(curBasicBlock,null));
         else {
             visit(node.getExpr());
-            curBasicBlock.end(new Return(curBasicBlock,node.getExpr().intValue));
+            curBasicBlock.end(new ReturnInstruction(curBasicBlock,node.getExpr().intValue));
         }
     }
 
@@ -301,20 +301,82 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(CallfunNode node) {
-
+        if (curBasicBlock.isEnded()) {
+            WarningInfo.uselessStatement(node.location());
+            return;
+        }
+        FunctionType functionType = (FunctionType)globalSymbolTable.resolveType(node.getName());
+        if (globalSymbolTable.isBuiltinMethod(functionType)) {
+            // BuiltinMethod
+        }
+        else {
+            Function function = irRoot.functions.get(node.getName());
+            node.getParams().forEach(param->param.accept(this));
+            VirtualRegister reg = new VirtualRegister(null);
+            CallInstruction callFun = new CallInstruction(curBasicBlock,reg,function);
+            node.getParams().forEach(param->callFun.appendArgReg(param.intValue));
+            curBasicBlock.append(callFun);
+            node.intValue = reg;
+        }
     }
 
     @Override
     public void visit(AssignmentNode node) {
+        if (curBasicBlock.isEnded()) {
+            WarningInfo.uselessStatement(node.location());
+            return;
+        }
 
     }
 
     @Override
     public void visit(ExpressionNode node) {
-        if (node.getOp().getOp() == ExprOperator.Operator.SELF) {
+        if (curBasicBlock.isEnded()) {
+            WarningInfo.uselessStatement(node.location());
+            return;
+        }
+        ExprOperator.Operator op = node.getOp().getOp();
+        if (op == ExprOperator.Operator.SELF) {
+            visit(node.getExprs().get(0));
+        }
+        else if (op == ExprOperator.Operator.MEM) {
+            ExprNode lhs = node.getExprs().get(0),rhs = node.getExprs().get(1);
+            visit(lhs);
+            if (rhs instanceof CallfunNode) {
+
+            }
+            else {
+
+            }
+        }
+        else if (op == ExprOperator.Operator.ARRAY) {
 
         }
+        else if (op == ExprOperator.Operator.SINC||op == ExprOperator.Operator.SDEC||op == ExprOperator.Operator.PINC
+                ||op == ExprOperator.Operator.PDEC||op == ExprOperator.Operator.NEG||op == ExprOperator.Operator.COMP) {
 
+        }
+        else if (op == ExprOperator.Operator.NOT) {
+
+        }
+        else if (op == ExprOperator.Operator.NEW) {
+
+        }
+        else if (op == ExprOperator.Operator.TIMES||op == ExprOperator.Operator.DIVIDE||op == ExprOperator.Operator.MOD
+                ||op == ExprOperator.Operator.ADD||op == ExprOperator.Operator.SUB
+                ||op == ExprOperator.Operator.LESH||op == ExprOperator.Operator.RISH
+                ||op == ExprOperator.Operator.LESS||op == ExprOperator.Operator.LEQ
+                ||op == ExprOperator.Operator.GRTR||op == ExprOperator.Operator.GEQ
+                ||op == ExprOperator.Operator.EQU||op == ExprOperator.Operator.NEQ
+                ||op == ExprOperator.Operator.BAND||op == ExprOperator.Operator.XOR||op == ExprOperator.Operator.BOR) {
+
+        }
+        else if (op == ExprOperator.Operator.LAND||op == ExprOperator.Operator.LOR) {
+
+        }
+        else if (op == ExprOperator.Operator.TRN) {
+
+        }
     }
 
     @Override
@@ -323,10 +385,13 @@ public class IRBuilder implements ASTVisitor {
         // To be completed here.
     }
 
+    public void visit(Node node) {
+        node.accept(this);
+    }
     public void visit(StmtNode node) {
         node.accept(this);
     }
-    public void visit(Node node) {
+    public void visit(ExprNode node) {
         node.accept(this);
     }
 }

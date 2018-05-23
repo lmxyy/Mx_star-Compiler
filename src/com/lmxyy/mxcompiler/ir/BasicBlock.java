@@ -1,8 +1,5 @@
 package com.lmxyy.mxcompiler.ir;
 
-import com.lmxyy.mxcompiler.utils.Location;
-import com.lmxyy.mxcompiler.utils.WarningInfo;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,7 +27,7 @@ public class BasicBlock {
         else head = tail = node;
     }
 
-    public void end(Linker linker) {
+    public void end(LinkInstruction linker) {
         if (ended) return;
         append(linker);
         ended = true;

@@ -1,8 +1,6 @@
 package com.lmxyy.mxcompiler.ir;
 
-import com.lmxyy.mxcompiler.utils.Location;
-
-public class Jump extends Linker {
+public class Jump extends LinkInstruction {
     private BasicBlock target;
 
     public Jump(BasicBlock _curBasicBlock,BasicBlock _target) {
