@@ -109,7 +109,7 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(DefclassNode node) {
-
+        // Do nothing here.
     }
 
     @Override
