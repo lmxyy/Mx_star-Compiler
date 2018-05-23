@@ -189,6 +189,7 @@ public class IRBuilder implements ASTVisitor {
             curBasicBlock.append(new MoveInstruction(curBasicBlock,oprand.intValue,reg));
             node.intValue = reg;
         }
+        else node.intValue = oprand.intValue;
 
         if (isMemOp) {
             IntValue addr = oprand.address;
@@ -196,8 +197,10 @@ public class IRBuilder implements ASTVisitor {
             reg = new VirtualRegister(null);
             curBasicBlock.append(new OperationInstruction(curBasicBlock,reg,op,oprand.intValue,one));
             curBasicBlock.append(new StoreInstruction(curBasicBlock,addr,offset,CompilerOption.getSizeInt(),reg));
-            if (!isSuffix)
-                node.intValue
+            if (!isSuffix) node.intValue = reg;
+        }
+        else {
+            curBasicBlock.append(new OperationInstruction(curBasicBlock,(Register) node.intValue,op,oprand.intValue,one));
         }
     }
 
