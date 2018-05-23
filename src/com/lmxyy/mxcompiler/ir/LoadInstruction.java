@@ -6,7 +6,7 @@ public class LoadInstruction extends IRInstruction {
     private IntValue addr;
     private int offset;
 
-    public LoadInstruction(BasicBlock _basicBlock, Register _dest, int _size, IntValue _addr, int _offset) {
+    public LoadInstruction(BasicBlock _basicBlock,Register _dest,int _size,IntValue _addr,int _offset) {
         super(_basicBlock);
         dest = _dest;
         size = _size;

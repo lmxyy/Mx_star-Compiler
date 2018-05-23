@@ -1,11 +1,13 @@
 package com.lmxyy.mxcompiler.frontend;
 
 import com.lmxyy.mxcompiler.ast.*;
+import com.lmxyy.mxcompiler.compiler.Compiler;
 import com.lmxyy.mxcompiler.ir.*;
 import com.lmxyy.mxcompiler.symbol.ExprOperator;
 import com.lmxyy.mxcompiler.symbol.FunctionType;
 import com.lmxyy.mxcompiler.symbol.GlobalSymbolTable;
 import com.lmxyy.mxcompiler.symbol.SymbolInfo;
+import com.lmxyy.mxcompiler.utils.CompilerOption;
 import com.lmxyy.mxcompiler.utils.WarningInfo;
 
 public class IRBuilder implements ASTVisitor {
@@ -14,7 +16,7 @@ public class IRBuilder implements ASTVisitor {
     private Function curFunction;
     private BasicBlock curBasicBlock;
     private BasicBlock loopStepBlock = null,loopAfterBlock = null;
-    private boolean isFunArg = false;
+    private boolean isFunArg = false,needAddr = false;
 
     public IRBuilder(GlobalSymbolTable _globalSymbolTable) {
         globalSymbolTable = _globalSymbolTable;
@@ -29,16 +31,173 @@ public class IRBuilder implements ASTVisitor {
         else if (node instanceof ExpressionNode) {
             if (((ExpressionNode) node).getOp().getOp() == ExprOperator.Operator.MEM) return true;
             else if (((ExpressionNode) node).getOp().getOp() == ExprOperator.Operator.ARRAY) return true;
+            else if (((ExpressionNode) node).getOp().getOp() == ExprOperator.Operator.SELF
+                    &&needMemoryAccess(((ExpressionNode) node).getExprs().get(0)))
+                return true;
             return false;
         }
         else return false;
     }
-    private void assign(boolean needMem,int size,Register addr,int offset,ExprNode rhs) {
-        if (needMem) {
+    private void assign(boolean needMem,int size,IntValue addr,int offset,ExprNode rhs) {
+        if (needMem)
+            curBasicBlock.append(new StoreInstruction(curBasicBlock,addr,offset,size,rhs.intValue));
+        else curBasicBlock.append(new MoveInstruction(curBasicBlock,rhs.intValue,(Register) addr));
+    }
 
+    private void processArrayAccess(ExprNode node,ExprNode array,ExprNode subscript) {
+        if (curBasicBlock.isEnded()) {
+            WarningInfo.uselessStatement(node.location());
+            return;
+        }
+
+        boolean oldNeedAddr = needAddr;
+
+        needAddr = false;
+        visit(array);
+        visit(subscript);
+        needAddr = oldNeedAddr;
+
+        IntValue unitSize = new IntImmediate(node.getType().getRegisterSize());
+        VirtualRegister reg = new VirtualRegister(null);
+
+        curBasicBlock.append(
+                new OperationInstruction(
+                        curBasicBlock,reg,OperationInstruction.Operator.MUL,
+                        subscript.intValue,unitSize
+                )
+        );
+        curBasicBlock.append(
+                new OperationInstruction(
+                        curBasicBlock,reg,OperationInstruction.Operator.ADD,
+                        array.intValue,reg
+                )
+        );
+
+        if (needAddr) {
+            node.address = reg;
+            node.offset = CompilerOption.getSizeInt();
         }
         else {
-            curBasicBlock.append(new MoveInstruction(curBasicBlock,rhs.intValue,addr));
+            curBasicBlock.append(
+                    new LoadInstruction(
+                            curBasicBlock,reg,node.getType().getRegisterSize(),
+                            reg,CompilerOption.getSizeInt()
+                    )
+            );
+            node.intValue = reg;
+        }
+    }
+
+    private void processNewExpr(ExpressionNode node) {
+        if (curBasicBlock.isEnded()) {
+            WarningInfo.uselessStatement(node.location());
+            return;
+        }
+
+        VartypeNode type = node.getType();
+        VirtualRegister reg = new VirtualRegister(null);
+
+        if (type.isClass()) {
+            curBasicBlock.append(new HeapAllocateInstruction(
+                    curBasicBlock,reg,
+                    new IntImmediate(globalSymbolTable.getMemorySize(type.getName()))
+                    )
+            );
+        }
+        else {
+            boolean oldNeedAddr = needAddr;
+            needAddr = false;
+            visit(node.getVartype());
+            needAddr = oldNeedAddr;
+            ExpressionNode dim = node.getVartype().getDims().get(0);
+
+            IntImmediate unitSize = new IntImmediate(
+                    node.getVartype().getType().getDimension() > 1?
+                            CompilerOption.getSizePointer():
+                            node.getVartype().getRegisterSize()
+            );
+            // It's highly possible to rewrite here.
+            if (dim != null) {
+                curBasicBlock.append(
+                        new OperationInstruction(
+                                curBasicBlock,reg,OperationInstruction.Operator.MUL,
+                                dim.intValue,unitSize
+                        )
+                );
+                curBasicBlock.append(
+                        new OperationInstruction(
+                                curBasicBlock,reg,OperationInstruction.Operator.ADD,
+                                reg,reg
+                        )
+                );
+                curBasicBlock.append(new HeapAllocateInstruction(curBasicBlock,reg,reg));
+                curBasicBlock.append(
+                        new StoreInstruction(
+                                curBasicBlock,reg,0,
+                                CompilerOption.getSizeInt(),dim.intValue
+                        )
+                );
+            }
+            else {
+                curBasicBlock.append(
+                        new OperationInstruction(
+                                curBasicBlock,reg,OperationInstruction.Operator.MUL,
+                                new IntImmediate(0),unitSize
+                        )
+                );
+                curBasicBlock.append(
+                        new OperationInstruction(
+                                curBasicBlock,reg,OperationInstruction.Operator.ADD,
+                                reg,reg
+                        )
+                );
+                curBasicBlock.append(new HeapAllocateInstruction(curBasicBlock,reg,reg));
+                curBasicBlock.append(
+                        new StoreInstruction(
+                                curBasicBlock,reg,0,
+                                CompilerOption.getSizeInt(),new IntImmediate(0)
+                        )
+                );
+            }
+            // Deal with it recursively.
+        }
+        node.intValue = reg;
+    }
+
+    private void processSelfIncOrDec(ExpressionNode node) {
+        boolean oldNeedAddr = needAddr,isMemOp = needMemoryAccess(node);
+        needAddr = isMemOp;
+        ExprNode oprand = node.getExprs().get(0);
+        visit(oprand);
+        if (isMemOp) {
+            needAddr = false;
+            visit(oprand);
+        }
+        needAddr = oldNeedAddr;
+
+        OperationInstruction.Operator op = OperationInstruction.Operator.ADD;
+        if (node.getOp().getOp() == ExprOperator.Operator.SDEC||node.getOp().getOp() == ExprOperator.Operator.PDEC)
+            op = OperationInstruction.Operator.SUB;
+        boolean isSuffix = true;
+        if (node.getOp().getOp() == ExprOperator.Operator.PINC||node.getOp().getOp() == ExprOperator.Operator.PDEC)
+            isSuffix = false;
+        IntImmediate one = new IntImmediate(1);
+        VirtualRegister reg;
+
+        if (isSuffix) {
+            reg = new VirtualRegister(null);
+            curBasicBlock.append(new MoveInstruction(curBasicBlock,oprand.intValue,reg));
+            node.intValue = reg;
+        }
+
+        if (isMemOp) {
+            IntValue addr = oprand.address;
+            int offset = oprand.offset;
+            reg = new VirtualRegister(null);
+            curBasicBlock.append(new OperationInstruction(curBasicBlock,reg,op,oprand.intValue,one));
+            curBasicBlock.append(new StoreInstruction(curBasicBlock,addr,offset,CompilerOption.getSizeInt(),reg));
+            if (!isSuffix)
+                node.intValue
         }
     }
 
@@ -109,7 +268,7 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(DefclassNode node) {
-        // Do nothing here.
+        // Maybe do nothing here.
     }
 
     @Override
@@ -125,12 +284,13 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(VartypeNode node) {
-        // Do nothing here.
+        // Do nothing here. Cannot reach here.
+        assert false;
     }
 
     @Override
     public void visit(VartypePlusNode node) {
-
+        node.getDims().forEach(dim->visit(dim));
     }
 
     @Override
@@ -296,7 +456,22 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(VariableNode node) {
-
+        if (node.isThis()) {
+            // To be completed here.
+        }
+        else if (node.getVar() == null && node.getId() != null && node.getExpr() == null) {
+            visit(node.getId());
+            node.intValue = node.getId().intValue;
+        }
+        else if (node.getVar() != null && node.getId() == null && node.getExpr() == null) {
+            visit(node.getId());
+            node.intValue = node.getId().intValue;
+        }
+        else if (node.getVar() != null && node.getId() != null && node.getExpr() == null) { // Member Access
+        }
+        else if (node.getVar() != null && node.getId() == null && node.getExpr() != null) // Array Access
+            processArrayAccess(node,node.getVar(),node.getExpr());
+        else assert false;
     }
 
     @Override
@@ -327,6 +502,17 @@ public class IRBuilder implements ASTVisitor {
             return;
         }
 
+        ExpressionNode lhs = node.getVariable(),rhs = node.getExpr();
+        visit(rhs);
+
+        boolean oldNeedAddr = needAddr,isMemOp = needMemoryAccess(lhs);
+        needAddr = isMemOp;
+        visit(lhs);
+        needAddr = oldNeedAddr;
+
+        IntValue addr = isMemOp?lhs.address:lhs.intValue;
+        int offset = isMemOp?lhs.offset:0;
+        assign(isMemOp,rhs.getVartype().getRegisterSize(),addr,offset,rhs);
     }
 
     @Override
@@ -338,30 +524,31 @@ public class IRBuilder implements ASTVisitor {
         ExprOperator.Operator op = node.getOp().getOp();
         if (op == ExprOperator.Operator.SELF) {
             visit(node.getExprs().get(0));
+            node.intValue = node.getExprs().get(0).intValue;
         }
         else if (op == ExprOperator.Operator.MEM) {
-            ExprNode lhs = node.getExprs().get(0),rhs = node.getExprs().get(1);
+            /*ExprNode lhs = node.getExprs().get(0),rhs = node.getExprs().get(1);
             visit(lhs);
             if (rhs instanceof CallfunNode) {
 
             }
             else {
 
-            }
+            }*/
         }
-        else if (op == ExprOperator.Operator.ARRAY) {
-
-        }
-        else if (op == ExprOperator.Operator.SINC||op == ExprOperator.Operator.SDEC||op == ExprOperator.Operator.PINC
-                ||op == ExprOperator.Operator.PDEC||op == ExprOperator.Operator.NEG||op == ExprOperator.Operator.COMP) {
+        else if (op == ExprOperator.Operator.ARRAY)
+            processArrayAccess(node,node.getExprs().get(0),node.getExprs().get(1));
+        else if (op == ExprOperator.Operator.SINC||op == ExprOperator.Operator.SDEC
+                ||op == ExprOperator.Operator.PINC ||op == ExprOperator.Operator.PDEC)
+            processSelfIncOrDec(node);
+        else if (op == ExprOperator.Operator.NEG||op == ExprOperator.Operator.COMP) {
 
         }
         else if (op == ExprOperator.Operator.NOT) {
-
+            visit(node.getExprs().get(0));
         }
-        else if (op == ExprOperator.Operator.NEW) {
-
-        }
+        else if (op == ExprOperator.Operator.NEW)
+            processNewExpr(node);
         else if (op == ExprOperator.Operator.TIMES||op == ExprOperator.Operator.DIVIDE||op == ExprOperator.Operator.MOD
                 ||op == ExprOperator.Operator.ADD||op == ExprOperator.Operator.SUB
                 ||op == ExprOperator.Operator.LESH||op == ExprOperator.Operator.RISH

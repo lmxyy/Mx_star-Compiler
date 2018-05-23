@@ -27,12 +27,12 @@ public class BasicBlock {
         else head = tail = node;
     }
 
-    public void end(LinkInstruction linker) {
+    public void end(EndInstruction ender) {
         if (ended) return;
-        append(linker);
+        append(ender);
         ended = true;
-        if (linker instanceof Jump)
-            succ.add(((Jump) linker).getTarget());
+        if (ender instanceof Jump)
+            succ.add(((Jump) ender).getTarget());
     }
     public void cleanEnd(IRInstruction node) {
         if (!ended) return;

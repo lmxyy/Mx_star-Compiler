@@ -12,6 +12,7 @@ public class SymbolTable {
     private boolean isClass = false;
     private String className = null;
     private FunctionType inFun = null;
+    private int offset = 0;
 
     public SymbolTable(SymbolTable _enclosingScope) {
         enclosingScope = _enclosingScope;
@@ -41,6 +42,7 @@ public class SymbolTable {
 
     public void define(String name,VartypeNode type) {
         map.put(name,new SymbolInfo(type));
+        offset += type.getRegisterSize();
     }
 
     public SymbolInfo getCurInfo(String name) {
@@ -76,7 +78,6 @@ public class SymbolTable {
         if (ret == null) return null;
         else return ret.getType();
     }
-
     public SymbolTable getEnclosingScope() {
         return enclosingScope;
     }

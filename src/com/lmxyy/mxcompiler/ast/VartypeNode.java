@@ -1,4 +1,6 @@
 package com.lmxyy.mxcompiler.ast;
+import com.lmxyy.mxcompiler.symbol.GlobalSymbolTable;
+import com.lmxyy.mxcompiler.symbol.SymbolTable;
 import com.lmxyy.mxcompiler.symbol.Type;
 import com.lmxyy.mxcompiler.utils.CompilerOption;
 import com.lmxyy.mxcompiler.utils.Location;
@@ -48,6 +50,10 @@ public class VartypeNode extends Node {
     public boolean isVoid() { return type.getType() == Type.Types.VOID&&type.getDimension() == 0; }
     public boolean isClass() { return type.getType() == Type.Types.CLASS&&type.getDimension() == 0; }
     public boolean isUB() { return type.getType() == Type.Types.UB; }
+
+    public int getMemorySize() {
+        return 0;
+    }
 
     @Override
     public Location location() { return location; }

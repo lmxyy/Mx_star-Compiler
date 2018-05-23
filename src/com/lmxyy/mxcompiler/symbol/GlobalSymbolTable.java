@@ -144,6 +144,7 @@ public class GlobalSymbolTable {
 
     private Map<String,VartypeNode> typeMap = new LinkedHashMap<>();
     private Map<String,FunctionType> constructorMap = new LinkedHashMap<>();
+    private Map<String,Integer> offsetMap = new LinkedHashMap<>();
 
     public SymbolTable globals = SymbolTable.creatGlobalSymbalTable();
 
@@ -157,7 +158,17 @@ public class GlobalSymbolTable {
 
     public void defineType(String name,VartypeNode type) {
         typeMap.put(name,type);
+        if (name.contains(".")) {
+            String className = name.split(".")[0];
+            if (className != "string"&&className != "#array") {
+                Integer offset = offsetMap.get(className);
+                if (offset == null)
+                    offsetMap.put(className,type.getRegisterSize());
+                else offsetMap.replace(className,offset+type.getRegisterSize());
+            }
+        }
     }
+
     public VartypeNode resolveType(String name) {
         return typeMap.get(name);
     }
@@ -167,5 +178,8 @@ public class GlobalSymbolTable {
     }
     public FunctionType resolveConstructor(String name) {
         return constructorMap.get(name);
+    }
+    public int getMemorySize(String name) {
+        return offsetMap.get(name);
     }
 }
