@@ -260,7 +260,7 @@ public class SemanticChecker implements ASTVisitor {
             curScope.define(node.getName(),node.getType());
         else {
                 globalSymbolTable.globals.define(curScope.getClassName()+"."+node.getName(),node.getType());
-                curScope.define(node.getName(),node.getType());
+                curScope.define(node.getName(),node.getType(),true);
         }
     }
 

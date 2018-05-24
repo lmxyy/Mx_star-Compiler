@@ -10,7 +10,6 @@ import com.lmxyy.mxcompiler.utils.CompilerOption;
 import com.lmxyy.mxcompiler.utils.WarningInfo;
 
 import static com.lmxyy.mxcompiler.ir.BinaryOperationInstruction.Operator.*;
-import static com.lmxyy.mxcompiler.ir.BinaryOperationInstruction.Operator.MOD;
 import static com.lmxyy.mxcompiler.symbol.ExprOperator.Operator.*;
 
 public class IRBuilder implements ASTVisitor {
@@ -20,6 +19,7 @@ public class IRBuilder implements ASTVisitor {
     private BasicBlock curBasicBlock;
     private BasicBlock loopStepBlock = null,loopAfterBlock = null;
     private boolean isFunArg = false,needAddr = false;
+    private String className = null;
 
     public IRBuilder(GlobalSymbolTable _globalSymbolTable) {
         globalSymbolTable = _globalSymbolTable;
@@ -48,6 +48,7 @@ public class IRBuilder implements ASTVisitor {
 
     private void assign(boolean needMem,int size,IntValue addr,int offset,ExprNode rhs) {
         if (rhs.basicBlockTrue != null) {
+            // Cannot be here.
             BasicBlock merge = new BasicBlock(curFunction,null);
             if (needMem) {
                 rhs.basicBlockTrue.append(new StoreInstruction(rhs.basicBlockTrue,addr,offset,size,rhs.intValue));
@@ -57,14 +58,14 @@ public class IRBuilder implements ASTVisitor {
                 rhs.basicBlockTrue.append(new MoveInstruction(rhs.basicBlockTrue,rhs.intValue,(Register)addr));
                 rhs.basicBlockFalse.append(new MoveInstruction(rhs.basicBlockFalse,rhs.intValue,(Register)addr));
             }
-            rhs.basicBlockTrue.end(new Jump(rhs.basicBlockTrue,merge));
-            rhs.basicBlockFalse.end(new Jump(rhs.basicBlockFalse,merge));
+            rhs.basicBlockTrue.end(new JumpInstruction(rhs.basicBlockTrue,merge));
+            rhs.basicBlockFalse.end(new JumpInstruction(rhs.basicBlockFalse,merge));
             curBasicBlock = merge;
         }
         else{
             if (needMem)
-                curBasicBlock.append(new StoreInstruction(curBasicBlock, addr, offset, size, rhs.intValue));
-            else curBasicBlock.append(new MoveInstruction(curBasicBlock, rhs.intValue, (Register) addr));
+                curBasicBlock.append(new StoreInstruction(curBasicBlock,addr,offset,size,rhs.intValue));
+            else curBasicBlock.append(new MoveInstruction(curBasicBlock,rhs.intValue,(Register)addr));
         }
     }
 
@@ -99,13 +100,18 @@ public class IRBuilder implements ASTVisitor {
 
         if (needAddr) {
             node.address = reg;
-            node.offset = CompilerOption.getSizeInt();
+            /*node.offset = CompilerOption.getSizeInt();*/
+            node.offset = 0;
         }
         else {
             curBasicBlock.append(
-                    new LoadInstruction(
+                    /*new LoadInstruction(
                             curBasicBlock,reg,node.getType().getRegisterSize(),
                             reg,CompilerOption.getSizeInt()
+                    )*/
+                    new LoadInstruction(
+                            curBasicBlock,reg,node.getType().getRegisterSize(),
+                            reg,0
                     )
             );
             node.intValue = reg;
@@ -129,6 +135,8 @@ public class IRBuilder implements ASTVisitor {
                     new IntImmediate(globalSymbolTable.getMemorySize(type.getName()))
                     )
             );
+            // To add something to call the constructor.
+            /* Write something here.*/
         }
         else {
             boolean oldNeedAddr = needAddr;
@@ -185,7 +193,7 @@ public class IRBuilder implements ASTVisitor {
                         )
                 );
             }
-            // Deal with it recursively.
+            // Write something to deal with the Syntactic sugar.
         }
         node.intValue = reg;
     }
@@ -226,12 +234,19 @@ public class IRBuilder implements ASTVisitor {
             if (!isSuffix) node.intValue = reg;
         }
         else {
-            curBasicBlock.append(new ArithmeticInstruction(curBasicBlock,(Register) node.intValue,op,oprand.intValue,one));
+            curBasicBlock.append(
+                    new ArithmeticInstruction(
+                            curBasicBlock,(Register) node.intValue,op,oprand.intValue,one
+                    )
+            );
         }
     }
 
     private void processStrOperation(ExprOperator.Operator op,ExpressionNode node) {
-
+        ExprNode lhs = node.getExprs().get(0),rhs = node.getExprs().get(1);
+        VirtualRegister reg = new VirtualRegister(null);
+        node.intValue = reg;
+        /* Write something here to call the builtin string method. */
     }
 
     private void processIntArithmeticExpr(ExprOperator.Operator op,ExpressionNode node) {
@@ -255,6 +270,7 @@ public class IRBuilder implements ASTVisitor {
         node.intValue = reg;
         curBasicBlock.append(new ArithmeticInstruction(curBasicBlock,reg,operator,lhs.intValue,rhs.intValue));
     }
+
     private void processIntRelationExpr(ExprOperator.Operator op,ExpressionNode node) {
         ExprNode lhs = node.getExprs().get(0),rhs = node.getExprs().get(1);
         visit(lhs); visit(rhs);
@@ -278,41 +294,47 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(DefunNode node) {
-        FunctionType functionType = (FunctionType)globalSymbolTable.resolveType(node.getName());
-        curFunction = new Function(functionType);
-        irRoot.functions.put(node.getName(),curFunction);
-
+        FunctionType functionType = null;
+        if (className == null) {
+            functionType = (FunctionType) globalSymbolTable.resolveType(node.getName());
+            curFunction = new Function(functionType,null);
+            irRoot.functions.put(node.getName(), curFunction);
+        }
+        else {
+            functionType = (FunctionType) globalSymbolTable.resolveType(className + "." + node.getName());
+            curFunction = new Function(functionType,new VirtualRegister(null));
+            irRoot.functions.put(node.getName(), curFunction);
+        }
         curBasicBlock = curFunction.startBasicBlock;
         isFunArg = true;
-        node.getParameterList().forEach(para->para.accept(this));
+        node.getParameterList().forEach(param -> param.accept(this));
         isFunArg = false;
 
         visit(node.getBody());
         if (!curBasicBlock.isEnded()) {
             if (node.getReturnType().isVoid())
-                curBasicBlock.end(new ReturnInstruction(curBasicBlock,null));
+                curBasicBlock.end(new ReturnInstruction(curBasicBlock, null));
             else {
                 curBasicBlock.end(new ReturnInstruction(curBasicBlock, new IntImmediate(0)));
-                WarningInfo.add(node.location(),"The function doesn't have a return value.");
+                WarningInfo.add(node.location(), "The function doesn't have a return value.");
             }
         }
 
         // merge all return blocks to one block
         if (curFunction.retInstruction.size() > 1) {
-            BasicBlock exitBasicBlock = new BasicBlock(curFunction,"$"+curFunction.getName()+".exit");
+            BasicBlock exitBasicBlock = new BasicBlock(curFunction, curFunction.getName() + ".exit");
             Register newRetVal = null;
             if (!node.getReturnType().isVoid())
-                newRetVal = new VirtualRegister("$returnValue");
-            for (ReturnInstruction ret:curFunction.retInstruction) {
+                newRetVal = new VirtualRegister("returnValue");
+            for (ReturnInstruction ret : curFunction.retInstruction) {
                 BasicBlock basicBlock = ret.getBasicBlock();
                 ret.remove();
                 if (ret.getRetVal() != null)
-                    basicBlock.append(new MoveInstruction(basicBlock,ret.getRetVal(),newRetVal));
-                basicBlock.end(new Jump(basicBlock,exitBasicBlock));
+                    basicBlock.append(new MoveInstruction(basicBlock, ret.getRetVal(), newRetVal));
+                basicBlock.end(new JumpInstruction(basicBlock, exitBasicBlock));
             }
             curFunction.retInstruction.clear();
-        }
-        else curFunction.exitBasicBlock = curFunction.retInstruction.get(0).getBasicBlock();
+        } else curFunction.exitBasicBlock = curFunction.retInstruction.get(0).getBasicBlock();
         // remove unreachable block: to be completed
     }
 
@@ -343,7 +365,10 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(DefclassNode node) {
-        // Maybe do nothing here.
+        className = node.getName();
+        visit(node.getConstructor());
+        node.getFunMembers().forEach(fun->fun.accept(this));
+        className = null;
     }
 
     @Override
@@ -374,10 +399,10 @@ public class IRBuilder implements ASTVisitor {
             WarningInfo.uselessStatement(node.location());
             return;
         }
-        BasicBlock basicBlockTrue = new BasicBlock(curFunction,"$if_true"),basicBlockFalse = null;
-        BasicBlock basicBlockAfter = new BasicBlock(curFunction,"$if_after");
+        BasicBlock basicBlockTrue = new BasicBlock(curFunction,"if_true"),basicBlockFalse = null;
+        BasicBlock basicBlockAfter = new BasicBlock(curFunction,"if_after");
         if (node.isHasElse())
-            basicBlockFalse = new BasicBlock(curFunction,"$if_false");
+            basicBlockFalse = new BasicBlock(curFunction,"if_false");
         node.getCond().basicBlockTrue = basicBlockTrue;
         if (node.isHasElse()) node.getCond().basicBlockFalse = basicBlockFalse;
         else node.getCond().basicBlockFalse = basicBlockAfter;
@@ -385,12 +410,12 @@ public class IRBuilder implements ASTVisitor {
 
         curBasicBlock = basicBlockTrue;
         visit(node.getBlock1());
-        basicBlockTrue.end(new Jump(curBasicBlock,basicBlockAfter));
+        basicBlockTrue.end(new JumpInstruction(curBasicBlock,basicBlockAfter));
 
         if (node.isHasElse()) {
             curBasicBlock = basicBlockFalse;
             visit(node.getBlock2());
-            basicBlockTrue.end(new Jump(curBasicBlock,basicBlockAfter));
+            basicBlockTrue.end(new JumpInstruction(curBasicBlock,basicBlockAfter));
         }
 
         curBasicBlock = basicBlockAfter;
@@ -402,15 +427,15 @@ public class IRBuilder implements ASTVisitor {
             WarningInfo.uselessStatement(node.location());
             return;
         }
-        BasicBlock basicBlockCond = new BasicBlock(curFunction,"$while_cond");
-        BasicBlock basicBlockLoop = new BasicBlock(curFunction,"$while_loop");
-        BasicBlock basicBlockAfter = new BasicBlock(curFunction,"$while_after");
+        BasicBlock basicBlockCond = new BasicBlock(curFunction,"while_cond");
+        BasicBlock basicBlockLoop = new BasicBlock(curFunction,"while_loop");
+        BasicBlock basicBlockAfter = new BasicBlock(curFunction,"while_after");
 
         BasicBlock oldLoopStepBlock = loopStepBlock;
         BasicBlock oldLoopAfterBlock = loopAfterBlock;
         loopStepBlock = basicBlockCond; loopAfterBlock = basicBlockAfter;
 
-        curBasicBlock.end(new Jump(curBasicBlock,basicBlockCond));
+        curBasicBlock.end(new JumpInstruction(curBasicBlock,basicBlockCond));
         node.getCond().basicBlockTrue = basicBlockLoop;
         node.getCond().basicBlockFalse = basicBlockAfter;
 
@@ -419,7 +444,7 @@ public class IRBuilder implements ASTVisitor {
 
         curBasicBlock = basicBlockLoop;
         visit(node.getBlock());
-        basicBlockLoop.end(new Jump(curBasicBlock,basicBlockCond));
+        basicBlockLoop.end(new JumpInstruction(curBasicBlock,basicBlockCond));
 
         curBasicBlock = basicBlockAfter;
         loopStepBlock = oldLoopStepBlock; loopAfterBlock = oldLoopAfterBlock;
@@ -436,16 +461,16 @@ public class IRBuilder implements ASTVisitor {
         else if (node.getInit2() != null)
             node.getInit2().forEach(x->x.accept(this));
 
-        BasicBlock basicBlockCond = new BasicBlock(curFunction,"$for_cond");
-        BasicBlock basicBlockLoop = new BasicBlock(curFunction,"$for_loop");
-        BasicBlock basicBlockStep = new BasicBlock(curFunction,"$for_step");
-        BasicBlock basicBlockAfter = new BasicBlock(curFunction,"$for_after");
+        BasicBlock basicBlockCond = new BasicBlock(curFunction,"for_cond");
+        BasicBlock basicBlockLoop = new BasicBlock(curFunction,"for_loop");
+        BasicBlock basicBlockStep = new BasicBlock(curFunction,"for_step");
+        BasicBlock basicBlockAfter = new BasicBlock(curFunction,"for_after");
 
         BasicBlock oldLoopStepBlock = loopStepBlock;
         BasicBlock oldLoopAfterBlock = loopAfterBlock;
         loopStepBlock = basicBlockCond; loopAfterBlock = basicBlockAfter;
 
-        curBasicBlock.end(new Jump(curBasicBlock,basicBlockCond));
+        curBasicBlock.end(new JumpInstruction(curBasicBlock,basicBlockCond));
         curBasicBlock = basicBlockCond;
         if (node.getCond() != null) {
             visit(node.getCond());
@@ -453,15 +478,15 @@ public class IRBuilder implements ASTVisitor {
             node.getCond().basicBlockFalse = basicBlockAfter;
         }
 
-        curBasicBlock.end(new Jump(curBasicBlock,basicBlockLoop));
+        curBasicBlock.end(new JumpInstruction(curBasicBlock,basicBlockLoop));
         curBasicBlock = basicBlockLoop;
         visit(node.getBlock());
-        if (node.getStep() == null) curBasicBlock.end(new Jump(curBasicBlock,basicBlockCond));
+        if (node.getStep() == null) curBasicBlock.end(new JumpInstruction(curBasicBlock,basicBlockCond));
         else {
-            curBasicBlock.end(new Jump(curBasicBlock,basicBlockStep));
+            curBasicBlock.end(new JumpInstruction(curBasicBlock,basicBlockStep));
             curBasicBlock = basicBlockStep;
             node.getStep().forEach(step->step.accept(this));
-            curBasicBlock.end(new Jump(curBasicBlock,basicBlockCond));
+            curBasicBlock.end(new JumpInstruction(curBasicBlock,basicBlockCond));
         }
 
         curBasicBlock = basicBlockAfter;
@@ -470,12 +495,12 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(ContinueStmtNode node) {
-        curBasicBlock.end(new Jump(curBasicBlock,loopStepBlock));
+        curBasicBlock.end(new JumpInstruction(curBasicBlock,loopStepBlock));
     }
 
     @Override
     public void visit(BreakStmtNode node) {
-        curBasicBlock.end(new Jump(curBasicBlock,loopAfterBlock));
+        curBasicBlock.end(new JumpInstruction(curBasicBlock,loopAfterBlock));
     }
 
     @Override
@@ -501,6 +526,7 @@ public class IRBuilder implements ASTVisitor {
     @Override
     public void visit(IdentifierNode node) {
         SymbolInfo info = node.scope.getInfo(node.getName());
+        info.used = true;
         node.intValue = info.register;
     }
 
@@ -627,13 +653,19 @@ public class IRBuilder implements ASTVisitor {
                     curBasicBlock.append(new LoadInstruction(
                             curBasicBlock, reg, type.getRegisterSize(), address, offset));
                     if (node.basicBlockTrue != null)
-                        curBasicBlock.end(new BranchInstruction(curBasicBlock, reg, node.basicBlockTrue, node.basicBlockFalse));
+                        curBasicBlock.end(
+                                new BranchInstruction(
+                                        curBasicBlock, reg, node.basicBlockTrue, node.basicBlockFalse
+                                )
+                        );
                 }
             }
             else { //调用类内部的函数
-                Function function = irRoot.functions.get(
+                FunctionType functionType = (FunctionType) globalSymbolTable.resolveType(
                         node.getVartype().getName()+"."+((CallfunNode)member).getName()
                 );
+                Function function = irRoot.functions.get(functionType.getName());
+                if (globalSymbolTable.isBuiltinMethod(functionType))
                 ((CallfunNode)member).getParams().forEach(param->param.accept(this));
                 VirtualRegister reg = new VirtualRegister(null);
                 CallInstruction callFun = new CallInstruction(curBasicBlock,reg,function);
@@ -652,7 +684,11 @@ public class IRBuilder implements ASTVisitor {
             UnaryOperationInstruction.Operator operator = UnaryOperationInstruction.Operator.NEG;
             if (op == ExprOperator.Operator.COMP)
                 operator = UnaryOperationInstruction.Operator.COMP;
-            curBasicBlock.append(new UnaryOperationInstruction(curBasicBlock,reg,operator,node.getExprs().get(0).intValue));
+            curBasicBlock.append(
+                    new UnaryOperationInstruction(
+                            curBasicBlock,reg,operator,node.getExprs().get(0).intValue
+                    )
+            );
             node.intValue = reg;
         }
         else if (op == ExprOperator.Operator.NOT) {
@@ -681,7 +717,7 @@ public class IRBuilder implements ASTVisitor {
         }
         else if (op == ExprOperator.Operator.LAND) {
             ExprNode lhs = node.getExprs().get(0),rhs = node.getExprs().get(1);
-            lhs.basicBlockTrue = new BasicBlock(curFunction,"$lhs_true");
+            lhs.basicBlockTrue = new BasicBlock(curFunction,"lhs_true");
             lhs.basicBlockFalse = node.basicBlockFalse;
             visit(lhs);
             curBasicBlock = lhs.basicBlockTrue;
@@ -693,7 +729,7 @@ public class IRBuilder implements ASTVisitor {
         else if (op == ExprOperator.Operator.LOR) {
             ExprNode lhs = node.getExprs().get(0),rhs = node.getExprs().get(1);
             lhs.basicBlockTrue = node.basicBlockTrue;
-            lhs.basicBlockFalse = new BasicBlock(curFunction,"$lhs_false");
+            lhs.basicBlockFalse = new BasicBlock(curFunction,"lhs_false");
             visit(lhs);
             curBasicBlock = lhs.basicBlockFalse;
 
@@ -703,24 +739,28 @@ public class IRBuilder implements ASTVisitor {
         }
         else if (op == TRN) {
             ExprNode cond = node.getExprs().get(0),lhs = node.getExprs().get(1),rhs = node.getExprs().get(2);
-            BasicBlock basicBlockTrue = new BasicBlock(curFunction,"$ternary_true");
-            BasicBlock basicBlockFalse = new BasicBlock(curFunction,"$ternary_false");
-            BasicBlock merge = new BasicBlock(curFunction,"$ternary_merge");
+            BasicBlock basicBlockTrue = new BasicBlock(curFunction,"ternary_true");
+            BasicBlock basicBlockFalse = new BasicBlock(curFunction,"ternary_false");
+            BasicBlock merge = new BasicBlock(curFunction,"ternary_merge");
 
             cond.basicBlockTrue = basicBlockTrue;
             cond.basicBlockFalse = basicBlockFalse;
             visit(cond);
 
+            boolean oldNeedAddr = needAddr;
+            needAddr = false;
             VirtualRegister reg = new VirtualRegister(null);
 
             curBasicBlock = basicBlockTrue;
             visit(lhs);basicBlockTrue.append(new MoveInstruction(basicBlockTrue,lhs.intValue,reg));
-            basicBlockTrue.end(new Jump(basicBlockTrue,merge));
+            basicBlockTrue.end(new JumpInstruction(basicBlockTrue,merge));
 
             curBasicBlock = basicBlockFalse;
             visit(rhs);
             basicBlockFalse.append(new MoveInstruction(basicBlockFalse,rhs.intValue,reg));
-            basicBlockFalse.end(new Jump(basicBlockFalse,merge));
+            basicBlockFalse.end(new JumpInstruction(basicBlockFalse,merge));
+
+            needAddr = oldNeedAddr;
 
             node.intValue = reg;
             curBasicBlock = merge;

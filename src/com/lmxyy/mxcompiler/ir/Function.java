@@ -10,10 +10,12 @@ public class Function {
     public BasicBlock startBasicBlock = null,exitBasicBlock = null;
     public List<VirtualRegister> argVarRegList = new ArrayList<>();
     public List<ReturnInstruction> retInstruction = new ArrayList<>();
+    IntValue address;
 
-    public Function(FunctionType _type) {
+    public Function(FunctionType _type,IntValue _address) {
         type = _type;
-        startBasicBlock = new BasicBlock(this,"$"+type.getName()+".entry");
+        address = _address;
+        startBasicBlock = new BasicBlock(this,type.getName()+".entry");
     }
 
     public FunctionType getType() {

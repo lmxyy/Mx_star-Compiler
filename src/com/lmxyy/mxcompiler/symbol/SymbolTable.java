@@ -41,7 +41,11 @@ public class SymbolTable {
     }
 
     public void define(String name,VartypeNode type) {
-        map.put(name,new SymbolInfo(type));
+        map.put(name,new SymbolInfo(type,false));
+        offset += type.getRegisterSize();
+    }
+    public void define(String name,VartypeNode type,boolean isClassGlobal) {
+        map.put(name,new SymbolInfo(type,isClassGlobal));
         offset += type.getRegisterSize();
     }
 

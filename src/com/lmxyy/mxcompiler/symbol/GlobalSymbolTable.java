@@ -159,7 +159,7 @@ public class GlobalSymbolTable {
 
     public void defineType(String name,VartypeNode type) {
         typeMap.put(name,type);
-        if (name.contains(".")) {
+        if (!(type instanceof FunctionType)&&name.contains(".")) {
             String className = name.split(".")[0];
             if (className != "string"&&className != "#array") {
                 Integer offset = sizeMap.get(className);

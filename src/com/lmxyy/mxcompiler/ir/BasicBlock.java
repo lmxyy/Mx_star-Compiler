@@ -31,8 +31,8 @@ public class BasicBlock {
         if (ended) return;
         append(ender);
         ended = true;
-        if (ender instanceof Jump)
-            succ.add(((Jump) ender).getTarget());
+        if (ender instanceof JumpInstruction)
+            succ.add(((JumpInstruction) ender).getTarget());
     }
     public void cleanEnd(IRInstruction node) {
         if (!ended) return;

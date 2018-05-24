@@ -1,9 +1,9 @@
 package com.lmxyy.mxcompiler.ir;
 
-public class Jump extends EndInstruction {
+public class JumpInstruction extends EndInstruction {
     private BasicBlock target;
 
-    public Jump(BasicBlock _curBasicBlock,BasicBlock _target) {
+    public JumpInstruction(BasicBlock _curBasicBlock, BasicBlock _target) {
         super(_curBasicBlock);
         target = _target;
     }
