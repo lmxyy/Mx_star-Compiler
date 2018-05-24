@@ -14,6 +14,10 @@ public class SymbolInfo {
         isClassGlobal = _isClassGlobal;
     }
 
+    public boolean isClassGlobal() {
+        return isClassGlobal;
+    }
+
     public VartypeNode getType() {
         return type;
     }
