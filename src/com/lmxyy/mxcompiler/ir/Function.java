@@ -10,9 +10,9 @@ public class Function {
     public BasicBlock startBasicBlock = null,exitBasicBlock = null;
     public List<VirtualRegister> argVarRegList = new ArrayList<>();
     public List<ReturnInstruction> retInstruction = new ArrayList<>();
-    IntValue address;
+    public Register address;
 
-    public Function(FunctionType _type,IntValue _address) {
+    public Function(FunctionType _type,Register _address) {
         type = _type;
         address = _address;
         startBasicBlock = new BasicBlock(this,type.getName()+".entry");
