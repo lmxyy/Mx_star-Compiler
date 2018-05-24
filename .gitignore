@@ -1,6 +1,5 @@
 # Document:
-Document/现代编译器的Java实现(第二版).pdf
-Document/自制编译器-青木峰郎著.pdf
+Document/
 
 # Emacs File:
 *~
@@ -15,3 +14,6 @@ Mx_star-Compiler.iml
 # JAVA:
 *.class
 out/
+
+# LLIRInterpreter
+LLIRInterpreter/
