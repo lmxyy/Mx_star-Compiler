@@ -1,7 +1,6 @@
 package com.lmxyy.mxcompiler.frontend;
 
 import com.lmxyy.mxcompiler.ast.*;
-import com.lmxyy.mxcompiler.compiler.Compiler;
 import com.lmxyy.mxcompiler.ir.*;
 import com.lmxyy.mxcompiler.symbol.ExprOperator;
 import com.lmxyy.mxcompiler.symbol.FunctionType;
@@ -9,6 +8,10 @@ import com.lmxyy.mxcompiler.symbol.GlobalSymbolTable;
 import com.lmxyy.mxcompiler.symbol.SymbolInfo;
 import com.lmxyy.mxcompiler.utils.CompilerOption;
 import com.lmxyy.mxcompiler.utils.WarningInfo;
+
+import static com.lmxyy.mxcompiler.ir.BinaryOperationInstruction.Operator.*;
+import static com.lmxyy.mxcompiler.ir.BinaryOperationInstruction.Operator.MOD;
+import static com.lmxyy.mxcompiler.symbol.ExprOperator.Operator.*;
 
 public class IRBuilder implements ASTVisitor {
     private IRRoot irRoot = new IRRoot();
@@ -29,19 +32,40 @@ public class IRBuilder implements ASTVisitor {
             else return false;
         }
         else if (node instanceof ExpressionNode) {
-            if (((ExpressionNode) node).getOp().getOp() == ExprOperator.Operator.MEM) return true;
-            else if (((ExpressionNode) node).getOp().getOp() == ExprOperator.Operator.ARRAY) return true;
-            else if (((ExpressionNode) node).getOp().getOp() == ExprOperator.Operator.SELF
+            if (((ExpressionNode) node).getOp().getOp() == MEM) return true;
+            else if (((ExpressionNode) node).getOp().getOp() == ARRAY) return true;
+            else if (((ExpressionNode) node).getOp().getOp() == SELF
                     &&needMemoryAccess(((ExpressionNode) node).getExprs().get(0)))
+                return true;
+            else if (((ExpressionNode) node).getOp().getOp() == TRN&&
+                    (needMemoryAccess(((ExpressionNode) node).getExprs().get(1))
+                            ||needMemoryAccess(((ExpressionNode) node).getExprs().get(2))))
                 return true;
             return false;
         }
         else return false;
     }
+
     private void assign(boolean needMem,int size,IntValue addr,int offset,ExprNode rhs) {
-        if (needMem)
-            curBasicBlock.append(new StoreInstruction(curBasicBlock,addr,offset,size,rhs.intValue));
-        else curBasicBlock.append(new MoveInstruction(curBasicBlock,rhs.intValue,(Register) addr));
+        if (rhs.basicBlockTrue != null) {
+            BasicBlock merge = new BasicBlock(curFunction,null);
+            if (needMem) {
+                rhs.basicBlockTrue.append(new StoreInstruction(rhs.basicBlockTrue,addr,offset,size,rhs.intValue));
+                rhs.basicBlockFalse.append(new StoreInstruction(rhs.basicBlockFalse,addr,offset,size,rhs.intValue));
+            }
+            else {
+                rhs.basicBlockTrue.append(new MoveInstruction(rhs.basicBlockTrue,rhs.intValue,(Register)addr));
+                rhs.basicBlockFalse.append(new MoveInstruction(rhs.basicBlockFalse,rhs.intValue,(Register)addr));
+            }
+            rhs.basicBlockTrue.end(new Jump(rhs.basicBlockTrue,merge));
+            rhs.basicBlockFalse.end(new Jump(rhs.basicBlockFalse,merge));
+            curBasicBlock = merge;
+        }
+        else{
+            if (needMem)
+                curBasicBlock.append(new StoreInstruction(curBasicBlock, addr, offset, size, rhs.intValue));
+            else curBasicBlock.append(new MoveInstruction(curBasicBlock, rhs.intValue, (Register) addr));
+        }
     }
 
     private void processArrayAccess(ExprNode node,ExprNode array,ExprNode subscript) {
@@ -61,14 +85,14 @@ public class IRBuilder implements ASTVisitor {
         VirtualRegister reg = new VirtualRegister(null);
 
         curBasicBlock.append(
-                new OperationInstruction(
-                        curBasicBlock,reg,OperationInstruction.Operator.MUL,
+                new ArithmeticInstruction(
+                        curBasicBlock,reg,MUL,
                         subscript.intValue,unitSize
                 )
         );
         curBasicBlock.append(
-                new OperationInstruction(
-                        curBasicBlock,reg,OperationInstruction.Operator.ADD,
+                new ArithmeticInstruction(
+                        curBasicBlock,reg,BinaryOperationInstruction.Operator.ADD,
                         array.intValue,reg
                 )
         );
@@ -85,6 +109,8 @@ public class IRBuilder implements ASTVisitor {
                     )
             );
             node.intValue = reg;
+            if (node.basicBlockTrue != null)
+                curBasicBlock.end(new BranchInstruction(curBasicBlock,reg,node.basicBlockTrue,node.basicBlockFalse));
         }
     }
 
@@ -119,14 +145,14 @@ public class IRBuilder implements ASTVisitor {
             // It's highly possible to rewrite here.
             if (dim != null) {
                 curBasicBlock.append(
-                        new OperationInstruction(
-                                curBasicBlock,reg,OperationInstruction.Operator.MUL,
+                        new ArithmeticInstruction(
+                                curBasicBlock,reg,MUL,
                                 dim.intValue,unitSize
                         )
                 );
                 curBasicBlock.append(
-                        new OperationInstruction(
-                                curBasicBlock,reg,OperationInstruction.Operator.ADD,
+                        new ArithmeticInstruction(
+                                curBasicBlock,reg,BinaryOperationInstruction.Operator.ADD,
                                 reg,reg
                         )
                 );
@@ -140,14 +166,14 @@ public class IRBuilder implements ASTVisitor {
             }
             else {
                 curBasicBlock.append(
-                        new OperationInstruction(
-                                curBasicBlock,reg,OperationInstruction.Operator.MUL,
+                        new ArithmeticInstruction(
+                                curBasicBlock,reg,MUL,
                                 new IntImmediate(0),unitSize
                         )
                 );
                 curBasicBlock.append(
-                        new OperationInstruction(
-                                curBasicBlock,reg,OperationInstruction.Operator.ADD,
+                        new ArithmeticInstruction(
+                                curBasicBlock,reg,BinaryOperationInstruction.Operator.ADD,
                                 reg,reg
                         )
                 );
@@ -175,9 +201,9 @@ public class IRBuilder implements ASTVisitor {
         }
         needAddr = oldNeedAddr;
 
-        OperationInstruction.Operator op = OperationInstruction.Operator.ADD;
+        BinaryOperationInstruction.Operator op = BinaryOperationInstruction.Operator.ADD;
         if (node.getOp().getOp() == ExprOperator.Operator.SDEC||node.getOp().getOp() == ExprOperator.Operator.PDEC)
-            op = OperationInstruction.Operator.SUB;
+            op = BinaryOperationInstruction.Operator.SUB;
         boolean isSuffix = true;
         if (node.getOp().getOp() == ExprOperator.Operator.PINC||node.getOp().getOp() == ExprOperator.Operator.PDEC)
             isSuffix = false;
@@ -195,13 +221,59 @@ public class IRBuilder implements ASTVisitor {
             IntValue addr = oprand.address;
             int offset = oprand.offset;
             reg = new VirtualRegister(null);
-            curBasicBlock.append(new OperationInstruction(curBasicBlock,reg,op,oprand.intValue,one));
+            curBasicBlock.append(new ArithmeticInstruction(curBasicBlock,reg,op,oprand.intValue,one));
             curBasicBlock.append(new StoreInstruction(curBasicBlock,addr,offset,CompilerOption.getSizeInt(),reg));
             if (!isSuffix) node.intValue = reg;
         }
         else {
-            curBasicBlock.append(new OperationInstruction(curBasicBlock,(Register) node.intValue,op,oprand.intValue,one));
+            curBasicBlock.append(new ArithmeticInstruction(curBasicBlock,(Register) node.intValue,op,oprand.intValue,one));
         }
+    }
+
+    private void processStrOperation(ExprOperator.Operator op,ExpressionNode node) {
+
+    }
+
+    private void processIntArithmeticExpr(ExprOperator.Operator op,ExpressionNode node) {
+        ExprNode lhs = node.getExprs().get(0),rhs = node.getExprs().get(1);
+        visit(lhs); visit(rhs);
+        BinaryOperationInstruction.Operator operator = null;
+        switch (op) {
+            case TIMES: operator = BinaryOperationInstruction.Operator.MUL; break;
+            case DIVIDE: operator = BinaryOperationInstruction.Operator.DIV; break;
+            case MOD: operator = BinaryOperationInstruction.Operator.MOD; break;
+            case ADD: operator = BinaryOperationInstruction.Operator.ADD; break;
+            case SUB: operator = BinaryOperationInstruction.Operator.SUB; break;
+            case LESH: operator = BinaryOperationInstruction.Operator.SHL; break;
+            case RISH: operator = BinaryOperationInstruction.Operator.SHR; break;
+            case BAND: operator = BinaryOperationInstruction.Operator.AND; break;
+            case XOR: operator = BinaryOperationInstruction.Operator.XOR; break;
+            case BOR: operator = BinaryOperationInstruction.Operator.OR; break;
+            default: assert false; break;
+        }
+        VirtualRegister reg = new VirtualRegister(null);
+        node.intValue = reg;
+        curBasicBlock.append(new ArithmeticInstruction(curBasicBlock,reg,operator,lhs.intValue,rhs.intValue));
+    }
+    private void processIntRelationExpr(ExprOperator.Operator op,ExpressionNode node) {
+        ExprNode lhs = node.getExprs().get(0),rhs = node.getExprs().get(1);
+        visit(lhs); visit(rhs);
+        BinaryOperationInstruction.Operator operator = null;
+        switch (op) {
+            case EQU: operator = BinaryOperationInstruction.Operator.EQU; break;
+            case NEQ: operator = BinaryOperationInstruction.Operator.NEQ; break;
+            case LESS: operator = BinaryOperationInstruction.Operator.LESS; break;
+            case LEQ: operator = BinaryOperationInstruction.Operator.LEQ; break;
+            case GRTR: operator = BinaryOperationInstruction.Operator.GRTR; break;
+            case GEQ: operator = BinaryOperationInstruction.Operator.GEQ; break;
+            default: assert false; break;
+        }
+        VirtualRegister reg = new VirtualRegister(null);
+        curBasicBlock.append(new ComparisionInstruction(curBasicBlock,reg,operator,lhs.intValue,rhs.intValue));
+
+        if (node.basicBlockTrue != null)
+            curBasicBlock.end(new BranchInstruction(curBasicBlock,reg,node.basicBlockTrue,node.basicBlockFalse));
+        else node.intValue = reg;
     }
 
     @Override
@@ -526,18 +598,49 @@ public class IRBuilder implements ASTVisitor {
         }
         ExprOperator.Operator op = node.getOp().getOp();
         if (op == ExprOperator.Operator.SELF) {
+            node.getExprs().get(0).basicBlockFalse = node.basicBlockFalse;
+            node.getExprs().get(0).basicBlockTrue = node.basicBlockTrue;
             visit(node.getExprs().get(0));
             node.intValue = node.getExprs().get(0).intValue;
         }
         else if (op == ExprOperator.Operator.MEM) {
-            /*ExprNode lhs = node.getExprs().get(0),rhs = node.getExprs().get(1);
-            visit(lhs);
-            if (rhs instanceof CallfunNode) {
+            ExprNode record = node.getExprs().get(0),member = node.getExprs().get(1);
+            boolean oldNeedAddr = needAddr;
+            needAddr = false;
+            visit(record);
+            needAddr = oldNeedAddr;
 
+            if (member instanceof IdentifierNode) {
+                IntValue address = record.intValue;
+                int offset = globalSymbolTable.getOffset(
+                        node.getVartype().getName() + "." + ((IdentifierNode) member).getName()
+                );
+                VartypeNode type = globalSymbolTable.resolveType(
+                        node.getVartype().getName() + "." + ((IdentifierNode) member).getName()
+                );
+                if (member instanceof IdentifierNode) {
+                    node.address = address;
+                    node.offset = offset;
+                } else {
+                    VirtualRegister reg = new VirtualRegister(null);
+                    node.intValue = reg;
+                    curBasicBlock.append(new LoadInstruction(
+                            curBasicBlock, reg, type.getRegisterSize(), address, offset));
+                    if (node.basicBlockTrue != null)
+                        curBasicBlock.end(new BranchInstruction(curBasicBlock, reg, node.basicBlockTrue, node.basicBlockFalse));
+                }
             }
-            else {
-
-            }*/
+            else { //调用类内部的函数
+                Function function = irRoot.functions.get(
+                        node.getVartype().getName()+"."+((CallfunNode)member).getName()
+                );
+                ((CallfunNode)member).getParams().forEach(param->param.accept(this));
+                VirtualRegister reg = new VirtualRegister(null);
+                CallInstruction callFun = new CallInstruction(curBasicBlock,reg,function);
+                ((CallfunNode)member).getParams().forEach(param->callFun.appendArgReg(param.intValue));
+                curBasicBlock.append(callFun);
+                node.intValue = reg;
+            }
         }
         else if (op == ExprOperator.Operator.ARRAY)
             processArrayAccess(node,node.getExprs().get(0),node.getExprs().get(1));
@@ -545,27 +648,84 @@ public class IRBuilder implements ASTVisitor {
                 ||op == ExprOperator.Operator.PINC ||op == ExprOperator.Operator.PDEC)
             processSelfIncOrDec(node);
         else if (op == ExprOperator.Operator.NEG||op == ExprOperator.Operator.COMP) {
-
+            VirtualRegister reg = new VirtualRegister(null);
+            UnaryOperationInstruction.Operator operator = UnaryOperationInstruction.Operator.NEG;
+            if (op == ExprOperator.Operator.COMP)
+                operator = UnaryOperationInstruction.Operator.COMP;
+            curBasicBlock.append(new UnaryOperationInstruction(curBasicBlock,reg,operator,node.getExprs().get(0).intValue));
+            node.intValue = reg;
         }
         else if (op == ExprOperator.Operator.NOT) {
             visit(node.getExprs().get(0));
+            node.basicBlockFalse = node.getExprs().get(0).basicBlockTrue;
+            node.basicBlockFalse = node.getExprs().get(0).basicBlockFalse;
         }
         else if (op == ExprOperator.Operator.NEW)
             processNewExpr(node);
+        if (op == ExprOperator.Operator.EQU||op == ExprOperator.Operator.NEQ
+                ||op == ExprOperator.Operator.LESS||op == ExprOperator.Operator.LEQ
+                ||op == ExprOperator.Operator.GRTR||op == ExprOperator.Operator.GEQ) {
+            ExprNode lhs = node.getExprs().get(0),rhs = node.getExprs().get(1);
+            if (lhs.getType().isString())
+                processStrOperation(op,node);
+            else processIntArithmeticExpr(op,node);
+        }
         else if (op == ExprOperator.Operator.TIMES||op == ExprOperator.Operator.DIVIDE||op == ExprOperator.Operator.MOD
                 ||op == ExprOperator.Operator.ADD||op == ExprOperator.Operator.SUB
                 ||op == ExprOperator.Operator.LESH||op == ExprOperator.Operator.RISH
-                ||op == ExprOperator.Operator.LESS||op == ExprOperator.Operator.LEQ
-                ||op == ExprOperator.Operator.GRTR||op == ExprOperator.Operator.GEQ
-                ||op == ExprOperator.Operator.EQU||op == ExprOperator.Operator.NEQ
                 ||op == ExprOperator.Operator.BAND||op == ExprOperator.Operator.XOR||op == ExprOperator.Operator.BOR) {
-
+            ExprNode lhs = node.getExprs().get(0),rhs = node.getExprs().get(1);
+            if (lhs.getType().isString())
+                processStrOperation(op,node);
+            else processIntArithmeticExpr(op,node);
         }
-        else if (op == ExprOperator.Operator.LAND||op == ExprOperator.Operator.LOR) {
+        else if (op == ExprOperator.Operator.LAND) {
+            ExprNode lhs = node.getExprs().get(0),rhs = node.getExprs().get(1);
+            lhs.basicBlockTrue = new BasicBlock(curFunction,"$lhs_true");
+            lhs.basicBlockFalse = node.basicBlockFalse;
+            visit(lhs);
+            curBasicBlock = lhs.basicBlockTrue;
 
+            rhs.basicBlockTrue = node.basicBlockTrue;
+            rhs.basicBlockFalse = node.basicBlockFalse;
+            visit(rhs);
         }
-        else if (op == ExprOperator.Operator.TRN) {
+        else if (op == ExprOperator.Operator.LOR) {
+            ExprNode lhs = node.getExprs().get(0),rhs = node.getExprs().get(1);
+            lhs.basicBlockTrue = node.basicBlockTrue;
+            lhs.basicBlockFalse = new BasicBlock(curFunction,"$lhs_false");
+            visit(lhs);
+            curBasicBlock = lhs.basicBlockFalse;
 
+            rhs.basicBlockTrue = node.basicBlockTrue;
+            rhs.basicBlockFalse = node.basicBlockFalse;
+            visit(rhs);
+        }
+        else if (op == TRN) {
+            ExprNode cond = node.getExprs().get(0),lhs = node.getExprs().get(1),rhs = node.getExprs().get(2);
+            BasicBlock basicBlockTrue = new BasicBlock(curFunction,"$ternary_true");
+            BasicBlock basicBlockFalse = new BasicBlock(curFunction,"$ternary_false");
+            BasicBlock merge = new BasicBlock(curFunction,"$ternary_merge");
+
+            cond.basicBlockTrue = basicBlockTrue;
+            cond.basicBlockFalse = basicBlockFalse;
+            visit(cond);
+
+            VirtualRegister reg = new VirtualRegister(null);
+
+            curBasicBlock = basicBlockTrue;
+            visit(lhs);basicBlockTrue.append(new MoveInstruction(basicBlockTrue,lhs.intValue,reg));
+            basicBlockTrue.end(new Jump(basicBlockTrue,merge));
+
+            curBasicBlock = basicBlockFalse;
+            visit(rhs);
+            basicBlockFalse.append(new MoveInstruction(basicBlockFalse,rhs.intValue,reg));
+            basicBlockFalse.end(new Jump(basicBlockFalse,merge));
+
+            node.intValue = reg;
+            curBasicBlock = merge;
+            if (node.basicBlockTrue != null)
+                curBasicBlock.end(new BranchInstruction(curBasicBlock,reg,node.basicBlockTrue,node.basicBlockFalse));
         }
     }
 

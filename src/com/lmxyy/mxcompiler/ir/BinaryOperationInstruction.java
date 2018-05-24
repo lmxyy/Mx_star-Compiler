@@ -1,16 +1,17 @@
 package com.lmxyy.mxcompiler.ir;
 
-public class OperationInstruction extends IRInstruction {
+public abstract class BinaryOperationInstruction extends IRInstruction {
     public enum Operator {
         ADD, SUB, MUL, DIV, MOD,
-        SHL, SHR, AND, OR, XOR
+        SHL, SHR, AND, OR, XOR,
+        EQU, NEQ, LESS, GRTR, LEQ, GEQ
     }
 
     private Register dest;
     private Operator operator;
     private IntValue lhs,rhs;
 
-    public OperationInstruction(BasicBlock _basicBlock,Register _dest,Operator _operator,IntValue _lhs,IntValue _rhs) {
+    public BinaryOperationInstruction(BasicBlock _basicBlock,Register _dest,Operator _operator, IntValue _lhs,IntValue _rhs) {
         super(_basicBlock);
         dest = _dest;
         operator = _operator;

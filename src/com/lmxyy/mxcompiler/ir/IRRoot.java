@@ -11,6 +11,6 @@ public class IRRoot {
     public Map<String,StaticString> stringPool = new LinkedHashMap<>();
 
     public IRRoot() {
-
+        stringPool.put("\\n",new StaticString("\n"));
     }
 }
