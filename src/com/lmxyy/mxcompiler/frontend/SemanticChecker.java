@@ -828,6 +828,11 @@ public class SemanticChecker implements ASTVisitor {
                         semanticError.add(vartype.location(),"Parentheses cannot follow the array constructor.");
                         return;
                     }
+                    else if (node.getVartype().getDims().size() == 0) {
+                        node.setType(vartype.toVartypeNode());
+                        semanticError.add(vartype.location(),"Please indicate at least one dimension.");
+                        return;
+                    }
                     else {
                         node.setType(vartype.toVartypeNode());
                         return;

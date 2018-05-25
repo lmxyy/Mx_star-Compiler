@@ -16,6 +16,10 @@ public class IRRoot {
 
     public Function stringSubString;
     public Function stringParseInt;
+    public Function stringConcat;
+    public Function stringEqual;
+    public Function stringLess;
+    public Function stringLessOrEqual;
 
     public Function funcPrintln;
     public Function funcPrint;

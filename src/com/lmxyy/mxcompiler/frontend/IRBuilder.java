@@ -2,18 +2,19 @@ package com.lmxyy.mxcompiler.frontend;
 
 import com.lmxyy.mxcompiler.ast.*;
 import com.lmxyy.mxcompiler.ir.*;
-import com.lmxyy.mxcompiler.symbol.ExprOperator;
-import com.lmxyy.mxcompiler.symbol.FunctionType;
-import com.lmxyy.mxcompiler.symbol.GlobalSymbolTable;
-import com.lmxyy.mxcompiler.symbol.SymbolInfo;
+import com.lmxyy.mxcompiler.symbol.*;
 import com.lmxyy.mxcompiler.utils.CompilerOption;
 import com.lmxyy.mxcompiler.utils.WarningInfo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.lmxyy.mxcompiler.ir.BinaryOperationInstruction.Operator.*;
 import static com.lmxyy.mxcompiler.symbol.ExprOperator.Operator.*;
+import static com.lmxyy.mxcompiler.symbol.ExprOperator.Operator.LESS;
 
 public class IRBuilder implements ASTVisitor {
-    private IRRoot irRoot = new IRRoot();
+    private IRRoot irRoot;
     private GlobalSymbolTable globalSymbolTable;
     private Function curFunction;
     private BasicBlock curBasicBlock;
@@ -21,8 +22,9 @@ public class IRBuilder implements ASTVisitor {
     private boolean isFunArg = false,needAddr = false;
     private String className = null;
 
-    public IRBuilder(GlobalSymbolTable _globalSymbolTable) {
+    public IRBuilder(GlobalSymbolTable _globalSymbolTable,IRRoot _irRoot) {
         globalSymbolTable = _globalSymbolTable;
+        irRoot = _irRoot;
     }
 
     private boolean needMemoryAccess(Node node) {
@@ -87,7 +89,7 @@ public class IRBuilder implements ASTVisitor {
 
         curBasicBlock.append(
                 new ArithmeticInstruction(
-                        curBasicBlock,reg,MUL,
+                        curBasicBlock,reg,BinaryOperationInstruction.Operator.MUL,
                         subscript.intValue,unitSize
                 )
         );
@@ -112,6 +114,101 @@ public class IRBuilder implements ASTVisitor {
             node.intValue = reg;
             if (node.basicBlockTrue != null)
                 curBasicBlock.end(new BranchInstruction(curBasicBlock,reg,node.basicBlockTrue,node.basicBlockFalse));
+        }
+    }
+
+    private StmtNode getForStatement(
+            List<List<Node>> inits,ExpressionNode [] conds,List<List<Node>> steps,
+            AssignmentNode assignment,int now,int tot
+    ) {
+        if (now == tot-1) {
+            List<Node> stmts = new ArrayList<>();
+            stmts.add(assignment);
+            return new BlockNode(stmts);
+        }
+        else {
+            List<Node> stmts = new ArrayList<>();
+            stmts.add(getForStatement(inits,conds,steps,assignment,now+1,tot));
+            return new ForStmtNode(
+                    null,inits.get(now),conds[now],
+                    steps.get(now),getForStatement(inits,conds,steps,assignment,now+1,tot)
+            );
+        }
+    }
+    private ExpressionNode getLhs(
+            VirtualRegister[] virtualRegisters,int tot,int now,
+            IdentifierNode base,IdentifierNode[] identifierNodes
+    ) {
+        if (now == -1) {
+            List<ExprNode> exprs = new ArrayList<>();exprs.add(base);
+            return new ExpressionNode(exprs,null,new ExprOperator(ExprOperator.Operator.SELF),false);
+        }
+        else {
+            ExpressionNode array = getLhs(virtualRegisters,tot,now-1,base,identifierNodes);
+            List<ExprNode> exprs = new ArrayList<>(); exprs.add(identifierNodes[now]);
+            ExpressionNode subscript = new ExpressionNode(
+                    exprs,null,
+                    new ExprOperator(ExprOperator.Operator.SELF),false
+            );
+            exprs = new ArrayList<>(); exprs.add(array); exprs.add(subscript);
+            return  new ExpressionNode(
+                    exprs,null,
+                    new ExprOperator(ExprOperator.Operator.ARRAY),false
+            );
+        }
+    }
+    private void processNewArray(IntValue addr,VartypePlusNode node) {
+        int n = node.getDims().size();
+        VirtualRegister [] virtualRegisters = new VirtualRegister[n-1];
+        IdentifierNode [] identifierNodes = new IdentifierNode[n-1];
+        VariableNode [] variableNodes = new VariableNode[n-1];
+
+        List<List<Node>> inits = new ArrayList<List<Node>>();
+        ExpressionNode [] conds = new ExpressionNode[n-1];
+        List<List<Node>> steps = new ArrayList<List<Node>>();
+        for (int i = 0;i < n-1;++i) {
+            virtualRegisters[i] = new VirtualRegister(null);
+            identifierNodes[i] = new IdentifierNode("$"+i);
+            identifierNodes[i].intValue =virtualRegisters[i];
+            variableNodes[i] = new VariableNode(null,identifierNodes[i],null,false);
+
+            ExpressionNode lhs = null,rhs = null;
+            List<ExprNode> lhsList = null,rhsList = null;
+
+            lhsList = new ArrayList<>(); rhsList = new ArrayList<>();
+            lhsList.add(variableNodes[i]); rhsList.add(new IntegerliteralNode(0));
+            lhs = new ExpressionNode(lhsList,null,new ExprOperator(SELF),false);
+            rhs = new ExpressionNode(rhsList,null,new ExprOperator(SELF),false);
+            inits.add(new ArrayList<>());
+            inits.get(i).add(new AssignmentNode(lhs,rhs));
+
+            lhsList = new ArrayList<>();
+            lhsList.add(variableNodes[i]); lhsList.add(node.getDims().get(i));
+            conds[i] = new ExpressionNode(lhsList,null,new ExprOperator(LESS),false);
+
+            lhsList = new ArrayList<>();
+            lhsList.add(variableNodes[i]);
+            steps.add(new ArrayList<>());
+            steps.get(i).add(new ExpressionNode(lhsList,null,new ExprOperator(PINC),false));
+        }
+
+        IdentifierNode base = new IdentifierNode("$base");
+        base.intValue = addr;
+        for (int i = 1;i < n;++i) {
+            ExpressionNode lhs = getLhs(virtualRegisters,i,i-1,base,identifierNodes);
+            List<ExprNode> exprs = new ArrayList<>(); exprs.add(identifierNodes[i]);
+            ExpressionNode dim = new ExpressionNode(exprs,null,new ExprOperator(SELF),false);
+            List<ExpressionNode> dims = new ArrayList<>(); dims.add(dim);
+            ExpressionNode rhs = new ExpressionNode(
+                    null,new VartypePlusNode(
+                            new Type(
+                                    node.getType().getType(),node.getType().getDimension()-i),
+                                    node.getName(),dims
+                            ),
+                    new ExprOperator(NEW),false
+            );
+            AssignmentNode assignment = new AssignmentNode(lhs,rhs);
+            visit(getForStatement(inits,conds,steps,assignment,0,i));
         }
     }
 
@@ -141,29 +238,62 @@ public class IRBuilder implements ASTVisitor {
             curBasicBlock.append(new MoveInstruction(curBasicBlock,oldFunAddr,constructor.address));
         }
         else {
-            boolean oldNeedAddr = needAddr;
-            needAddr = false;
             visit(node.getVartype());
-            needAddr = oldNeedAddr;
-            ExpressionNode dim = node.getVartype().getDims().get(0);
-
-            IntImmediate unitSize = new IntImmediate(
-                    node.getVartype().getType().getDimension() > 1?
-                            CompilerOption.getSizePointer():
-                            node.getVartype().getRegisterSize()
-            );
-            // It's highly possible to rewrite here.
-            if (dim != null) {
+            if (node.getVartype().getDims().size() > 1) {
+                ExpressionNode dim = node.getVartype().getDims().get(0);
+                boolean oldNeedAddr = needAddr;
+                needAddr = false;
+                VartypeNode baseType = new VartypeNode(
+                        new Type(
+                                node.getVartype().getType().getType(),
+                                node.getVartype().getType().getDimension()-1
+                        ),
+                        node.getVartype().getName()
+                );
+                needAddr = oldNeedAddr;
                 curBasicBlock.append(
                         new ArithmeticInstruction(
-                                curBasicBlock,reg,MUL,
-                                dim.intValue,unitSize
+                                curBasicBlock,reg,BinaryOperationInstruction.Operator.MUL,dim.intValue,
+                                new IntImmediate(baseType.getRegisterSize())
                         )
                 );
                 curBasicBlock.append(
                         new ArithmeticInstruction(
-                                curBasicBlock,reg,BinaryOperationInstruction.Operator.ADD,
-                                reg,reg
+                                curBasicBlock,reg,BinaryOperationInstruction.Operator.ADD,reg,
+                                new IntImmediate(CompilerOption.getSizeInt())
+                        )
+                );
+                curBasicBlock.append(new HeapAllocateInstruction(curBasicBlock,reg,reg));
+                curBasicBlock.append(
+                        new StoreInstruction(
+                                curBasicBlock,reg,0,
+                                CompilerOption.getSizeInt(),dim.intValue
+                        )
+                );
+                processNewArray(reg,node.getVartype());
+            }
+            else {
+                ExpressionNode dim = node.getVartype().getDims().get(0);
+                boolean oldNeedAddr = needAddr;
+                needAddr = false;
+                VartypeNode baseType = new VartypeNode(
+                        new Type(
+                                node.getVartype().getType().getType(),
+                                node.getVartype().getType().getDimension()-1
+                        ),
+                        node.getVartype().getName()
+                );
+                needAddr = oldNeedAddr;
+                curBasicBlock.append(
+                        new ArithmeticInstruction(
+                                curBasicBlock,reg,BinaryOperationInstruction.Operator.MUL,dim.intValue,
+                                new IntImmediate(baseType.getRegisterSize())
+                        )
+                );
+                curBasicBlock.append(
+                        new ArithmeticInstruction(
+                                curBasicBlock,reg,BinaryOperationInstruction.Operator.ADD,reg,
+                                new IntImmediate(CompilerOption.getSizeInt())
                         )
                 );
                 curBasicBlock.append(new HeapAllocateInstruction(curBasicBlock,reg,reg));
@@ -174,28 +304,6 @@ public class IRBuilder implements ASTVisitor {
                         )
                 );
             }
-            else {
-                curBasicBlock.append(
-                        new ArithmeticInstruction(
-                                curBasicBlock,reg,MUL,
-                                new IntImmediate(0),unitSize
-                        )
-                );
-                curBasicBlock.append(
-                        new ArithmeticInstruction(
-                                curBasicBlock,reg,BinaryOperationInstruction.Operator.ADD,
-                                reg,reg
-                        )
-                );
-                curBasicBlock.append(new HeapAllocateInstruction(curBasicBlock,reg,reg));
-                curBasicBlock.append(
-                        new StoreInstruction(
-                                curBasicBlock,reg,0,
-                                CompilerOption.getSizeInt(),new IntImmediate(0)
-                        )
-                );
-            }
-            // Write something to deal with the Syntactic sugar.
         }
         node.intValue = reg;
     }
@@ -245,10 +353,30 @@ public class IRBuilder implements ASTVisitor {
     }
 
     private void processStrOperation(ExprOperator.Operator op,ExpressionNode node) {
+        visit(node.getExprs().get(0));
+        visit(node.getExprs().get(1));
         ExprNode lhs = node.getExprs().get(0),rhs = node.getExprs().get(1);
+        if (op == ExprOperator.Operator.GRTR||op == ExprOperator.Operator.GEQ) {
+            lhs = node.getExprs().get(1);
+            rhs = node.getExprs().get(0);
+        }
         VirtualRegister reg = new VirtualRegister(null);
         node.intValue = reg;
-        /* Write something here to call the builtin string method. */
+        CallInstruction call = null;
+        switch (op) {
+            case ADD: call = new CallInstruction(curBasicBlock,reg,irRoot.stringConcat); break;
+            case EQU: call = new CallInstruction(curBasicBlock,reg,irRoot.stringEqual); break;
+            case LESS: case GRTR: call = new CallInstruction(curBasicBlock,reg,irRoot.stringLess); break;
+            case LEQ: case GEQ: call = new CallInstruction(curBasicBlock,reg,irRoot.stringLessOrEqual); break;
+            default: assert false; break;
+        }
+        call.appendArgReg(lhs.intValue);
+        call.appendArgReg(rhs.intValue);
+        curBasicBlock.append(call);
+
+        if (node.basicBlockTrue != null) {
+            curBasicBlock.end(new BranchInstruction(curBasicBlock,reg,node.basicBlockTrue,node.basicBlockFalse));
+        }
     }
 
     private void processFuncPrint(ExprNode node,boolean lastNewLine) {
@@ -428,14 +556,10 @@ public class IRBuilder implements ASTVisitor {
     public void visit(DefunNode node) {
         FunctionType functionType = null;
         if (className == null) {
-            functionType = (FunctionType) globalSymbolTable.resolveType(node.getName());
-            curFunction = new Function(functionType,null);
-            irRoot.functions.put(node.getName(), curFunction);
+            curFunction = irRoot.functions.get(node.getName());
         }
         else {
-            functionType = (FunctionType) globalSymbolTable.resolveType(className + "." + node.getName());
-            curFunction = new Function(functionType,new VirtualRegister(null));
-            irRoot.functions.put(node.getName(), curFunction);
+            curFunction = irRoot.functions.get(className + "." + node.getName());
         }
         curBasicBlock = curFunction.startBasicBlock;
         isFunArg = true;
@@ -474,25 +598,16 @@ public class IRBuilder implements ASTVisitor {
     @Override
     public void visit(DefvarNode node) {
         SymbolInfo info = node.scope.getInfo(node.getName());
-        if (node.scope == globalSymbolTable.globals) {
-            StaticData data = new StaticSpace(node.getName(),info.getType().getRegisterSize());
-            info.register = data; irRoot.dataList.add(data);
+        if (node.scope != globalSymbolTable.globals&&curBasicBlock.isEnded()) {
+            WarningInfo.uselessStatement(node.location());
+            return;
         }
-        else {
-            if (curBasicBlock.isEnded()) {
-                WarningInfo.uselessStatement(node.location());
-                return;
-            }
-            VirtualRegister reg = new VirtualRegister(node.getName());
-            info.register = reg;
-            if (isFunArg)
-                curFunction.argVarRegList.add(reg);
-            if (node.getInit() != null) {
-                visit(node.getInit());
-                assign(false,node.getInit().getVartype().getRegisterSize(),reg,0,node.getInit());
-            }
-            else if (!isFunArg)
-                curBasicBlock.append(new MoveInstruction(curBasicBlock,new IntImmediate(0),reg));
+        if (node.getInit() != null) {
+            visit(node.getInit());
+            assign(
+                    false, node.getInit().getVartype().getRegisterSize(),
+                    info.register, 0, node.getInit()
+            );
         }
     }
 
@@ -502,9 +617,7 @@ public class IRBuilder implements ASTVisitor {
         node.getFunMembers().forEach(fun->fun.accept(this));
         if (node.getConstructor() != null) {
             DefunNode constructor = node.getConstructor();
-            FunctionType functionType = globalSymbolTable.resolveConstructor(className);
-            curFunction = new Function(functionType,new VirtualRegister(null));
-            irRoot.functions.put(node.getName(), curFunction);
+            curFunction = irRoot.functions.get(node.getName());
             curBasicBlock = curFunction.startBasicBlock;
 
             isFunArg = true;
@@ -695,6 +808,7 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(IdentifierNode node) {
+        if (node.getName().contains("$")) return;
         SymbolInfo info = node.scope.getInfo(node.getName());
         info.used = true;
         if (info.isClassGlobal()) {
@@ -883,8 +997,14 @@ public class IRBuilder implements ASTVisitor {
                 }
             }
             else { //调用类内部的函数
-                if (record.getType().getType().getDimension() > 0||record.getType().isString()) {
-                    // Process the builtin function
+                if (record.getType().getType().getDimension() > 0) {
+                    processBuiltinMethod(node,GlobalSymbolTable.arraySize);
+                }
+                else if (record.getType().isString()) {
+                    FunctionType functionType = (FunctionType) globalSymbolTable.resolveType(
+                            "string." + ((CallfunNode) member).getName()
+                    );
+                    processBuiltinMethod(node,functionType);
                 }
                 else {
                     FunctionType functionType = (FunctionType) globalSymbolTable.resolveType(
@@ -931,7 +1051,7 @@ public class IRBuilder implements ASTVisitor {
         else if (op == ExprOperator.Operator.NEW)
             processNewExpr(node);
         if (op == ExprOperator.Operator.EQU||op == ExprOperator.Operator.NEQ
-                ||op == ExprOperator.Operator.LESS||op == ExprOperator.Operator.LEQ
+                ||op == LESS||op == ExprOperator.Operator.LEQ
                 ||op == ExprOperator.Operator.GRTR||op == ExprOperator.Operator.GEQ) {
             ExprNode lhs = node.getExprs().get(0),rhs = node.getExprs().get(1);
             if (lhs.getType().isString())
