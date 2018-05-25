@@ -100,18 +100,13 @@ public class IRBuilder implements ASTVisitor {
 
         if (needAddr) {
             node.address = reg;
-            /*node.offset = CompilerOption.getSizeInt();*/
-            node.offset = 0;
+            node.offset = CompilerOption.getSizeInt();
         }
         else {
             curBasicBlock.append(
-                    /*new LoadInstruction(
-                            curBasicBlock,reg,node.getType().getRegisterSize(),
-                            reg,CompilerOption.getSizeInt()
-                    )*/
                     new LoadInstruction(
                             curBasicBlock,reg,node.getType().getRegisterSize(),
-                            reg,0
+                            reg,CompilerOption.getSizeInt()
                     )
             );
             node.intValue = reg;
@@ -254,6 +249,136 @@ public class IRBuilder implements ASTVisitor {
         VirtualRegister reg = new VirtualRegister(null);
         node.intValue = reg;
         /* Write something here to call the builtin string method. */
+    }
+
+    private void processFuncPrint(ExprNode node,boolean lastNewLine) {
+        if (node instanceof ExpressionNode) {
+            if (((ExpressionNode)node).getOp().getOp() == SELF) {
+                processFuncPrint(((ExpressionNode)node).getExprs().get(0), lastNewLine);
+            }
+            else if (((ExpressionNode)node).getOp().getOp() == ExprOperator.Operator.ADD) {
+                ExprNode lhs = ((ExpressionNode)node).getExprs().get(0);
+                ExprNode rhs = ((ExpressionNode)node).getExprs().get(1);
+                processFuncPrint(lhs, false);
+                processFuncPrint(rhs, lastNewLine);
+            }
+        }
+        else {
+            boolean flag = false;
+            if (node instanceof CallfunNode) {
+                FunctionType functionType = null;
+                if (className != null) {
+                    functionType = (FunctionType) globalSymbolTable.resolveType(
+                            className+"."+ ((CallfunNode) node).getName()
+                    );
+                }
+                if (functionType == null) {
+                    functionType = (FunctionType) globalSymbolTable.resolveType(((CallfunNode) node).getName());
+                    if (functionType == GlobalSymbolTable.funcToString)
+                        flag = true;
+                }
+            }
+            if (flag) {
+                ExprNode intExpr = ((CallfunNode) node).getParams().get(0);
+                visit(intExpr);
+                CallInstruction call = new CallInstruction(
+                        curBasicBlock,null,
+                        lastNewLine?irRoot.funcPrintlnInt:irRoot.funcPrintInt
+                );
+                call.appendArgReg(intExpr.intValue);
+                curBasicBlock.append(call);
+            }
+            else {
+                visit(node);
+                CallInstruction call = new CallInstruction(
+                        curBasicBlock,null,
+                        lastNewLine?irRoot.funcPrintln:irRoot.funcPrint
+                );
+                call.appendArgReg(node.intValue);
+                curBasicBlock.append(call);
+            }
+        }
+    }
+
+    private void processBuiltinMethod(ExprNode node,FunctionType functionType) {
+        boolean oldNeedAddr = needAddr;
+        needAddr = false;
+        if (node instanceof CallfunNode) {
+            if (functionType == GlobalSymbolTable.funcPrint||functionType == GlobalSymbolTable.funcPrintln) {
+                processFuncPrint(((CallfunNode) node).getParams().get(0),
+                        functionType == GlobalSymbolTable.funcPrintln);
+            }
+            else if (functionType == GlobalSymbolTable.funcGetString) {
+                VirtualRegister reg = new VirtualRegister("gottenstring");
+                CallInstruction call = new CallInstruction(curBasicBlock,reg,irRoot.funcGetString);
+                curBasicBlock.append(call);
+                node.intValue = reg;
+            }
+            else if (functionType == GlobalSymbolTable.funcGetInt) {
+                VirtualRegister reg = new VirtualRegister("gottenint");
+                CallInstruction call = new CallInstruction(curBasicBlock,reg,irRoot.funcGetInt);
+                curBasicBlock.append(call);
+                node.intValue = reg;
+            }
+            else if (functionType == GlobalSymbolTable.funcToString) {
+                visit(((CallfunNode) node).getParams().get(0));
+                VirtualRegister reg = new VirtualRegister("tostring");
+                CallInstruction call = new CallInstruction(curBasicBlock,reg,irRoot.funcGetString);
+                call.appendArgReg(((CallfunNode) node).getParams().get(0).intValue);
+                curBasicBlock.append(call);
+                node.intValue = reg;
+            }
+            else {
+                // Cannot reach here.
+                assert false;
+            }
+        }
+        else {
+            ExprNode record = ((ExpressionNode) node).getExprs().get(0);
+            CallfunNode member = (CallfunNode) ((ExpressionNode) node).getExprs().get(1);
+            if (functionType == GlobalSymbolTable.stringLength||functionType == GlobalSymbolTable.arraySize) {
+                visit(record);
+                VirtualRegister reg = new VirtualRegister("size");
+                curBasicBlock.append(
+                        new LoadInstruction(
+                                curBasicBlock, reg, CompilerOption.getSizeInt(),
+                                record.intValue, 0));
+                node.intValue = reg;
+            }
+            else if (functionType == GlobalSymbolTable.stringSubString) {
+                visit(record);
+                member.getParams().forEach(param->param.accept(this));
+                VirtualRegister reg = new VirtualRegister("substr");
+                CallInstruction call = new CallInstruction(curBasicBlock,reg, irRoot.stringSubString);
+                member.getParams().forEach(param->call.appendArgReg(param.intValue));
+                curBasicBlock.append(call);
+                node.intValue = reg;
+            }
+            else if (functionType == GlobalSymbolTable.stringParseInt) {
+                visit(record);
+                VirtualRegister reg = new VirtualRegister("parsedint");
+                curBasicBlock.append(new MoveInstruction(curBasicBlock,record.intValue,irRoot.stringParseInt.address));
+                curBasicBlock.append(new CallInstruction(curBasicBlock,reg,irRoot.stringParseInt));
+                node.intValue = reg;
+            }
+            else if (functionType == GlobalSymbolTable.stringOrd) {
+                visit(record);
+                visit(member.getParams().get(0));
+                VirtualRegister reg = new VirtualRegister("ord");
+                curBasicBlock.append(
+                        new ArithmeticInstruction(
+                                curBasicBlock,reg,BinaryOperationInstruction.Operator.ADD,
+                                record.intValue,member.getParams().get(0).intValue));
+                curBasicBlock.append(
+                        new LoadInstruction(
+                                curBasicBlock,reg,1,
+                                reg,CompilerOption.getSizeInt()
+                        )
+                );
+                node.intValue = reg;
+            }
+
+        }
     }
 
     private void processIntArithmeticExpr(ExprOperator.Operator op,ExpressionNode node) {
@@ -679,9 +804,7 @@ public class IRBuilder implements ASTVisitor {
         else {
             functionType = (FunctionType) globalSymbolTable.resolveType(node.getName());
             if (globalSymbolTable.isBuiltinMethod(functionType)) {
-                /*processBuiltinMethod(node);*/
-                // BuiltinMethod
-                // Write something here to process the builtin method.
+                processBuiltinMethod(node,functionType);
             }
             else {
                 Function function = irRoot.functions.get(node.getName());

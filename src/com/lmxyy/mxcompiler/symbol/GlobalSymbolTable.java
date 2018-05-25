@@ -14,13 +14,13 @@ public class GlobalSymbolTable {
     public final static VartypeNode ubType = new VartypeNode(new Type(Type.Types.UB,0),"ub");
 
     // Builtin string functions
-    private final static FunctionType stringLength = new FunctionType(
+    public final static FunctionType stringLength = new FunctionType(
             intType,
             "string.length",
             new ArrayList<VartypeNode>(),
             new ArrayList<String>()
     );
-    private final static FunctionType stringSubString = new FunctionType(
+    public final static FunctionType stringSubString = new FunctionType(
             stringType,
             "string.substring",
             new ArrayList<VartypeNode>() {{
@@ -32,13 +32,13 @@ public class GlobalSymbolTable {
                 add("arg1");
             }}
     );
-    private final static FunctionType stringParseInt = new FunctionType(
+    public final static FunctionType stringParseInt = new FunctionType(
             intType,
             "string.parseInt",
             new ArrayList<VartypeNode>(),
             new ArrayList<String>()
     );
-    private final static FunctionType stringOrd = new FunctionType(
+    public final static FunctionType stringOrd = new FunctionType(
             intType,
             "string.ord",
             new ArrayList<VartypeNode>() {{
@@ -58,7 +58,7 @@ public class GlobalSymbolTable {
     );
 
     // Builtin array functions
-    private final static FunctionType arraySize = new FunctionType(
+    public final static FunctionType arraySize = new FunctionType(
             intType,
             "#array.size",
             new ArrayList<VartypeNode>(),
@@ -71,7 +71,7 @@ public class GlobalSymbolTable {
     );
 
     // Builtin functions
-    private final static FunctionType funcPrint = new FunctionType(
+    public final static FunctionType funcPrint = new FunctionType(
             voidType,
             "print",
             new ArrayList<VartypeNode>() {{
@@ -81,7 +81,7 @@ public class GlobalSymbolTable {
                 add("arg0");
             }}
     );
-    private final static FunctionType funcPrintln = new FunctionType(
+    public final static FunctionType funcPrintln = new FunctionType(
             voidType,
             "println",
             new ArrayList<VartypeNode>() {{
@@ -91,19 +91,19 @@ public class GlobalSymbolTable {
                 add("arg0");
             }}
     );
-    private final static FunctionType funcGetString = new FunctionType(
+    public final static FunctionType funcGetString = new FunctionType(
             stringType,
             "getString",
             new ArrayList<VartypeNode>(),
             new ArrayList<String>()
     );
-    private final static FunctionType funcGetInt = new FunctionType(
+    public final static FunctionType funcGetInt = new FunctionType(
             intType,
             "getInt",
             new ArrayList<VartypeNode>(),
             new ArrayList<String>()
     );
-    private final static FunctionType funcToString = new FunctionType(
+    public final static FunctionType funcToString = new FunctionType(
             stringType,
             "toString",
             new ArrayList<VartypeNode>() {{

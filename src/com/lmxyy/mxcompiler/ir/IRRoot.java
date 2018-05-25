@@ -13,4 +13,15 @@ public class IRRoot {
     public IRRoot() {
         stringPool.put("\\n",new StaticString("\n"));
     }
+
+    public Function stringSubString;
+    public Function stringParseInt;
+
+    public Function funcPrintln;
+    public Function funcPrint;
+    public Function funcPrintlnInt;
+    public Function funcPrintInt;
+    public Function funcGetString;
+    public Function funcGetInt;
+    public Function funcToString;
 }
