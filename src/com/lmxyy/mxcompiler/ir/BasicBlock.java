@@ -66,4 +66,8 @@ public class BasicBlock {
     public String toString() {
         return hintName;
     }
+
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
+    }
 }

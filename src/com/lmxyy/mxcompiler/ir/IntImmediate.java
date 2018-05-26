@@ -9,4 +9,9 @@ public class IntImmediate extends IntValue {
     public int getVal() {
         return val;
     }
+
+    @Override
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
+    }
 }

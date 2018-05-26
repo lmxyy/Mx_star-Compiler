@@ -20,4 +20,9 @@ public class BranchInstruction extends EndInstruction {
     public BasicBlock getIfFalse() {
         return ifFalse;
     }
+
+    @Override
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
+    }
 }

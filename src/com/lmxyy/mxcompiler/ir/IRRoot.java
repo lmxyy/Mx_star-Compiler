@@ -28,4 +28,8 @@ public class IRRoot {
     public Function funcGetString;
     public Function funcGetInt;
     public Function funcToString;
+
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
+    }
 }

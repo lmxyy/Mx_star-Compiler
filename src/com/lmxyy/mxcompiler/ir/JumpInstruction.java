@@ -11,4 +11,9 @@ public class JumpInstruction extends EndInstruction {
     public BasicBlock getTarget() {
         return target;
     }
+
+    @Override
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
+    }
 }

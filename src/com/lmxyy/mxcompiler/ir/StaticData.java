@@ -5,4 +5,13 @@ public abstract class StaticData extends Register {
     public StaticData(String _hintName) {
         hintName = _hintName;
     }
+
+    public String getHintName() {
+        return hintName;
+    }
+
+    @Override
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
+    }
 }

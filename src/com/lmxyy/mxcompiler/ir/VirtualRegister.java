@@ -6,4 +6,13 @@ public class VirtualRegister extends Register {
     public VirtualRegister(String _hintName) {
         hintName = _hintName;
     }
+
+    public String getHintName() {
+        return hintName;
+    }
+
+    @Override
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
+    }
 }

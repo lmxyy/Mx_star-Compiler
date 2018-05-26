@@ -10,4 +10,9 @@ public class StaticSpace extends StaticData {
     public int getLength() {
         return length;
     }
+
+    @Override
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
+    }
 }

@@ -16,4 +16,9 @@ public class HeapAllocateInstruction extends IRInstruction {
     public IntValue getAllocSize() {
         return allocSize;
     }
+
+    @Override
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
+    }
 }

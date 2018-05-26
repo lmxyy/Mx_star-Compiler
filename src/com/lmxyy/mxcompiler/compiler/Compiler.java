@@ -1,8 +1,12 @@
 package com.lmxyy.mxcompiler.compiler;
 
+import com.lmxyy.mxcompiler.ast.IdentifierNode;
 import com.lmxyy.mxcompiler.ast.ProgNode;
 import com.lmxyy.mxcompiler.frontend.ASTBuilder;
+import com.lmxyy.mxcompiler.frontend.IRBuilder;
+import com.lmxyy.mxcompiler.frontend.IRPrebuilder;
 import com.lmxyy.mxcompiler.frontend.SemanticChecker;
+import com.lmxyy.mxcompiler.ir.IRRoot;
 import com.lmxyy.mxcompiler.parser.Mx_starLexer;
 import com.lmxyy.mxcompiler.parser.Mx_starParser;
 import com.lmxyy.mxcompiler.parser.SyntaxErrorListener;
@@ -21,6 +25,8 @@ public class Compiler {
     private InputStream inS;
     private OutputStream outS;
     private ProgNode ast;
+    private GlobalSymbolTable globalSymbolTable;
+    private IRRoot irRoot;
 
     public Compiler(InputStream _inS,OutputStream _outS) {
         inS = _inS;
@@ -40,17 +46,29 @@ public class Compiler {
             ret = false;
         ASTBuilder builder = new ASTBuilder();
         ast = (ProgNode) builder.visit(tree);
-        SemanticChecker semanticChecker = new SemanticChecker(new GlobalSymbolTable());
+        globalSymbolTable = new GlobalSymbolTable();
+        SemanticChecker semanticChecker = new SemanticChecker(globalSymbolTable);
         semanticChecker.visit(ast);
         if (!semanticChecker.semanticError.msgs.isEmpty())
             ret = false;
         return ret;
     }
 
+    private void buildIR() throws Exception {
+        irRoot = new IRRoot();
+        IRPrebuilder irPrebuilder = new IRPrebuilder(globalSymbolTable,irRoot);
+        ast.accept(irPrebuilder);
+        IRBuilder irBuilder = new IRBuilder(globalSymbolTable,irRoot);
+    }
+
     public boolean run() throws Exception{
         SimpleDateFormat formatter = new SimpleDateFormat("E MMM dd HH:mm:ss",Locale.US);
         System.err.println("Compilation started at "+formatter.format(new java.util.Date()));
         boolean ret = buildAST();
-        return ret;
+        if (ret == false) {
+            return false;
+        }
+        buildIR();
+        return true;
     }
 }

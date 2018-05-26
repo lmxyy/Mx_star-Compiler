@@ -39,4 +39,8 @@ public abstract class IRInstruction {
     public boolean isRemoved() {
         return removed;
     }
+
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
+    }
 }

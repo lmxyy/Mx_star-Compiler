@@ -15,4 +15,9 @@ public class MoveInstruction extends IRInstruction {
     public Register getDest() {
         return dest;
     }
+
+    @Override
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
+    }
 }

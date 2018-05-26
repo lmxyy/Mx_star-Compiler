@@ -27,4 +27,9 @@ public class CallInstruction extends IRInstruction {
     public List<IntValue> getArgArgRegList() {
         return argArgRegList;
     }
+
+    @Override
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
+    }
 }

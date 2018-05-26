@@ -31,4 +31,9 @@ public abstract class BinaryOperationInstruction extends IRInstruction {
     public IntValue getRhs() {
         return rhs;
     }
+
+    @Override
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
+    }
 }

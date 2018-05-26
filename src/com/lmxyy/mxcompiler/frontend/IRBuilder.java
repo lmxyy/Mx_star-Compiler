@@ -9,9 +9,7 @@ import com.lmxyy.mxcompiler.utils.WarningInfo;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.lmxyy.mxcompiler.ir.BinaryOperationInstruction.Operator.*;
 import static com.lmxyy.mxcompiler.symbol.ExprOperator.Operator.*;
-import static com.lmxyy.mxcompiler.symbol.ExprOperator.Operator.LESS;
 
 public class IRBuilder implements ASTVisitor {
     private IRRoot irRoot;
@@ -168,7 +166,7 @@ public class IRBuilder implements ASTVisitor {
         List<List<Node>> steps = new ArrayList<List<Node>>();
         for (int i = 0;i < n-1;++i) {
             virtualRegisters[i] = new VirtualRegister(null);
-            identifierNodes[i] = new IdentifierNode("$"+i);
+            identifierNodes[i] = new IdentifierNode(null);
             identifierNodes[i].intValue =virtualRegisters[i];
             variableNodes[i] = new VariableNode(null,identifierNodes[i],null,false);
 
@@ -192,7 +190,7 @@ public class IRBuilder implements ASTVisitor {
             steps.get(i).add(new ExpressionNode(lhsList,null,new ExprOperator(PINC),false));
         }
 
-        IdentifierNode base = new IdentifierNode("$base");
+        IdentifierNode base = new IdentifierNode(null);
         base.intValue = addr;
         for (int i = 1;i < n;++i) {
             ExpressionNode lhs = getLhs(virtualRegisters,i,i-1,base,identifierNodes);
@@ -451,7 +449,7 @@ public class IRBuilder implements ASTVisitor {
             else if (functionType == GlobalSymbolTable.funcToString) {
                 visit(((CallfunNode) node).getParams().get(0));
                 VirtualRegister reg = new VirtualRegister("tostring");
-                CallInstruction call = new CallInstruction(curBasicBlock,reg,irRoot.funcGetString);
+                CallInstruction call = new CallInstruction(curBasicBlock,reg,irRoot.funcToString);
                 call.appendArgReg(((CallfunNode) node).getParams().get(0).intValue);
                 curBasicBlock.append(call);
                 node.intValue = reg;

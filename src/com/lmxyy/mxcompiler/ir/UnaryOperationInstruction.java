@@ -25,4 +25,9 @@ public class UnaryOperationInstruction extends IRInstruction {
     public IntValue getOprand() {
         return oprand;
     }
+
+    @Override
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
+    }
 }

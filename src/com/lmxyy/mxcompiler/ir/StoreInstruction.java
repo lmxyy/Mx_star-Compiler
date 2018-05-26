@@ -26,4 +26,9 @@ public class StoreInstruction extends IRInstruction {
     public IntValue getValue() {
         return value;
     }
+
+    @Override
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
+    }
 }

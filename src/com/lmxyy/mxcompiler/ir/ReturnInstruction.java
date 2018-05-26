@@ -12,4 +12,9 @@ public class ReturnInstruction extends EndInstruction {
     public IntValue getRetVal() {
         return retVal;
     }
+
+    @Override
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
+    }
 }

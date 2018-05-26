@@ -6,4 +6,8 @@ public class StaticString extends StaticData {
         super("$string");
         string = _string;
     }
+    @Override
+    public void accept(IRVisitor visitor) {
+        visitor.visit(this);
+    }
 }

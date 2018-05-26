@@ -152,4 +152,8 @@ public class IRPrebuilder implements ASTVisitor {
     public void visit(StmtNode node) {
         node.accept(this);
     }
+
+    public IRRoot getIrRoot() {
+        return irRoot;
+    }
 }

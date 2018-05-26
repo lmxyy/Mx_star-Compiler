@@ -6,6 +6,7 @@ public interface IRVisitor {
     void visit(BasicBlock node);
     void visit(Function node);
 
+    void visit(IRInstruction node);
     void visit(ArithmeticInstruction node);
     void visit(UnaryOperationInstruction node);
     void visit(ComparisionInstruction node);
@@ -17,7 +18,9 @@ public interface IRVisitor {
     void visit(LoadInstruction node);
     void visit(MoveInstruction node);
     void visit(StoreInstruction node);
+    void visit(EndInstruction node);
 
+    void visit(IntValue node);
     void visit(VirtualRegister node);
     void visit(PhysicalRegister node);
     void visit(StaticSpace node);
