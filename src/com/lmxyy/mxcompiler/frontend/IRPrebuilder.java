@@ -21,10 +21,10 @@ public class IRPrebuilder implements ASTVisitor {
     public void visit(DefunNode node) {
         Function function = null;
         if (className == null)
-            function = new Function((FunctionType) globalSymbolTable.resolveType(node.getName()),null);
+            function = new Function((FunctionType) globalSymbolTable.resolveType(node.getName()));
         else
             function = new Function((FunctionType) globalSymbolTable.resolveType(
-                    className+"."+node.getName()),new VirtualRegister("thisaddress"));
+                    className+"."+node.getName()));
         irRoot.functions.put(function.getType().getName(),function);
     }
 
@@ -45,11 +45,7 @@ public class IRPrebuilder implements ASTVisitor {
     public void visit(DefclassNode node) {
         className = node.getName();
         if (node.getConstructor() != null) {
-            irRoot.functions.put(
-                    className,new Function(globalSymbolTable.resolveConstructor(className),
-                            new VirtualRegister("thisaddress")
-                    )
-            );
+            irRoot.functions.put(className,new Function(globalSymbolTable.resolveConstructor(className)));
         }
         node.getFunMembers().forEach(fun->fun.accept(this));
         className = null;

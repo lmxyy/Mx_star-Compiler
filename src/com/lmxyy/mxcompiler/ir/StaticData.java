@@ -11,7 +11,5 @@ public abstract class StaticData extends Register {
     }
 
     @Override
-    public void accept(IRVisitor visitor) {
-        visitor.visit(this);
-    }
+    public abstract void accept(IRVisitor visitor);
 }

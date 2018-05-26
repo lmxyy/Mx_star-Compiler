@@ -228,12 +228,9 @@ public class IRBuilder implements ASTVisitor {
             Function constructor = irRoot.functions.get(node.getVartype().getName());
             node.getExprs().forEach(param -> param.accept(this));
             CallInstruction callFun = new CallInstruction(curBasicBlock, reg, constructor);
+            callFun.appendArgReg(reg);
             node.getExprs().forEach(param -> callFun.appendArgReg(param.intValue));
-            VirtualRegister oldFunAddr = new VirtualRegister(null);
-            curBasicBlock.append(new MoveInstruction(curBasicBlock,constructor.address,oldFunAddr));
-            curBasicBlock.append(new MoveInstruction(curBasicBlock,reg,constructor.address));
             curBasicBlock.append(callFun);
-            curBasicBlock.append(new MoveInstruction(curBasicBlock,oldFunAddr,constructor.address));
         }
         else {
             visit(node.getVartype());
@@ -483,8 +480,9 @@ public class IRBuilder implements ASTVisitor {
             else if (functionType == GlobalSymbolTable.stringParseInt) {
                 visit(record);
                 VirtualRegister reg = new VirtualRegister("parsedint");
-                curBasicBlock.append(new MoveInstruction(curBasicBlock,record.intValue,irRoot.stringParseInt.address));
-                curBasicBlock.append(new CallInstruction(curBasicBlock,reg,irRoot.stringParseInt));
+                CallInstruction call = new CallInstruction(curBasicBlock,reg,irRoot.stringParseInt);
+                call.appendArgReg(record.intValue);
+                curBasicBlock.append(call);
                 node.intValue = reg;
             }
             else if (functionType == GlobalSymbolTable.stringOrd) {
@@ -558,6 +556,7 @@ public class IRBuilder implements ASTVisitor {
         }
         else {
             curFunction = irRoot.functions.get(className + "." + node.getName());
+            curFunction.argVarRegList.add(new VirtualRegister("this"));
         }
         curBasicBlock = curFunction.startBasicBlock;
         isFunArg = true;
@@ -616,6 +615,8 @@ public class IRBuilder implements ASTVisitor {
         if (node.getConstructor() != null) {
             DefunNode constructor = node.getConstructor();
             curFunction = irRoot.functions.get(node.getName());
+            VirtualRegister thisReg = new VirtualRegister("this");
+            curFunction.argVarRegList.add(thisReg);
             curBasicBlock = curFunction.startBasicBlock;
 
             isFunArg = true;
@@ -626,7 +627,7 @@ public class IRBuilder implements ASTVisitor {
                 if (defvar.getInit() != null) {
                     visit(defvar.getInit());
                     assign(
-                            true,defvar.getInit().getVartype().getRegisterSize(), curFunction.address,
+                            true,defvar.getInit().getVartype().getRegisterSize(),thisReg,
                             globalSymbolTable.getOffset(className+"."+defvar.getName()), defvar.getInit()
                     );
                 }
@@ -812,7 +813,7 @@ public class IRBuilder implements ASTVisitor {
         if (info.isClassGlobal()) {
             VirtualRegister reg = new VirtualRegister(null);
             node.intValue = reg;
-            IntValue address = curFunction.address;
+            IntValue address = curFunction.argVarRegList.get(0);
             IntValue offset = new IntImmediate(globalSymbolTable.getOffset(className+"."+node.getName()));
             curBasicBlock.append(new ArithmeticInstruction(
                     curBasicBlock,reg,
@@ -851,7 +852,7 @@ public class IRBuilder implements ASTVisitor {
     @Override
     public void visit(VariableNode node) {
         if (node.isThis()) {
-            node.intValue = curFunction.address;
+            node.intValue = curFunction.argVarRegList.get(0);
         }
         else if (node.getVar() == null && node.getId() != null && node.getExpr() == null) {
             visit(node.getId());
@@ -907,10 +908,10 @@ public class IRBuilder implements ASTVisitor {
             Function function = irRoot.functions.get(className+"."+node.getName());
             node.getParams().forEach(param -> param.accept(this));
             VirtualRegister reg = new VirtualRegister(null);
-            CallInstruction callFun = new CallInstruction(curBasicBlock, reg, function);
-            node.getParams().forEach(param -> callFun.appendArgReg(param.intValue));
-            curBasicBlock.append(new MoveInstruction(curBasicBlock,curFunction.address,function.address));
-            curBasicBlock.append(callFun);
+            CallInstruction call = new CallInstruction(curBasicBlock, reg, function);
+            call.appendArgReg(curFunction.argVarRegList.get(0));
+            node.getParams().forEach(param -> call.appendArgReg(param.intValue));
+            curBasicBlock.append(call);
             node.intValue = reg;
         }
         else {
@@ -1012,14 +1013,10 @@ public class IRBuilder implements ASTVisitor {
                     if (globalSymbolTable.isBuiltinMethod(functionType))
                         ((CallfunNode) member).getParams().forEach(param -> param.accept(this));
                     VirtualRegister reg = new VirtualRegister(null);
-                    CallInstruction callFun = new CallInstruction(curBasicBlock, reg, function);
-                    ((CallfunNode) member).getParams().forEach(param -> callFun.appendArgReg(param.intValue));
-                    VirtualRegister oldFunAddr = new VirtualRegister(null);
-                    curBasicBlock.append(new MoveInstruction(curBasicBlock,function.address,oldFunAddr));
-                    curBasicBlock.append(new MoveInstruction(curBasicBlock,record.intValue,function.address));
-                    curBasicBlock.append(callFun);
-                    curBasicBlock.append(new MoveInstruction(curBasicBlock,oldFunAddr,function.address));
-
+                    CallInstruction call = new CallInstruction(curBasicBlock, reg, function);
+                    call.appendArgReg(record.intValue);
+                    ((CallfunNode) member).getParams().forEach(param -> call.appendArgReg(param.intValue));
+                    curBasicBlock.append(call);
                     node.intValue = reg;
                 }
             }

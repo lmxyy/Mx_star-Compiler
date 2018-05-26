@@ -60,7 +60,7 @@ public class GlobalSymbolTable {
     // Builtin array functions
     public final static FunctionType arraySize = new FunctionType(
             intType,
-            "#array.size",
+            "_array.size",
             new ArrayList<VartypeNode>(),
             new ArrayList<String>()
     );

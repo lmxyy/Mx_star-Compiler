@@ -40,7 +40,5 @@ public abstract class IRInstruction {
         return removed;
     }
 
-    public void accept(IRVisitor visitor) {
-        visitor.visit(this);
-    }
+    public abstract void accept(IRVisitor visitor);
 }

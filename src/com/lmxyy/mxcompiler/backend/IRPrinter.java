@@ -7,13 +7,12 @@ import java.util.*;
 
 public class IRPrinter implements IRVisitor {
     private PrintStream out;
-    private Map<BasicBlock, Boolean> BBVisited = new HashMap<>();
+    private Set<BasicBlock> BBVisited = new HashSet<>();
     private Map<BasicBlock, String> labelMap = new HashMap<>();
     private Map<StaticData, String> dataMap = new HashMap<>();
-    private Map<VirtualRegister, String> regMap = new HashMap<>();
-    private Map<String, Integer> counterReg = new HashMap<>();
+    private Map<VirtualRegister, String> regMap;
+    private Map<String, Integer> counterReg;
     private Map<String, Integer> counterBB = new HashMap<>();
-    private Map<String, Integer> counterData = new HashMap<>();
     private boolean definingStatic = true;
 
     public IRPrinter(PrintStream _out) {
@@ -56,76 +55,183 @@ public class IRPrinter implements IRVisitor {
     @Override
     public void visit(IRRoot node) {
         node.dataList.forEach(data->data.accept(this));
+        node.stringPool.values().forEach(str->str.accept(this));
+        if (!node.dataList.isEmpty()||!node.stringPool.isEmpty()) out.println();
+        definingStatic = false;
+        node.functions.values().forEach(fun->fun.accept(this));
     }
 
     @Override
     public void visit(BasicBlock node) {
-
+        if (BBVisited.contains(node)) return;
+        BBVisited.add(node);
+        out.println("%"+labelId(node)+":");
+        for (IRInstruction inst = node.getHead();inst != null;inst = inst.getNxt()) {
+            visit(inst);
+        }
     }
 
     @Override
     public void visit(Function node) {
+        regMap = new HashMap<>(); counterReg = new HashMap<>();
+        out.printf("func %s ",node.getConvertedName());
+        node.argVarRegList.forEach(reg->out.printf("$%s ",regId(reg)));
+        out.println("{\n");
+        node.getReversePostOrder().forEach(basicBlock->visit(basicBlock));
+        out.println("}\n");
+    }
 
+    public void visit(IRInstruction node) {
+        node.accept(this);
+    }
+
+    public void visit(BinaryOperationInstruction node) {
+        node.accept(this);
     }
 
     @Override
     public void visit(ArithmeticInstruction node) {
+        out.printf("    ");
+        String op = null;
+        switch (node.getOperator()) {
+            case ADD: op = "add"; break;
+            case SUB: op = "sub"; break;
+            case MUL: op = "mul"; break;
+            case DIV: op = "div"; break;
+            case MOD: op = "rem"; break;
+            case SHL: op = "shl"; break;
+            case SHR: op = "ashr"; break;
+            case AND: op = "and"; break;
+            case OR: op = "or"; break;
+            case XOR: op = "xor"; break;
+            default: assert false; break;
+        }
 
+        visit(node.getDest());
+        out.printf(" = %s ", op);
+        visit(node.getLhs());
+        out.printf(" ");
+        visit(node.getRhs());
+        out.println();
+    }
+    @Override
+    public void visit(ComparisionInstruction node) {
+        out.print("    ");
+        String op = null;
+        switch (node.getOperator()) {
+            case EQU: op = "seq"; break;
+            case NEQ: op = "sne"; break;
+            case GRTR: op = "sgt"; break;
+            case GEQ: op = "sge"; break;
+            case LESS: op = "slt"; break;
+            case LEQ: op = "sle"; break;
+            default: assert false; break;
+        }
+
+        visit(node.getDest());
+        out.printf(" = %s ", op);
+        visit(node.getLhs());
+        out.printf(" ");
+        visit(node.getRhs());
+        out.println();
     }
 
     @Override
     public void visit(UnaryOperationInstruction node) {
+        out.print("    ");
+        String op = null;
+        switch (node.getOperator()) {
+            case NEG: op = "neg"; break;
+            case COMP: op = "not"; break;
+            default: assert false;
+        }
 
-    }
-
-    @Override
-    public void visit(ComparisionInstruction node) {
-
+        visit(node.getDest());
+        out.printf(" = %s ", op);
+        visit(node.getOprand());
+        out.println();
     }
 
     @Override
     public void visit(CallInstruction node) {
-
+        out.print("    ");
+        if (node.getRegister() != null) {
+            visit(node.getRegister());
+            out.print(" = ");
+        }
+        out.printf("call %s ",node.getFunction().getConvertedName());
+        node.getArgArgRegList().forEach(arg -> {
+            arg.accept(this);
+            out.print(" ");
+        });
+        out.println();
     }
 
-    @Override
-    public void visit(BinaryOperationInstruction node) {
-
+    public void visit(EndInstruction node) {
+        node.accept(this);
     }
-
     @Override
     public void visit(BranchInstruction node) {
-
+        out.print("    br ");
+        visit(node.getIndicator());
+        out.println(" %" + labelId(node.getIfTrue()) + " %" + labelId(node.getIfFalse()));
+        out.println();
+    }
+    @Override
+    public void visit(JumpInstruction node) {
+        out.printf("    jump %%%s\n\n", labelId(node.getTarget()));
+    }
+    @Override
+    public void visit(ReturnInstruction node) {
+        out.print("    ret ");
+        if (node.getRetVal() != null)
+            visit(node.getRetVal());
+        out.println();
+        out.println();
     }
 
     @Override
     public void visit(HeapAllocateInstruction node) {
-
-    }
-
-    @Override
-    public void visit(JumpInstruction node) {
-
+        out.print("    ");
+        visit(node.getDest());
+        out.printf(" = alloc ");
+        visit(node.getAllocSize());
+        out.println();
     }
 
     @Override
     public void visit(LoadInstruction node) {
-
+        out.print("    ");
+        visit(node.getDest())
+        out.printf(" = load %d ", node.getSize());
+        visit(node.getAddr());
+        out.println(" " + node.getOffset());
     }
 
     @Override
     public void visit(MoveInstruction node) {
-
+        out.print("    ");
+        visit(node.getDest());
+        out.print(" = move ");
+        visit(node.getSource());
+        out.println();
     }
 
     @Override
     public void visit(StoreInstruction node) {
-
+        out.printf("    store %d ", node.getSize());
+        visit(node.getAddr());
+        out.print(" ");
+        visit(node.getValue());
+        out.println(" 0");
     }
 
+    public void visit(IntValue node) {
+        node.accept(this);
+    }
     @Override
     public void visit(VirtualRegister node) {
-
+        out.print("$" + regId(node));
     }
 
     @Override
@@ -133,18 +239,23 @@ public class IRPrinter implements IRVisitor {
 
     }
 
+    public void visit(StaticData node) {
+        node.accept(this);
+    }
     @Override
     public void visit(StaticSpace node) {
-
+        if (definingStatic) out.printf("space @%s %d\n", dataId(node), node.getLength());
+        else out.print("@" + dataId(node));
     }
 
     @Override
     public void visit(StaticString node) {
-
+        if (definingStatic) out.printf("asciiz @%s %s\n", dataId(node), node.getString());
+        else out.print("@" + dataId(node));
     }
 
     @Override
     public void visit(IntImmediate node) {
-
+        out.print(node.getVal());
     }
 }
