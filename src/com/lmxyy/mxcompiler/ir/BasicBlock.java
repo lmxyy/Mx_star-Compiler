@@ -76,6 +76,8 @@ public class BasicBlock {
             // Cannot reach here.
             assert false;
         }
+        if (head == tail) tail = head = null;
+        else tail = tail.getPre();
     }
 
     public Set<BasicBlock> getPred() {

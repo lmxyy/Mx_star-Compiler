@@ -52,7 +52,7 @@ public class SymbolTable {
                 offsetMap.put(name, 0);
             } else {
                 sizeMap.replace(className, offset + type.getRegisterSize());
-                offsetMap.put(name, 0);
+                offsetMap.put(name, offset);
             }
         }
     }
@@ -66,7 +66,7 @@ public class SymbolTable {
                 offsetMap.put(name, 0);
             } else {
                 sizeMap.replace(className, offset + type.getRegisterSize());
-                offsetMap.put(name, 0);
+                offsetMap.put(name, offset);
             }
         }
     }

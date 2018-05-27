@@ -1,4 +1,4 @@
-package com.lmxyy.mxcompiler;
+package com.lmxyy.mxcompiler.utils;
 
 import java.io.*;
 import java.util.*;

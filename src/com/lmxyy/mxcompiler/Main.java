@@ -1,6 +1,7 @@
 package com.lmxyy.mxcompiler;
 
 import com.lmxyy.mxcompiler.compiler.Compiler;
+import com.lmxyy.mxcompiler.utils.LLIRInterpreter;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -30,7 +31,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
-         String inFile = "/Users/limuyang/Desktop/Mx_star-Compiler/testcase/584.mx", outFile = null;
+         String inFile = "/Users/limuyang/Desktop/Mx_star-Compiler/testcase/irtest7.mx", outFile = null;
 //        String inFile = null,outFile = null;
         boolean isPrintHelp = false, isPrintVersion = false, isPrintConfig = false;
         for (int i = 0; i < args.length; ++i) {
@@ -91,5 +92,12 @@ public class Main {
             System.err.println("Compilation exited abnormally at "+formatter.format(new Date()));
             System.exit(1);
         }
+//        LLIRInterpreter llirInterpreter = new LLIRInterpreter(
+//                new FileInputStream("/Users/limuyang/Desktop/Mx_star-Compiler/ir.txt"),
+//                false
+//        );
+//        llirInterpreter.run();
+//        System.err.println("exitcode:  " + llirInterpreter.getExitcode());
+//        System.err.println("exception: " + llirInterpreter.exitException());
     }
 }

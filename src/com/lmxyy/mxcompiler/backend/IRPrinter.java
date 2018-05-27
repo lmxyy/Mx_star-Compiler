@@ -224,7 +224,7 @@ public class IRPrinter implements IRVisitor {
         visit(node.getAddr());
         out.print(" ");
         visit(node.getValue());
-        out.println(" 0");
+        out.printf(" %d\n",node.getOffset());
     }
 
     public void visit(IntValue node) {
