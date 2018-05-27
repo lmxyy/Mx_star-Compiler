@@ -23,7 +23,7 @@ public abstract class IRInstruction {
         assert removed == false;
         if (pre != null) pre.nxt = nxt;
         if (nxt != null) nxt.pre = pre;
-        else basicBlock.cleanEnd(this);
+        else basicBlock.cleanEnd();
         removed = true;
     }
 

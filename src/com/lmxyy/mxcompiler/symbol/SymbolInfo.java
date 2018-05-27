@@ -11,6 +11,7 @@ public class SymbolInfo {
     public boolean used;
 
     public SymbolInfo(VartypeNode _type,boolean _isClassGlobal) {
+        type = _type;
         isClassGlobal = _isClassGlobal;
     }
 

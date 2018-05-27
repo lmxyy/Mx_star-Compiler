@@ -1,6 +1,7 @@
 package com.lmxyy.mxcompiler.symbol;
 
 import com.lmxyy.mxcompiler.ast.VartypeNode;
+import com.lmxyy.mxcompiler.ir.Function;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -12,7 +13,8 @@ public class SymbolTable {
     private boolean isClass = false;
     private String className = null;
     private FunctionType inFun = null;
-    private int offset = 0;
+    private Map<String,Integer> sizeMap = new LinkedHashMap<>();
+    private Map<String,Integer> offsetMap = new LinkedHashMap<>();
 
     public SymbolTable(SymbolTable _enclosingScope) {
         enclosingScope = _enclosingScope;
@@ -42,11 +44,31 @@ public class SymbolTable {
 
     public void define(String name,VartypeNode type) {
         map.put(name,new SymbolInfo(type,false));
-        offset += type.getRegisterSize();
+        if (!(type instanceof FunctionType)&&name.contains(".")) {
+            String className  = name.split("[.]")[0];
+            Integer offset = sizeMap.get(className);
+            if (offset == null) {
+                sizeMap.put(className, type.getRegisterSize());
+                offsetMap.put(name, 0);
+            } else {
+                sizeMap.replace(className, offset + type.getRegisterSize());
+                offsetMap.put(name, 0);
+            }
+        }
     }
     public void define(String name,VartypeNode type,boolean isClassGlobal) {
         map.put(name,new SymbolInfo(type,isClassGlobal));
-        offset += type.getRegisterSize();
+        if (!(type instanceof FunctionType)&&name.contains(".")) {
+            String className = name.split("[.]")[0];
+            Integer offset = sizeMap.get(className);
+            if (offset == null) {
+                sizeMap.put(className, type.getRegisterSize());
+                offsetMap.put(name, 0);
+            } else {
+                sizeMap.replace(className, offset + type.getRegisterSize());
+                offsetMap.put(name, 0);
+            }
+        }
     }
 
     public SymbolInfo getCurInfo(String name) {
@@ -84,5 +106,12 @@ public class SymbolTable {
     }
     public SymbolTable getEnclosingScope() {
         return enclosingScope;
+    }
+
+    public int getMemorySize(String name) {
+        return sizeMap.get(name);
+    }
+    public int getOffset(String name) {
+        return offsetMap.get(name);
     }
 }

@@ -1,0 +1,11 @@
+int N = 100000;
+int main()
+{
+    int sum = 0,i = 0;
+    while (i < N)
+    {
+	sum = sum+i;
+	i++;
+    }
+    return 0;
+}

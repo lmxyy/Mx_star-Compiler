@@ -1,5 +1,7 @@
 package com.lmxyy.mxcompiler.ir;
 
+import com.lmxyy.mxcompiler.backend.IRPrinter;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,6 +16,17 @@ public class BasicBlock {
         if (_hintName == null) hintName = "$block";
         else hintName = _hintName;
         head = tail = null;
+    }
+
+    private void addSucc(BasicBlock basicBlock) {
+        if (basicBlock == null) return;
+        succ.add(basicBlock);
+        basicBlock.pred.add(this);
+    }
+    private void delSucc(BasicBlock basicBlock) {
+        if (basicBlock == null) return;
+        succ.remove(basicBlock);
+        basicBlock.pred.remove(this);
     }
 
     public void append(IRInstruction node) {
@@ -31,13 +44,38 @@ public class BasicBlock {
         if (ended) return;
         append(ender);
         ended = true;
-        if (ender instanceof JumpInstruction)
-            succ.add(((JumpInstruction) ender).getTarget());
+        if (ender instanceof JumpInstruction) {
+            addSucc(((JumpInstruction) ender).getTarget());
+        }
+        else if (ender instanceof ReturnInstruction) {
+            parent.retInstruction.add((ReturnInstruction) ender);
+        }
+        else if (ender instanceof BranchInstruction) {
+            addSucc(((BranchInstruction) ender).getIfTrue());
+            addSucc(((BranchInstruction) ender).getIfFalse());
+        }
+        else {
+            // Cannot reach here.
+            assert false;
+        }
     }
-    public void cleanEnd(IRInstruction node) {
+    public void cleanEnd() {
         if (!ended) return;
         ended = false;
-
+        if (tail instanceof JumpInstruction) {
+            delSucc(((JumpInstruction) tail).getTarget());
+        }
+        else if (tail instanceof ReturnInstruction) {
+            parent.retInstruction.remove((ReturnInstruction) tail);
+        }
+        else if (tail instanceof BranchInstruction) {
+            delSucc(((BranchInstruction) tail).getIfTrue());
+            delSucc(((BranchInstruction) tail).getIfFalse());
+        }
+        else {
+            // Cannot reach here.
+            assert false;
+        }
     }
 
     public Set<BasicBlock> getPred() {

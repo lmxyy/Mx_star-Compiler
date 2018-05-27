@@ -51,8 +51,9 @@ public class VartypeNode extends Node {
     public boolean isClass() { return type.getType() == Type.Types.CLASS&&type.getDimension() == 0; }
     public boolean isUB() { return type.getType() == Type.Types.UB; }
 
-    public int getMemorySize() {
-        return 0;
+    public VartypeNode getRecessionType(int index) {
+        assert type.getDimension() >= index;
+        return new VartypeNode(new Type(type.getType(),type.getDimension()-index), name);
     }
 
     @Override

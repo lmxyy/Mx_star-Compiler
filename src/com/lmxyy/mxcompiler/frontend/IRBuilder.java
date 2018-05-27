@@ -115,14 +115,17 @@ public class IRBuilder implements ASTVisitor {
         }
     }
 
-    private StmtNode getForStatement(
+    private ForStmtNode getForStatement(
             List<List<Node>> inits,ExpressionNode [] conds,List<List<Node>> steps,
             AssignmentNode assignment,int now,int tot
     ) {
         if (now == tot-1) {
             List<Node> stmts = new ArrayList<>();
             stmts.add(assignment);
-            return new BlockNode(stmts);
+            return new ForStmtNode(
+                    null,inits.get(now),conds[now],
+                    steps.get(now),new BlockNode(stmts)
+            );
         }
         else {
             List<Node> stmts = new ArrayList<>();
@@ -135,76 +138,97 @@ public class IRBuilder implements ASTVisitor {
     }
     private ExpressionNode getLhs(
             VirtualRegister[] virtualRegisters,int tot,int now,
-            IdentifierNode base,IdentifierNode[] identifierNodes
+            IdentifierNode base,IdentifierNode[] identifierNodes,VartypeNode baseType
     ) {
         if (now == -1) {
             List<ExprNode> exprs = new ArrayList<>();exprs.add(base);
-            return new ExpressionNode(exprs,null,new ExprOperator(ExprOperator.Operator.SELF),false);
+            return new ExpressionNode(
+                    exprs,null,new ExprOperator(ExprOperator.Operator.SELF), false
+            ){{
+                setType(baseType);
+            }};
         }
         else {
-            ExpressionNode array = getLhs(virtualRegisters,tot,now-1,base,identifierNodes);
+            ExpressionNode array = getLhs(virtualRegisters,tot,now-1,base,identifierNodes,baseType);
             List<ExprNode> exprs = new ArrayList<>(); exprs.add(identifierNodes[now]);
             ExpressionNode subscript = new ExpressionNode(
                     exprs,null,
                     new ExprOperator(ExprOperator.Operator.SELF),false
-            );
+            ){{
+                setType(GlobalSymbolTable.intType);
+            }};
             exprs = new ArrayList<>(); exprs.add(array); exprs.add(subscript);
             return  new ExpressionNode(
                     exprs,null,
                     new ExprOperator(ExprOperator.Operator.ARRAY),false
-            );
+            ){{
+                VartypeNode arrayType = getExprs().get(0).getType();
+                setType(arrayType.getRecessionType(1));
+            }};
         }
     }
     private void processNewArray(IntValue addr,VartypePlusNode node) {
         int n = node.getDims().size();
-        VirtualRegister [] virtualRegisters = new VirtualRegister[n-1];
-        IdentifierNode [] identifierNodes = new IdentifierNode[n-1];
-        VariableNode [] variableNodes = new VariableNode[n-1];
+        VirtualRegister [] virtualRegisters = new VirtualRegister[n];
+        IdentifierNode [] identifierNodes = new IdentifierNode[n];
+        VariableNode [] variableNodes = new VariableNode[n];
 
         List<List<Node>> inits = new ArrayList<List<Node>>();
-        ExpressionNode [] conds = new ExpressionNode[n-1];
+        ExpressionNode [] conds = new ExpressionNode[n];
         List<List<Node>> steps = new ArrayList<List<Node>>();
-        for (int i = 0;i < n-1;++i) {
-            virtualRegisters[i] = new VirtualRegister(null);
+        for (int i = 0;i < n;++i) {
+            virtualRegisters[i] = new VirtualRegister("myloopvariable");
             identifierNodes[i] = new IdentifierNode(null);
-            identifierNodes[i].intValue =virtualRegisters[i];
+            identifierNodes[i].intValue = virtualRegisters[i];
+            identifierNodes[i].setType(GlobalSymbolTable.intType);
             variableNodes[i] = new VariableNode(null,identifierNodes[i],null,false);
+            variableNodes[i].setType(GlobalSymbolTable.intType);
 
             ExpressionNode lhs = null,rhs = null;
             List<ExprNode> lhsList = null,rhsList = null;
 
             lhsList = new ArrayList<>(); rhsList = new ArrayList<>();
-            lhsList.add(variableNodes[i]); rhsList.add(new IntegerliteralNode(0));
+            lhsList.add(variableNodes[i]);
+            rhsList.add(new IntegerliteralNode(0){{setType(GlobalSymbolTable.intType);}});
             lhs = new ExpressionNode(lhsList,null,new ExprOperator(SELF),false);
+            lhs.setType(GlobalSymbolTable.intType);
             rhs = new ExpressionNode(rhsList,null,new ExprOperator(SELF),false);
+            rhs.setType(GlobalSymbolTable.intType);
             inits.add(new ArrayList<>());
             inits.get(i).add(new AssignmentNode(lhs,rhs));
 
             lhsList = new ArrayList<>();
             lhsList.add(variableNodes[i]); lhsList.add(node.getDims().get(i));
             conds[i] = new ExpressionNode(lhsList,null,new ExprOperator(LESS),false);
+            conds[i].setType(GlobalSymbolTable.boolType);
 
             lhsList = new ArrayList<>();
             lhsList.add(variableNodes[i]);
             steps.add(new ArrayList<>());
-            steps.get(i).add(new ExpressionNode(lhsList,null,new ExprOperator(PINC),false));
+            steps.get(i).add(new ExpressionNode(lhsList,null,new ExprOperator(PINC),false){{
+                setType(GlobalSymbolTable.intType);
+            }});
         }
 
         IdentifierNode base = new IdentifierNode(null);
         base.intValue = addr;
         for (int i = 1;i < n;++i) {
-            ExpressionNode lhs = getLhs(virtualRegisters,i,i-1,base,identifierNodes);
             List<ExprNode> exprs = new ArrayList<>(); exprs.add(identifierNodes[i]);
             ExpressionNode dim = new ExpressionNode(exprs,null,new ExprOperator(SELF),false);
             List<ExpressionNode> dims = new ArrayList<>(); dims.add(dim);
+            VartypePlusNode vartypePlusNode = new VartypePlusNode(
+                    new Type(
+                            node.getType().getType(),node.getType().getDimension()-i
+                    ),
+                    node.getName(),dims
+            );
+            ExpressionNode lhs = getLhs(virtualRegisters,i,i-1,base,identifierNodes,node.toVartypeNode());
+            lhs.setType(vartypePlusNode.toVartypeNode());
             ExpressionNode rhs = new ExpressionNode(
-                    null,new VartypePlusNode(
-                            new Type(
-                                    node.getType().getType(),node.getType().getDimension()-i),
-                                    node.getName(),dims
-                            ),
+                    null,vartypePlusNode,
                     new ExprOperator(NEW),false
             );
+            rhs.setType(vartypePlusNode.toVartypeNode());
             AssignmentNode assignment = new AssignmentNode(lhs,rhs);
             visit(getForStatement(inits,conds,steps,assignment,0,i));
         }
@@ -217,12 +241,12 @@ public class IRBuilder implements ASTVisitor {
         }
 
         VartypeNode type = node.getType();
-        VirtualRegister reg = new VirtualRegister(null);
+        VirtualRegister reg = new VirtualRegister("newaddress");
 
         if (type.isClass()) {
             curBasicBlock.append(new HeapAllocateInstruction(
                     curBasicBlock,reg,
-                    new IntImmediate(globalSymbolTable.getMemorySize(type.getName()))
+                    new IntImmediate(globalSymbolTable.globals.getMemorySize(type.getName()))
                     )
             );
             Function constructor = irRoot.functions.get(node.getVartype().getName());
@@ -362,7 +386,7 @@ public class IRBuilder implements ASTVisitor {
             case ADD: call = new CallInstruction(curBasicBlock,reg,irRoot.stringConcat); break;
             case EQU: call = new CallInstruction(curBasicBlock,reg,irRoot.stringEqual); break;
             case LESS: case GRTR: call = new CallInstruction(curBasicBlock,reg,irRoot.stringLess); break;
-            case LEQ: case GEQ: call = new CallInstruction(curBasicBlock,reg,irRoot.stringLessOrEqual); break;
+            case LEQ: case GEQ: call = new CallInstruction(curBasicBlock,reg,irRoot.stringLeq); break;
             default: assert false; break;
         }
         call.appendArgReg(lhs.intValue);
@@ -391,12 +415,14 @@ public class IRBuilder implements ASTVisitor {
             if (node instanceof CallfunNode) {
                 FunctionType functionType = null;
                 if (className != null) {
-                    functionType = (FunctionType) globalSymbolTable.resolveType(
+                    functionType = (FunctionType) globalSymbolTable.globals.getTypeInfo(
                             className+"."+ ((CallfunNode) node).getName()
                     );
                 }
                 if (functionType == null) {
-                    functionType = (FunctionType) globalSymbolTable.resolveType(((CallfunNode) node).getName());
+                    functionType = (FunctionType) globalSymbolTable.globals.getTypeInfo(
+                            ((CallfunNode) node).getName()
+                    );
                     if (functionType == GlobalSymbolTable.funcToString)
                         flag = true;
                 }
@@ -559,10 +585,14 @@ public class IRBuilder implements ASTVisitor {
             curFunction.argVarRegList.add(new VirtualRegister("this"));
         }
         curBasicBlock = curFunction.startBasicBlock;
+
         isFunArg = true;
-        node.getParameterList().forEach(param -> param.accept(this));
+        node.getParameterList().forEach(param->param.accept(this));
         isFunArg = false;
 
+        if (curFunction.getName().equals("main")) {
+            curBasicBlock.append(new CallInstruction(curBasicBlock,null,irRoot.functions.get("__init")));
+        }
         visit(node.getBody());
         if (!curBasicBlock.isEnded()) {
             if (node.getReturnType().isVoid())
@@ -595,16 +625,18 @@ public class IRBuilder implements ASTVisitor {
     @Override
     public void visit(DefvarNode node) {
         SymbolInfo info = node.scope.getInfo(node.getName());
-        if (node.scope != globalSymbolTable.globals&&curBasicBlock.isEnded()) {
+        if (curBasicBlock.isEnded()) {
             WarningInfo.uselessStatement(node.location());
             return;
         }
         if (node.getInit() != null) {
             visit(node.getInit());
             assign(
-                    false, node.getInit().getVartype().getRegisterSize(),
+                    false, node.getInit().getType().getRegisterSize(),
                     info.register, 0, node.getInit()
             );
+            if (isFunArg)
+                curFunction.argVarRegList.add((VirtualRegister) info.register);
         }
     }
 
@@ -612,44 +644,44 @@ public class IRBuilder implements ASTVisitor {
     public void visit(DefclassNode node) {
         className = node.getName();
         node.getFunMembers().forEach(fun->fun.accept(this));
+        curFunction = irRoot.functions.get(node.getName());
+        curBasicBlock = curFunction.startBasicBlock;
+        VirtualRegister thisReg = new VirtualRegister("this");
+        curFunction.argVarRegList.add(thisReg);
+
+        for (DefvarNode defvar:node.getVarMembers()) {
+            if (defvar.getInit() != null) {
+                visit(defvar.getInit());
+                assign(
+                        true,defvar.getInit().getType().getRegisterSize(),thisReg,
+                        globalSymbolTable.globals.getOffset(className+"."+defvar.getName()), defvar.getInit()
+                );
+            }
+        }
+
         if (node.getConstructor() != null) {
             DefunNode constructor = node.getConstructor();
-            curFunction = irRoot.functions.get(node.getName());
-            VirtualRegister thisReg = new VirtualRegister("this");
-            curFunction.argVarRegList.add(thisReg);
-            curBasicBlock = curFunction.startBasicBlock;
 
             isFunArg = true;
             constructor.getParameterList().forEach(param -> param.accept(this));
             isFunArg = false;
 
-            for (DefvarNode defvar:node.getVarMembers()) {
-                if (defvar.getInit() != null) {
-                    visit(defvar.getInit());
-                    assign(
-                            true,defvar.getInit().getVartype().getRegisterSize(),thisReg,
-                            globalSymbolTable.getOffset(className+"."+defvar.getName()), defvar.getInit()
-                    );
-                }
-            }
-
             visit(constructor.getBody());
-            if (!curBasicBlock.isEnded()) {
-                curBasicBlock.end(new ReturnInstruction(curBasicBlock, null));
-            }
-
-            // merge all return blocks to one block
-            if (curFunction.retInstruction.size() > 1) {
-                BasicBlock exitBasicBlock = new BasicBlock(curFunction, curFunction.getName() + ".exit");
-                for (ReturnInstruction ret : curFunction.retInstruction) {
-                    BasicBlock basicBlock = ret.getBasicBlock();
-                    ret.remove();
-                    basicBlock.end(new JumpInstruction(basicBlock, exitBasicBlock));
-                }
-                curFunction.retInstruction.clear();
-            }
-            else curFunction.exitBasicBlock = curFunction.retInstruction.get(0).getBasicBlock();
         }
+        if (!curBasicBlock.isEnded()) {
+            curBasicBlock.end(new ReturnInstruction(curBasicBlock, null));
+        }
+        // merge all return blocks to one block
+        if (curFunction.retInstruction.size() > 1) {
+            BasicBlock exitBasicBlock = new BasicBlock(curFunction, curFunction.getName() + ".exit");
+            for (ReturnInstruction ret : curFunction.retInstruction) {
+                BasicBlock basicBlock = ret.getBasicBlock();
+                ret.remove();
+                basicBlock.end(new JumpInstruction(basicBlock, exitBasicBlock));
+            }
+            curFunction.retInstruction.clear();
+        }
+        else curFunction.exitBasicBlock = curFunction.retInstruction.get(0).getBasicBlock();
         className = null;
     }
 
@@ -697,7 +729,7 @@ public class IRBuilder implements ASTVisitor {
         if (node.isHasElse()) {
             curBasicBlock = basicBlockFalse;
             visit(node.getBlock2());
-            basicBlockTrue.end(new JumpInstruction(curBasicBlock,basicBlockAfter));
+            basicBlockFalse.end(new JumpInstruction(curBasicBlock,basicBlockAfter));
         }
 
         curBasicBlock = basicBlockAfter;
@@ -755,9 +787,9 @@ public class IRBuilder implements ASTVisitor {
         curBasicBlock.end(new JumpInstruction(curBasicBlock,basicBlockCond));
         curBasicBlock = basicBlockCond;
         if (node.getCond() != null) {
-            visit(node.getCond());
             node.getCond().basicBlockTrue = basicBlockLoop;
             node.getCond().basicBlockFalse = basicBlockAfter;
+            visit(node.getCond());
         }
 
         curBasicBlock.end(new JumpInstruction(curBasicBlock,basicBlockLoop));
@@ -807,14 +839,15 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(IdentifierNode node) {
-        if (node.getName().contains("$")) return;
+        if (node.getName() == null)
+            return;
         SymbolInfo info = node.scope.getInfo(node.getName());
         info.used = true;
         if (info.isClassGlobal()) {
             VirtualRegister reg = new VirtualRegister(null);
             node.intValue = reg;
             IntValue address = curFunction.argVarRegList.get(0);
-            IntValue offset = new IntImmediate(globalSymbolTable.getOffset(className+"."+node.getName()));
+            IntValue offset = new IntImmediate(globalSymbolTable.globals.getOffset(className+"."+node.getName()));
             curBasicBlock.append(new ArithmeticInstruction(
                     curBasicBlock,reg,
                     BinaryOperationInstruction.Operator.ADD,
@@ -870,11 +903,11 @@ public class IRBuilder implements ASTVisitor {
             needAddr = oldNeedAddr;
 
             IntValue address = record.intValue;
-            int offset = globalSymbolTable.getOffset(
-                    node.getType().getName() + "." + ((IdentifierNode) member).getName()
+            int offset = globalSymbolTable.globals.getOffset(
+                    record.getType().getName() + "." + ((IdentifierNode) member).getName()
             );
-            VartypeNode type = globalSymbolTable.resolveType(
-                    node.getType().getName() + "." + ((IdentifierNode) member).getName()
+            VartypeNode type = globalSymbolTable.globals.getTypeInfo(
+                    record.getType().getName() + "." + ((IdentifierNode) member).getName()
             );
             if (needAddr) {
                 node.address = address;
@@ -904,7 +937,7 @@ public class IRBuilder implements ASTVisitor {
             return;
         }
         FunctionType functionType = null;
-        if (className != null&&globalSymbolTable.resolveType(className+"."+node.getName()) != null) {
+        if (className != null&&globalSymbolTable.globals.getTypeInfo(className+"."+node.getName()) != null) {
             Function function = irRoot.functions.get(className+"."+node.getName());
             node.getParams().forEach(param -> param.accept(this));
             VirtualRegister reg = new VirtualRegister(null);
@@ -915,7 +948,7 @@ public class IRBuilder implements ASTVisitor {
             node.intValue = reg;
         }
         else {
-            functionType = (FunctionType) globalSymbolTable.resolveType(node.getName());
+            functionType = (FunctionType) globalSymbolTable.globals.getTypeInfo(node.getName());
             if (globalSymbolTable.isBuiltinMethod(functionType)) {
                 processBuiltinMethod(node,functionType);
             }
@@ -948,7 +981,7 @@ public class IRBuilder implements ASTVisitor {
 
         IntValue addr = isMemOp?lhs.address:lhs.intValue;
         int offset = isMemOp?lhs.offset:0;
-        assign(isMemOp,rhs.getVartype().getRegisterSize(),addr,offset,rhs);
+        assign(isMemOp,rhs.getType().getRegisterSize(),addr,offset,rhs);
     }
 
     @Override
@@ -962,7 +995,13 @@ public class IRBuilder implements ASTVisitor {
             node.getExprs().get(0).basicBlockFalse = node.basicBlockFalse;
             node.getExprs().get(0).basicBlockTrue = node.basicBlockTrue;
             visit(node.getExprs().get(0));
-            node.intValue = node.getExprs().get(0).intValue;
+            if (!needAddr) {
+                node.intValue = node.getExprs().get(0).intValue;
+            }
+            else {
+                node.address = node.getExprs().get(0).address;
+                node.offset = node.getExprs().get(0).offset;
+            }
         }
         else if (op == ExprOperator.Operator.MEM) {
             ExprNode record = node.getExprs().get(0),member = node.getExprs().get(1);
@@ -973,11 +1012,11 @@ public class IRBuilder implements ASTVisitor {
 
             if (member instanceof IdentifierNode) {
                 IntValue address = record.intValue;
-                int offset = globalSymbolTable.getOffset(
-                        node.getVartype().getName() + "." + ((IdentifierNode) member).getName()
+                int offset = globalSymbolTable.globals.getOffset(
+                        node.getType().getName() + "." + ((IdentifierNode) member).getName()
                 );
-                VartypeNode type = globalSymbolTable.resolveType(
-                        node.getVartype().getName() + "." + ((IdentifierNode) member).getName()
+                VartypeNode type = globalSymbolTable.globals.getTypeInfo(
+                        node.getType().getName() + "." + ((IdentifierNode) member).getName()
                 );
                 if (needAddr) {
                     node.address = address;
@@ -1000,14 +1039,14 @@ public class IRBuilder implements ASTVisitor {
                     processBuiltinMethod(node,GlobalSymbolTable.arraySize);
                 }
                 else if (record.getType().isString()) {
-                    FunctionType functionType = (FunctionType) globalSymbolTable.resolveType(
+                    FunctionType functionType = (FunctionType) globalSymbolTable.globals.getTypeInfo(
                             "string." + ((CallfunNode) member).getName()
                     );
                     processBuiltinMethod(node,functionType);
                 }
                 else {
-                    FunctionType functionType = (FunctionType) globalSymbolTable.resolveType(
-                            node.getVartype().getName() + "." + ((CallfunNode) member).getName()
+                    FunctionType functionType = (FunctionType) globalSymbolTable.globals.getTypeInfo(
+                            node.getType().getName() + "." + ((CallfunNode) member).getName()
                     );
                     Function function = irRoot.functions.get(functionType.getName());
                     if (globalSymbolTable.isBuiltinMethod(functionType))
@@ -1045,7 +1084,7 @@ public class IRBuilder implements ASTVisitor {
         }
         else if (op == ExprOperator.Operator.NEW)
             processNewExpr(node);
-        if (op == ExprOperator.Operator.EQU||op == ExprOperator.Operator.NEQ
+        else if (op == ExprOperator.Operator.EQU||op == ExprOperator.Operator.NEQ
                 ||op == LESS||op == ExprOperator.Operator.LEQ
                 ||op == ExprOperator.Operator.GRTR||op == ExprOperator.Operator.GEQ) {
             ExprNode lhs = node.getExprs().get(0),rhs = node.getExprs().get(1);
@@ -1099,7 +1138,8 @@ public class IRBuilder implements ASTVisitor {
             VirtualRegister reg = new VirtualRegister(null);
 
             curBasicBlock = basicBlockTrue;
-            visit(lhs);basicBlockTrue.append(new MoveInstruction(basicBlockTrue,lhs.intValue,reg));
+            visit(lhs);
+            basicBlockTrue.append(new MoveInstruction(basicBlockTrue,lhs.intValue,reg));
             basicBlockTrue.end(new JumpInstruction(basicBlockTrue,merge));
 
             curBasicBlock = basicBlockFalse;
@@ -1118,8 +1158,18 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(ProgNode node) {
-        node.getDefs().forEach(def -> def.accept(this));
-        // To be completed here.
+        curFunction = irRoot.functions.get("__init");
+        curBasicBlock = curFunction.startBasicBlock;
+        node.getDefs().forEach(def -> {
+            if (def instanceof DefvarNode)
+                def.accept(this);
+        });
+        curBasicBlock.end(new ReturnInstruction(curBasicBlock,null));
+        curFunction = null;
+        node.getDefs().forEach(def -> {
+            if (!(def instanceof DefvarNode))
+                def.accept(this);
+        });
     }
 
     public void visit(Node node) {

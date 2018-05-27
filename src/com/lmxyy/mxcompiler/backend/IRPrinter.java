@@ -30,7 +30,7 @@ public class IRPrinter implements IRVisitor {
     private String regId(VirtualRegister reg) {
         String id = regMap.get(reg);
         if (id == null) {
-            id = newId(reg.getHintName() == null?reg.getHintName():"t",counterReg);
+            id = newId(reg.getHintName() != null?reg.getHintName():"t",counterReg);
             regMap.put(reg,id);
         }
         return id;
@@ -73,7 +73,7 @@ public class IRPrinter implements IRVisitor {
 
     @Override
     public void visit(Function node) {
-        regMap = new HashMap<>(); counterReg = new HashMap<>();
+        regMap = new HashMap<>(); counterReg = new IdentityHashMap<>();
         out.printf("func %s ",node.getConvertedName());
         node.argVarRegList.forEach(reg->out.printf("$%s ",regId(reg)));
         out.println("{\n");
@@ -186,6 +186,7 @@ public class IRPrinter implements IRVisitor {
         out.print("    ret ");
         if (node.getRetVal() != null)
             visit(node.getRetVal());
+        else out.print("0");
         out.println();
         out.println();
     }
@@ -202,7 +203,7 @@ public class IRPrinter implements IRVisitor {
     @Override
     public void visit(LoadInstruction node) {
         out.print("    ");
-        visit(node.getDest())
+        visit(node.getDest());
         out.printf(" = load %d ", node.getSize());
         visit(node.getAddr());
         out.println(" " + node.getOffset());

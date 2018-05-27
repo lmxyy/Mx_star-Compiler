@@ -5,7 +5,8 @@ import com.lmxyy.mxcompiler.ir.*;
 import com.lmxyy.mxcompiler.symbol.FunctionType;
 import com.lmxyy.mxcompiler.symbol.GlobalSymbolTable;
 import com.lmxyy.mxcompiler.symbol.SymbolInfo;
-import com.lmxyy.mxcompiler.utils.WarningInfo;
+
+import java.util.ArrayList;
 
 public class IRPrebuilder implements ASTVisitor {
     private GlobalSymbolTable globalSymbolTable;
@@ -21,11 +22,13 @@ public class IRPrebuilder implements ASTVisitor {
     public void visit(DefunNode node) {
         Function function = null;
         if (className == null)
-            function = new Function((FunctionType) globalSymbolTable.resolveType(node.getName()));
+            function = new Function((FunctionType) globalSymbolTable.globals.getTypeInfo(node.getName()));
         else
-            function = new Function((FunctionType) globalSymbolTable.resolveType(
+            function = new Function((FunctionType) globalSymbolTable.globals.getTypeInfo(
                     className+"."+node.getName()));
         irRoot.functions.put(function.getType().getName(),function);
+        node.getParameterList().forEach(param->param.accept(this));
+        visit(node.getBody());
     }
 
     @Override
@@ -44,9 +47,7 @@ public class IRPrebuilder implements ASTVisitor {
     @Override
     public void visit(DefclassNode node) {
         className = node.getName();
-        if (node.getConstructor() != null) {
-            irRoot.functions.put(className,new Function(globalSymbolTable.resolveConstructor(className)));
-        }
+        irRoot.functions.put(className,new Function(globalSymbolTable.resolveConstructor(className)));
         node.getFunMembers().forEach(fun->fun.accept(this));
         className = null;
     }
@@ -143,13 +144,14 @@ public class IRPrebuilder implements ASTVisitor {
     @Override
     public void visit(ProgNode node) {
         node.getDefs().forEach(def->def.accept(this));
+        FunctionType functionType = new FunctionType(
+                GlobalSymbolTable.voidType,"_init",
+                new ArrayList<VartypeNode>(),new ArrayList<String>()
+        );
+        irRoot.functions.put("__init",new Function(functionType));
     }
 
     public void visit(StmtNode node) {
         node.accept(this);
-    }
-
-    public IRRoot getIrRoot() {
-        return irRoot;
     }
 }

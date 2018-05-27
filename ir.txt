@@ -1,0 +1,51 @@
+asciiz @string \n
+
+func main {
+
+%main.entry:
+    call _init 
+    $n = move 5
+    $sum = move 0
+    $i = move 1
+    jump %for_cond
+
+%for_cond:
+    $t = sle $i $n
+    br $t %for_loop %for_after
+
+%for_after:
+    ret $sum
+
+%for_loop:
+    $j = move 1
+    jump %for_cond_2
+
+%for_cond_2:
+    $t_2 = sle $j $n
+    br $t_2 %for_loop_2 %for_after_2
+
+%for_after_2:
+    jump %for_step
+
+%for_step:
+    $i = add $i 1
+    jump %for_cond
+
+%for_loop_2:
+    $t_3 = add $sum $i
+    $sum = move $t_3
+    jump %for_step_2
+
+%for_step_2:
+    $j = add $j 1
+    jump %for_cond_2
+
+}
+
+func _init {
+
+%_init.entry:
+    ret 0
+
+}
+

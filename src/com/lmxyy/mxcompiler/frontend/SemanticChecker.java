@@ -291,7 +291,7 @@ public class SemanticChecker implements ASTVisitor {
     @Override
     public void visit(VartypePlusNode node) {
         node.scope = curScope;
-        assert false;
+        node.getDims().forEach(dim->dim.accept(this));
     }
 
     @Override
@@ -673,7 +673,7 @@ public class SemanticChecker implements ASTVisitor {
             }
             else if (lhs.getType().getType().getDimension() > 0) {
                 if (rhs instanceof CallfunNode) {
-                    VartypeNode type = globalSymbolTable.globals.getTypeInfo("#array."+((CallfunNode) rhs).getName());
+                    VartypeNode type = globalSymbolTable.globals.getTypeInfo("_array."+((CallfunNode) rhs).getName());
                     if (type == null) {
                         node.setType(GlobalSymbolTable.ubType);
                         semanticError.hasNoMember(rhs.location(),lhs.getType(),((CallfunNode) rhs).getName());
@@ -782,6 +782,7 @@ public class SemanticChecker implements ASTVisitor {
         }
         else if (op == ExprOperator.Operator.NEW) {
             VartypePlusNode vartype = node.getVartype();
+            visit(vartype);
             if (vartype.getType().getDimension() == 0) {
                 if (vartype.getType().getType() == Type.Types.CLASS) {
                     if (globalSymbolTable.resolveType(vartype.getName()) == null) {
@@ -834,6 +835,11 @@ public class SemanticChecker implements ASTVisitor {
                         return;
                     }
                     else {
+                        node.getVartype().getDims().forEach(dim->{
+                            if(!(dim.getType().isInt())) {
+                                semanticError.expectType(dim.location(),GlobalSymbolTable.intType,dim.getType());
+                            }
+                        });
                         node.setType(vartype.toVartypeNode());
                         return;
                     }

@@ -25,11 +25,7 @@ public class Function {
         if (type == null) return null;
         else {
             String name = type.getName();
-            if (name.contains(".")) {
-                String [] strings = name.split(".");
-                return "_"+strings[0]+strings[1];
-            }
-            else return name;
+            return name;
         }
     }
     public String getName() {

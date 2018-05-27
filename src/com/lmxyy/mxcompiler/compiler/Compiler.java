@@ -2,6 +2,7 @@ package com.lmxyy.mxcompiler.compiler;
 
 import com.lmxyy.mxcompiler.ast.IdentifierNode;
 import com.lmxyy.mxcompiler.ast.ProgNode;
+import com.lmxyy.mxcompiler.backend.IRPrinter;
 import com.lmxyy.mxcompiler.frontend.ASTBuilder;
 import com.lmxyy.mxcompiler.frontend.IRBuilder;
 import com.lmxyy.mxcompiler.frontend.IRPrebuilder;
@@ -18,6 +19,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -59,6 +61,10 @@ public class Compiler {
         IRPrebuilder irPrebuilder = new IRPrebuilder(globalSymbolTable,irRoot);
         ast.accept(irPrebuilder);
         IRBuilder irBuilder = new IRBuilder(globalSymbolTable,irRoot);
+        irBuilder.visit(ast);
+        String irInfoPath = "/Users/limuyang/Desktop/Mx_star-Compiler/ir.txt";
+        IRPrinter irPrinter = new IRPrinter(new PrintStream(irInfoPath));
+        irPrinter.visit(irRoot);
     }
 
     public boolean run() throws Exception{

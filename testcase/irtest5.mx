@@ -1,0 +1,5 @@
+int main()
+{
+    int [][][] A = new int [5][6][9];
+    return 0;
+}
