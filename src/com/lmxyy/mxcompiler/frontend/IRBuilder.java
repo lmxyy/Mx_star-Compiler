@@ -27,6 +27,8 @@ public class IRBuilder implements ASTVisitor {
 
     private boolean needMemoryAccess(Node node) {
         if (node instanceof IdentifierNode) {
+            if (((IdentifierNode) node).getName() == null)
+                return false;
             SymbolInfo info = node.scope.getInfo(((IdentifierNode) node).getName());
             if (info.isClassGlobal()) {
                 return true;
@@ -44,13 +46,8 @@ public class IRBuilder implements ASTVisitor {
         } else if (node instanceof ExpressionNode) {
             if (((ExpressionNode) node).getOp().getOp() == MEM) return true;
             else if (((ExpressionNode) node).getOp().getOp() == ARRAY) return true;
-            else if (((ExpressionNode) node).getOp().getOp() == SELF
-                    && needMemoryAccess(((ExpressionNode) node).getExprs().get(0)))
-                return true;
-            else if (((ExpressionNode) node).getOp().getOp() == TRN &&
-                    (needMemoryAccess(((ExpressionNode) node).getExprs().get(1))
-                            || needMemoryAccess(((ExpressionNode) node).getExprs().get(2))))
-                return true;
+            else if (((ExpressionNode) node).getOp().getOp() == SELF)
+                return needMemoryAccess(((ExpressionNode) node).getExprs().get(0));
             return false;
         } else return false;
     }
@@ -226,11 +223,8 @@ public class IRBuilder implements ASTVisitor {
         IdentifierNode base = new IdentifierNode(null);
         base.intValue = addr;
         for (int i = 1; i < n; ++i) {
-            List<ExprNode> exprs = new ArrayList<>();
-            exprs.add(identifierNodes[i]);
-            ExpressionNode dim = new ExpressionNode(exprs, null, new ExprOperator(SELF), false);
             List<ExpressionNode> dims = new ArrayList<>();
-            dims.add(dim);
+            dims.add(node.getDims().get(i));
             VartypePlusNode vartypePlusNode = new VartypePlusNode(
                     new Type(
                             node.getType().getType(), node.getType().getDimension() - i
@@ -670,7 +664,8 @@ public class IRBuilder implements ASTVisitor {
             curFunction.retInstruction.clear();
             exitBasicBlock.end(new ReturnInstruction(exitBasicBlock,newRetVal));
         } else curFunction.exitBasicBlock = curFunction.retInstruction.get(0).getBasicBlock();
-        // remove unreachable block: to be completed
+
+        curFunction.exitBasicBlock.getPred().retainAll(curFunction.getReversePostOrder());
         // Write something here.
     }
 
@@ -741,6 +736,7 @@ public class IRBuilder implements ASTVisitor {
             curFunction.retInstruction.clear();
         }
         else curFunction.exitBasicBlock = curFunction.retInstruction.get(0).getBasicBlock();
+        curFunction.exitBasicBlock.getPred().retainAll(curFunction.getReversePostOrder());
         className = null;
     }
 
