@@ -528,9 +528,7 @@ public class IRBuilder implements ASTVisitor {
                 curBasicBlock.append(
                         new LoadInstruction(
                                 curBasicBlock, reg, 1,
-                                reg, CompilerOption.getSizeInt()
-                        )
-                );
+                                reg, CompilerOption.getSizeInt()));
                 node.intValue = reg;
             }
 
@@ -541,36 +539,101 @@ public class IRBuilder implements ASTVisitor {
         ExprNode lhs = node.getExprs().get(0), rhs = node.getExprs().get(1);
         visit(lhs);
         visit(rhs);
+        boolean isConstant = (lhs.intValue instanceof IntImmediate)&&(rhs.intValue instanceof IntImmediate);
         BinaryOperationInstruction.Operator operator = null;
         switch (op) {
             case TIMES:
+                if (isConstant) {
+                    node.intValue = new IntImmediate(
+                            ((IntImmediate) lhs.intValue).getVal()*((IntImmediate) rhs.intValue).getVal()
+                    );
+                    return;
+                }
                 operator = BinaryOperationInstruction.Operator.MUL;
                 break;
             case DIVIDE:
+                if (isConstant) {
+                    if (((IntImmediate) rhs.intValue).getVal() != 0)
+                        node.intValue = new IntImmediate(
+                            ((IntImmediate) lhs.intValue).getVal()/((IntImmediate) rhs.intValue).getVal()
+                        );
+                    else WarningInfo.add(node.location(),"Cannot divide 0.");
+                    return;
+                }
                 operator = BinaryOperationInstruction.Operator.DIV;
                 break;
             case MOD:
+                if (isConstant) {
+                    if (((IntImmediate) rhs.intValue).getVal() != 0)
+                        node.intValue = new IntImmediate(
+                                ((IntImmediate) lhs.intValue).getVal()%((IntImmediate) rhs.intValue).getVal()
+                        );
+                    else WarningInfo.add(node.location(),"Cannot mod 0.");
+                    return;
+                }
                 operator = BinaryOperationInstruction.Operator.MOD;
                 break;
             case ADD:
+                if (isConstant) {
+                    node.intValue = new IntImmediate(
+                            ((IntImmediate) lhs.intValue).getVal()+((IntImmediate) rhs.intValue).getVal()
+                    );
+                    return;
+                }
                 operator = BinaryOperationInstruction.Operator.ADD;
                 break;
             case SUB:
+                if (isConstant) {
+                    node.intValue = new IntImmediate(
+                            ((IntImmediate) lhs.intValue).getVal()-((IntImmediate) rhs.intValue).getVal()
+                    );
+                    return;
+                }
                 operator = BinaryOperationInstruction.Operator.SUB;
                 break;
             case LESH:
+                if (isConstant) {
+                    node.intValue = new IntImmediate(
+                            ((IntImmediate) lhs.intValue).getVal()<<((IntImmediate) rhs.intValue).getVal()
+                    );
+                    return;
+                }
                 operator = BinaryOperationInstruction.Operator.SHL;
                 break;
             case RISH:
+                if (isConstant) {
+                    node.intValue = new IntImmediate(
+                            ((IntImmediate) lhs.intValue).getVal()>>((IntImmediate) rhs.intValue).getVal()
+                    );
+                    return;
+                }
                 operator = BinaryOperationInstruction.Operator.SHR;
                 break;
             case BAND:
+                if (isConstant) {
+                    node.intValue = new IntImmediate(
+                            ((IntImmediate) lhs.intValue).getVal()&((IntImmediate) rhs.intValue).getVal()
+                    );
+                    return;
+                }
                 operator = BinaryOperationInstruction.Operator.AND;
                 break;
             case XOR:
+                if (isConstant) {
+                    node.intValue = new IntImmediate(
+                            ((IntImmediate) lhs.intValue).getVal()^((IntImmediate) rhs.intValue).getVal()
+                    );
+                    return;
+                }
                 operator = BinaryOperationInstruction.Operator.XOR;
                 break;
             case BOR:
+                if (isConstant) {
+                    node.intValue = new IntImmediate(
+                            ((IntImmediate) lhs.intValue).getVal()|((IntImmediate) rhs.intValue).getVal()
+                    );
+                    return;
+                }
                 operator = BinaryOperationInstruction.Operator.OR;
                 break;
             default:
@@ -586,24 +649,61 @@ public class IRBuilder implements ASTVisitor {
         ExprNode lhs = node.getExprs().get(0), rhs = node.getExprs().get(1);
         visit(lhs);
         visit(rhs);
+        boolean isConstant = (lhs.intValue instanceof IntImmediate)&&(rhs.intValue instanceof IntImmediate);
         BinaryOperationInstruction.Operator operator = null;
         switch (op) {
             case EQU:
+                if (isConstant) {
+                    node.intValue = new IntImmediate(
+                            ((IntImmediate) lhs.intValue).getVal()==((IntImmediate) rhs.intValue).getVal()?1:0
+                    );
+                    return;
+                }
                 operator = BinaryOperationInstruction.Operator.EQU;
                 break;
             case NEQ:
+                if (isConstant) {
+                    node.intValue = new IntImmediate(
+                            ((IntImmediate) lhs.intValue).getVal()!=((IntImmediate) rhs.intValue).getVal()?1:0
+                    );
+                    return;
+                }
                 operator = BinaryOperationInstruction.Operator.NEQ;
                 break;
             case LESS:
+                if (isConstant) {
+                    node.intValue = new IntImmediate(
+                            ((IntImmediate) lhs.intValue).getVal()<((IntImmediate) rhs.intValue).getVal()?1:0
+                    );
+                    return;
+                }
                 operator = BinaryOperationInstruction.Operator.LESS;
                 break;
             case LEQ:
+                if (isConstant) {
+                    node.intValue = new IntImmediate(
+                            ((IntImmediate) lhs.intValue).getVal()<=((IntImmediate) rhs.intValue).getVal()?1:0
+                    );
+                    return;
+                }
                 operator = BinaryOperationInstruction.Operator.LEQ;
                 break;
             case GRTR:
+                if (isConstant) {
+                    node.intValue = new IntImmediate(
+                            ((IntImmediate) lhs.intValue).getVal()>((IntImmediate) rhs.intValue).getVal()?1:0
+                    );
+                    return;
+                }
                 operator = BinaryOperationInstruction.Operator.GRTR;
                 break;
             case GEQ:
+                if (isConstant) {
+                    node.intValue = new IntImmediate(
+                            ((IntImmediate) lhs.intValue).getVal()>=((IntImmediate) rhs.intValue).getVal()?1:0
+                    );
+                    return;
+                }
                 operator = BinaryOperationInstruction.Operator.GEQ;
                 break;
             default:
@@ -620,7 +720,6 @@ public class IRBuilder implements ASTVisitor {
 
     @Override
     public void visit(DefunNode node) {
-        FunctionType functionType = null;
         if (className == null) {
             curFunction = irRoot.functions.get(node.getName());
         } else {
@@ -965,13 +1064,21 @@ public class IRBuilder implements ASTVisitor {
             node.getId().basicBlockTrue = node.basicBlockTrue;
             node.getId().basicBlockFalse = node.basicBlockFalse;
             visit(node.getId());
-            node.intValue = node.getId().intValue;
+            if (needAddr) {
+                node.address = node.getId().address;
+                node.offset = node.getId().offset;
+            }
+            else node.intValue = node.getId().intValue;
         }
         else if (node.getVar() != null && node.getId() == null && node.getExpr() == null) {
             node.getId().basicBlockTrue = node.basicBlockTrue;
             node.getId().basicBlockFalse = node.basicBlockFalse;
             visit(node.getId());
-            node.intValue = node.getId().intValue;
+            if (needAddr) {
+                node.address = node.getVar().address;
+                node.offset = node.getVar().offset;
+            }
+            else node.intValue = node.getVar().intValue;
         }
         else if (node.getVar() != null && node.getId() != null && node.getExpr() == null) { // Member Access
             ExprNode record = node.getVar(),member = node.getId();
@@ -1124,11 +1231,10 @@ public class IRBuilder implements ASTVisitor {
                 }
                 else {
                     FunctionType functionType = (FunctionType) globalSymbolTable.globals.getTypeInfo(
-                            node.getType().getName() + "." + ((CallfunNode) member).getName()
+                            record.getType().getName() + "." + ((CallfunNode) member).getName()
                     );
                     Function function = irRoot.functions.get(functionType.getName());
-                    if (globalSymbolTable.isBuiltinMethod(functionType))
-                        ((CallfunNode) member).getParams().forEach(param -> param.accept(this));
+                    ((CallfunNode) member).getParams().forEach(param -> param.accept(this));
                     VirtualRegister reg = new VirtualRegister(null);
                     CallInstruction call = new CallInstruction(curBasicBlock, reg, function);
                     call.appendArgReg(record.intValue);
@@ -1165,7 +1271,10 @@ public class IRBuilder implements ASTVisitor {
                     node.getExprs().get(0).intValue,
                     new IntImmediate(1))
             );
-            node.intValue = reg;
+            if (node.getExprs().get(0).intValue instanceof IntImmediate){
+                node.intValue = new IntImmediate(((IntImmediate) node.getExprs().get(0).intValue).getVal()^1);
+            }
+            else node.intValue = reg;
             if (node.basicBlockTrue != null) {
                 curBasicBlock.end(new BranchInstruction(curBasicBlock,reg,node.basicBlockTrue,node.basicBlockFalse));
             }

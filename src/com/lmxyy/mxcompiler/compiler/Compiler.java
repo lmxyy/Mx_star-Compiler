@@ -61,10 +61,12 @@ public class Compiler {
         IRPrebuilder irPrebuilder = new IRPrebuilder(globalSymbolTable,irRoot);
         ast.accept(irPrebuilder);
         IRBuilder irBuilder = new IRBuilder(globalSymbolTable,irRoot);
+
         irBuilder.visit(ast);
-        String irInfoPath = "/Users/limuyang/Desktop/Mx_star-Compiler/ir.txt";
-        IRPrinter irPrinter = new IRPrinter(new PrintStream(irInfoPath));
-        irPrinter.visit(irRoot);
+//        String irInfoPath = "/Users/limuyang/Desktop/Mx_star-Compiler/ir.txt";
+//        IRPrinter irPrinter = new IRPrinter(new PrintStream(irInfoPath));
+//        irPrinter.visit(irRoot);
+
     }
 
     public boolean run() throws Exception{

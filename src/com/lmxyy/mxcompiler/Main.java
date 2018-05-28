@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class Main {
-    private static final String Ver = "0.0.1";
+    private static final String Ver = "0.0.0";
 
     private static void printHelp() {
         System.out.println("Usage: mxcompiler [options] file...");
@@ -31,7 +31,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
-         String inFile = "/Users/limuyang/Desktop/Mx_star-Compiler/testcase/irtest8.mx", outFile = null;
+         String inFile = "/Users/limuyang/Desktop/Mx_star-Compiler/testcase/irtest9.mx", outFile = null;
 //        String inFile = null,outFile = null;
         boolean isPrintHelp = false, isPrintVersion = false, isPrintConfig = false;
         for (int i = 0; i < args.length; ++i) {

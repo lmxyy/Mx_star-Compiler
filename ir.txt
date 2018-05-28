@@ -1,95 +1,32 @@
 asciiz @string \n
 
+func A $this {
+
+%A.entry:
+    store 4 $this 1 0
+    store 4 $this 1 4
+    ret 0
+
+}
+
+func A.f $this $c {
+
+%A.f.entry:
+    store 4 $this $c 0
+    ret 0
+
+}
+
 func main {
 
 %main.entry:
     call _init 
-    $newaddress = mul 1 4
-    $newaddress = add $newaddress 4
-    $newaddress = alloc $newaddress
-    store 4 $newaddress 1 0
-    $myloopvariable = move 0
-    jump %for_cond
-
-%for_cond:
-    $t = slt $myloopvariable 1
-    br $t %for_loop %for_after
-
-%for_after:
-    $myloopvariable = move 0
-    jump %for_cond_2
-
-%for_cond_2:
-    $t_2 = slt $myloopvariable 1
-    br $t_2 %for_loop_2 %for_after_2
-
-%for_loop_2:
-    $myloopvariable_2 = move 0
-    jump %for_cond_3
-
-%for_cond_3:
-    $t_3 = slt $myloopvariable_2 10
-    br $t_3 %for_loop_3 %for_after_3
-
-%for_loop_3:
-    $newaddress_2 = mul 100 4
-    $newaddress_2 = add $newaddress_2 4
-    $newaddress_2 = alloc $newaddress_2
-    store 4 $newaddress_2 100 0
-    $t_4 = mul $myloopvariable 4
-    $t_4 = add $newaddress $t_4
-    $t_4 = load 4 $t_4 4
-    $t_5 = mul $myloopvariable_2 4
-    $t_5 = add $t_4 $t_5
-    store 4 $t_5 $newaddress_2 4
-    jump %for_step
-
-%for_step:
-    $myloopvariable_2 = add $myloopvariable_2 1
-    jump %for_cond_3
-
-%for_after_3:
-    jump %for_step_2
-
-%for_step_2:
-    $myloopvariable = add $myloopvariable 1
-    jump %for_cond_2
-
-%for_after_2:
-    $A = move $newaddress
-    $t_6 = mul 0 4
-    $t_6 = add $A $t_6
-    $t_6 = load 4 $t_6 4
-    $t_7 = mul 1 4
-    $t_7 = add $t_6 $t_7
-    $t_7 = load 4 $t_7 4
-    $t_8 = mul 10 4
-    $t_8 = add $t_7 $t_8
-    store 4 $t_8 100 4
-    $t_9 = mul 0 4
-    $t_9 = add $A $t_9
-    $t_9 = load 4 $t_9 4
-    $t_10 = mul 1 4
-    $t_10 = add $t_9 $t_10
-    $t_10 = load 4 $t_10 4
-    $t_11 = mul 10 4
-    $t_11 = add $t_10 $t_11
-    $t_11 = load 4 $t_11 4
-    ret $t_11
-
-%for_loop:
-    $newaddress_3 = mul 10 4
-    $newaddress_3 = add $newaddress_3 4
-    $newaddress_3 = alloc $newaddress_3
-    store 4 $newaddress_3 10 0
-    $t_12 = mul $myloopvariable 4
-    $t_12 = add $newaddress $t_12
-    store 4 $t_12 $newaddress_3 4
-    jump %for_step_3
-
-%for_step_3:
-    $myloopvariable = add $myloopvariable 1
-    jump %for_cond
+    $newaddress = alloc 8
+    call A $newaddress 
+    $a = move $newaddress
+    $t = call A.f $a 6 
+    $t_2 = load 4 $a 0
+    ret $t_2
 
 }
 

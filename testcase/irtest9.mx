@@ -1,0 +1,15 @@
+class A
+{
+    int a = 1,b = 1;
+    void f(int c) {
+	a = c;
+    }
+}
+
+
+int main()
+{
+    A a = new A;
+    a.f(6);
+    return a.a;
+}

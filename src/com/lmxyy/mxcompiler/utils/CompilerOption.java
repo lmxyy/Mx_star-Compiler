@@ -1,9 +1,9 @@
 package com.lmxyy.mxcompiler.utils;
 
 public class CompilerOption {
-    private static final int SIZE_INT = 4;
+    private static final int SIZE_INT = 8;
     private static final int SIZE_BOOL = 1;
-    private static final int SIZE_POINTER = 4;
+    private static final int SIZE_POINTER = 8;
 
     public static boolean ifPrintAST = false;
     public static boolean ifPrintRawIR = false;
