@@ -114,6 +114,7 @@ public class BasicBlock {
     }
 
     public void transform() {
+        ended = false;
         List<IRInstruction> instructions = new ArrayList<>();
         for (IRInstruction inst = head;inst != null;inst = inst.getNxt()) {
             instructions.add(inst);
@@ -216,5 +217,13 @@ public class BasicBlock {
             }
             else append(instruction);
         });
+        ended = true;
+    }
+
+    public void setHead(IRInstruction _head) {
+        head = _head;
+    }
+    public void setTail(IRInstruction _tail) {
+        tail = _tail;
     }
 }

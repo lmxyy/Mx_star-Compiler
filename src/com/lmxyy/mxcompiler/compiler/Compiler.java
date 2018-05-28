@@ -3,6 +3,7 @@ package com.lmxyy.mxcompiler.compiler;
 import com.lmxyy.mxcompiler.ast.IdentifierNode;
 import com.lmxyy.mxcompiler.ast.ProgNode;
 import com.lmxyy.mxcompiler.backend.IRPrinter;
+import com.lmxyy.mxcompiler.backend.IRTransformer;
 import com.lmxyy.mxcompiler.frontend.ASTBuilder;
 import com.lmxyy.mxcompiler.frontend.IRBuilder;
 import com.lmxyy.mxcompiler.frontend.IRPrebuilder;
@@ -66,7 +67,7 @@ public class Compiler {
 //        String irInfoPath = "/Users/limuyang/Desktop/Mx_star-Compiler/ir.txt";
 //        IRPrinter irPrinter = new IRPrinter(new PrintStream(irInfoPath));
 //        irPrinter.visit(irRoot);
-
+//        new IRTransformer(irRoot).run();
     }
 
     public boolean run() throws Exception{

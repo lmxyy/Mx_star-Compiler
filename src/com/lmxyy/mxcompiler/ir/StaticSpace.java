@@ -7,7 +7,8 @@ public class StaticSpace extends StaticData {
         length = _length;
     }
 
-    public int getLength() {
+    @Override
+    public int getRegisterSize() {
         return length;
     }
 

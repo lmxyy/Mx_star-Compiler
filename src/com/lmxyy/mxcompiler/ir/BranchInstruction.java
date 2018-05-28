@@ -1,5 +1,7 @@
 package com.lmxyy.mxcompiler.ir;
 
+import java.util.Map;
+
 public class BranchInstruction extends EndInstruction {
     private IntValue indicator;
     private BasicBlock ifTrue,ifFalse;
@@ -24,5 +26,33 @@ public class BranchInstruction extends EndInstruction {
     @Override
     public void accept(IRVisitor visitor) {
         visitor.visit(this);
+    }
+    @Override
+    protected void reloadUsedRegisterCollection() {
+        usedRegister.clear();
+        if (indicator instanceof Register) usedRegister.add((Register) indicator);
+        usedIntValue.clear();
+        usedIntValue.add(indicator);
+    }
+
+    @Override
+    public void setDefinedRegister(Register newReg) {
+    }
+
+    @Override
+    public void setUsedRegister(Map<Register, Register> regMap) {
+        if (indicator instanceof Register) indicator = regMap.get(indicator);
+        reloadUsedRegisterCollection();
+    }
+
+    @Override
+    public Register getDefinedRegister() {
+        return null;
+    }
+
+    @Override
+    public void replaceIntValueUse(IntValue oldValue,IntValue newValue) {
+        if (indicator == oldValue) indicator = newValue;
+        reloadUsedRegisterCollection();
     }
 }

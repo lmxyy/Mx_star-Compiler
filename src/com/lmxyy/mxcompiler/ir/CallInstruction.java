@@ -2,11 +2,12 @@ package com.lmxyy.mxcompiler.ir;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class CallInstruction extends IRInstruction {
-    private VirtualRegister register;
+    private Register register;
     private Function function;
-    private List<IntValue> argArgRegList = new ArrayList<>();
+    private List<IntValue> argRegList = new ArrayList<>();
 
     public CallInstruction(BasicBlock _basicBlock, VirtualRegister _register, Function _function) {
         super(_basicBlock);
@@ -15,21 +16,58 @@ public class CallInstruction extends IRInstruction {
     }
 
     public void appendArgReg(IntValue reg) {
-        argArgRegList.add(reg);
+        argRegList.add(reg);
     }
 
-    public VirtualRegister getRegister() {
+    public Register getRegister() {
         return register;
     }
     public Function getFunction() {
         return function;
     }
     public List<IntValue> getArgArgRegList() {
-        return argArgRegList;
+        return argRegList;
     }
 
     @Override
     public void accept(IRVisitor visitor) {
         visitor.visit(this);
+    }
+    @Override
+    protected void reloadUsedRegisterCollection() {
+        usedRegister.clear();
+        usedIntValue.clear();
+        for (IntValue arg : argRegList) {
+            if (arg instanceof Register)
+                usedRegister.add((Register) arg);
+            usedIntValue.add(arg);
+        }
+    }
+
+    @Override
+    public void setDefinedRegister(Register newReg) {
+        register = newReg;
+    }
+
+    @Override
+    public void setUsedRegister(Map<Register, Register> regMap) {
+        for (int i = 0; i < argRegList.size(); ++i)
+            if (argRegList.get(i) instanceof Register) {
+                argRegList.set(i, regMap.get(argRegList.get(i)));
+            }
+        reloadUsedRegisterCollection();
+    }
+
+    @Override
+    public void replaceIntValueUse(IntValue oldValue,IntValue newValue) {
+        for (int i = 0; i < argRegList.size(); ++i)
+            if (argRegList.get(i) == oldValue)
+                argRegList.set(i, newValue);
+        reloadUsedRegisterCollection();
+    }
+
+    @Override
+    public Register getDefinedRegister() {
+        return register;
     }
 }

@@ -11,14 +11,14 @@ public class NASMRegisterSet {
     R0  R1  R2  R3  R4  R5  R6  R7  R8  R9  R10  R11  R12  R13  R14  R15
     RAX RCX RDX RBX RSP RBP RSI RDI
      */
-    public static NASMRegister RAX = new NASMRegister(0,"R0",false,false,false);
-    public static NASMRegister RCX = new NASMRegister(0,"R1",false,false,false);
-    public static NASMRegister RDX = new NASMRegister(0,"R2",false,false,false);
-    public static NASMRegister RBX = new NASMRegister(0,"R3",false,false,true);
+    public static NASMRegister RAX = new NASMRegister(0,"R0",true,false,false);
+    public static NASMRegister RCX = new NASMRegister(0,"R1",true,false,false);
+    public static NASMRegister RDX = new NASMRegister(0,"R2",true,false,false);
+    public static NASMRegister RBX = new NASMRegister(0,"R3",true,false,true);
     public static NASMRegister RSP = new NASMRegister(0,"R4",true,false,false);
-    public static NASMRegister RBP = new NASMRegister(0,"R5",false,false,true);
-    public static NASMRegister RSI = new NASMRegister(0,"R6",false,false,false);
-    public static NASMRegister RDI = new NASMRegister(0,"R7",false,false,false);
+    public static NASMRegister RBP = new NASMRegister(0,"R5",true,false,true);
+    public static NASMRegister RSI = new NASMRegister(0,"R6",true,false,false);
+    public static NASMRegister RDI = new NASMRegister(0,"R7",true,false,false);
     public static NASMRegister R8 = new NASMRegister(0,"R8",false,false,false);
     public static NASMRegister R9 = new NASMRegister(0,"R9",false,false,false);
     public static NASMRegister R10 = new NASMRegister(0,"R10",false,false,false);

@@ -12,4 +12,6 @@ public abstract class StaticData extends Register {
 
     @Override
     public abstract void accept(IRVisitor visitor);
+
+    public abstract int getRegisterSize();
 }

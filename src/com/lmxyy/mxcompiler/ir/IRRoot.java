@@ -95,6 +95,19 @@ public class IRRoot {
     public Function funcGetInt = new Function(GlobalSymbolTable.funcGetInt);
     public Function funcToString = new Function(GlobalSymbolTable.funcToString);
 
+    public boolean isBuiltinFunction(Function function) {
+        if (function == stringSubString) return true;
+        if (function == stringParseInt) return true;
+        if (function == stringConcat) return true;
+        if (function == stringEqual) return true;
+        if (function == stringLeq) return true;
+        if (function == funcPrint) return true;
+        if (function == funcPrintInt) return true;
+        if (function == funcPrintln) return true;
+        if (function == funcPrintlnInt) return true;
+        return false;
+    }
+
     public void accept(IRVisitor visitor) {
         visitor.visit(this);
     }

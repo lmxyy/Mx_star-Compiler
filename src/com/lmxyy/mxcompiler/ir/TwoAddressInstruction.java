@@ -1,5 +1,7 @@
 package com.lmxyy.mxcompiler.ir;
 
+import java.util.Map;
+
 public class TwoAddressInstruction extends IRInstruction {
 
     private BinaryOperationInstruction.Operator operator;
@@ -17,4 +19,34 @@ public class TwoAddressInstruction extends IRInstruction {
 
     @Override
     public void accept(IRVisitor visitor) { visitor.visit(this); }
+
+    @Override
+    protected void reloadUsedRegisterCollection() {
+        usedRegister.clear();
+        if (rhs instanceof Register) usedRegister.add((Register) rhs);
+        usedIntValue.clear();
+        usedIntValue.add(rhs);
+    }
+
+    @Override
+    public void setDefinedRegister(Register newReg) {
+        lhs = newReg;
+    }
+
+    @Override
+    public void setUsedRegister(Map<Register, Register> regMap) {
+        if (rhs instanceof Register) rhs = regMap.get(rhs);
+        reloadUsedRegisterCollection();
+    }
+
+    @Override
+    public Register getDefinedRegister() {
+        return lhs;
+    }
+
+    @Override
+    public void replaceIntValueUse(IntValue oldValue,IntValue newValue) {
+        if (rhs == oldValue) rhs = newValue;
+        reloadUsedRegisterCollection();
+    }
 }
