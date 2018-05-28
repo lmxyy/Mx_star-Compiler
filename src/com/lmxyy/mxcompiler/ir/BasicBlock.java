@@ -1,9 +1,11 @@
 package com.lmxyy.mxcompiler.ir;
 
-import com.lmxyy.mxcompiler.backend.IRPrinter;
-
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import static com.lmxyy.mxcompiler.ir.BinaryOperationInstruction.Operator.*;
 
 public class BasicBlock {
     private Set<BasicBlock> pred = new HashSet<>(),succ = new HashSet<>();
@@ -13,7 +15,7 @@ public class BasicBlock {
 
     public BasicBlock(Function _parent,String _hintName) {
         parent = _parent;
-        if (_hintName == null) hintName = "$block";
+        if (_hintName == null) hintName = "block";
         else hintName = _hintName;
         head = tail = null;
     }
@@ -109,5 +111,110 @@ public class BasicBlock {
 
     public void accept(IRVisitor visitor) {
         visitor.visit(this);
+    }
+
+    public void transform() {
+        List<IRInstruction> instructions = new ArrayList<>();
+        for (IRInstruction inst = head;inst != null;inst = inst.getNxt()) {
+            instructions.add(inst);
+        }
+        head = tail = null;
+        instructions.forEach(instruction -> {
+            if (instruction instanceof BinaryOperationInstruction) {
+                switch (((BinaryOperationInstruction) instruction).getOperator()) {
+                    case DIV: case MOD:
+                        append(new TwoAddressInstruction(
+                                this,((BinaryOperationInstruction) instruction).getOperator(),
+                                ((BinaryOperationInstruction) instruction).getDest(),
+                                ((BinaryOperationInstruction) instruction).getRhs())
+                        );
+                        break;
+                    case LEQ:
+                        if (((BinaryOperationInstruction) instruction).getLhs() instanceof IntImmediate) {
+                            append(new ComparisionInstruction(
+                                    this,((BinaryOperationInstruction) instruction).getDest(), LESS,
+                                    ((BinaryOperationInstruction) instruction).getRhs(),
+                                    ((BinaryOperationInstruction) instruction).getLhs())
+                            );
+                        }
+                        else append(new ComparisionInstruction(
+                                this,((BinaryOperationInstruction) instruction).getDest(), GRTR,
+                                ((BinaryOperationInstruction) instruction).getLhs(),
+                                ((BinaryOperationInstruction) instruction).getRhs())
+                        );
+                        append(new TwoAddressInstruction(
+                                this,XOR,((BinaryOperationInstruction) instruction).getDest(),
+                                new IntImmediate(1))
+                        );
+                        break;
+                    case GEQ:
+                        if (((BinaryOperationInstruction) instruction).getLhs() instanceof IntImmediate) {
+                            append(new ComparisionInstruction(
+                                    this,((BinaryOperationInstruction) instruction).getDest(), GRTR,
+                                    ((BinaryOperationInstruction) instruction).getRhs(),
+                                    ((BinaryOperationInstruction) instruction).getLhs())
+                            );
+                        }
+                        else append(new ComparisionInstruction(
+                                this,((BinaryOperationInstruction) instruction).getDest(), LESS,
+                                ((BinaryOperationInstruction) instruction).getLhs(),
+                                ((BinaryOperationInstruction) instruction).getRhs())
+                        );
+                        append(new TwoAddressInstruction(
+                                this,XOR,((BinaryOperationInstruction) instruction).getDest(),
+                                new IntImmediate(1))
+                        );
+                        break;
+                    case LESS:
+                        if (((BinaryOperationInstruction) instruction).getLhs() instanceof IntImmediate) {
+                            append(new ComparisionInstruction(
+                                    this,((BinaryOperationInstruction) instruction).getDest(), GRTR,
+                                    ((BinaryOperationInstruction) instruction).getRhs(),
+                                    ((BinaryOperationInstruction) instruction).getLhs())
+                            );
+                        }
+                        else append(instruction);
+                        break;
+                    case GRTR:
+                        if (((BinaryOperationInstruction) instruction).getLhs() instanceof IntImmediate) {
+                            append(new ComparisionInstruction(
+                                    this,((BinaryOperationInstruction) instruction).getDest(), LESS,
+                                    ((BinaryOperationInstruction) instruction).getRhs(),
+                                    ((BinaryOperationInstruction) instruction).getLhs())
+                            );
+                        }
+                        else append(instruction);
+                        break;
+                    case EQU: case NEQ:
+                        if (((BinaryOperationInstruction) instruction).getLhs() instanceof IntImmediate) {
+                            append(new ComparisionInstruction(
+                                    this,((BinaryOperationInstruction) instruction).getDest(),
+                                    ((BinaryOperationInstruction) instruction).getOperator(),
+                                    ((BinaryOperationInstruction) instruction).getRhs(),
+                                    ((BinaryOperationInstruction) instruction).getLhs())
+                            );
+                        }
+                        else append(instruction);
+                        break;
+                    default:
+                        IntValue lhs = ((BinaryOperationInstruction) instruction).getLhs(),
+                                rhs = ((BinaryOperationInstruction) instruction).getRhs();
+                        if (lhs instanceof IntImmediate) {
+                            lhs = ((BinaryOperationInstruction) instruction).getRhs();
+                            rhs = ((BinaryOperationInstruction) instruction).getLhs();
+                        }
+                        VirtualRegister reg = new VirtualRegister(null);
+                        append(new MoveInstruction(this,lhs,reg));
+                        append(new TwoAddressInstruction(
+                                this, ((BinaryOperationInstruction) instruction).getOperator(),
+                                (Register)lhs,rhs));
+                        append(new MoveInstruction(this,lhs,
+                                ((BinaryOperationInstruction) instruction).getDest()));
+                        append(new MoveInstruction(this,reg,(Register) lhs));
+                        break;
+                }
+            }
+            else append(instruction);
+        });
     }
 }

@@ -16,4 +16,25 @@ public class NASMRegister extends PhysicalRegister {
         isCallerSave = _isCallerSave;
         isCalleeSave = _isCalleeSave;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isGeneral() {
+        return isGeneral;
+    }
+
+    public boolean isCallerSave() {
+        return isCallerSave;
+    }
+
+    public boolean isCalleeSave() {
+        return isCalleeSave;
+    }
+
 }

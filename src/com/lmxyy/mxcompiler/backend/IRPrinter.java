@@ -227,6 +227,10 @@ public class IRPrinter implements IRVisitor {
         out.printf(" %d\n",node.getOffset());
     }
 
+    @Override
+    public void visit(TwoAddressInstruction node) {
+
+    }
     public void visit(IntValue node) {
         node.accept(this);
     }
@@ -254,6 +258,7 @@ public class IRPrinter implements IRVisitor {
         if (definingStatic) out.printf("asciiz @%s %s\n", dataId(node), node.getString());
         else out.print("@" + dataId(node));
     }
+
 
     @Override
     public void visit(IntImmediate node) {

@@ -17,6 +17,7 @@ public interface IRVisitor {
     void visit(MoveInstruction node);
     void visit(StoreInstruction node);
     void visit(ReturnInstruction node);
+    void visit(TwoAddressInstruction node);
 
     void visit(VirtualRegister node);
     void visit(PhysicalRegister node);
