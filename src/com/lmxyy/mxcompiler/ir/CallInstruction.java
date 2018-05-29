@@ -25,7 +25,7 @@ public class CallInstruction extends IRInstruction {
     public Function getFunction() {
         return function;
     }
-    public List<IntValue> getArgArgRegList() {
+    public List<IntValue> getArgRegList() {
         return argRegList;
     }
 

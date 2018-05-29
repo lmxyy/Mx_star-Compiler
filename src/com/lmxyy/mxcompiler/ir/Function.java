@@ -10,6 +10,8 @@ public class Function {
     public List<VirtualRegister> argVarRegList = new ArrayList<>();
     public List<ReturnInstruction> retInstruction = new ArrayList<>();
 
+    public Set<PhysicalRegister> usedPhysicalGeneralRegister = new HashSet<>();
+
     private Set<BasicBlock> visited = null;
     private List<BasicBlock> reversePostOrder = null;
 

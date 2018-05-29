@@ -1,4 +1,4 @@
-package com.lmxyy.mxcompiler.backend;
+package com.lmxyy.mxcompiler.nasm;
 
 import com.lmxyy.mxcompiler.ir.Function;
 import com.lmxyy.mxcompiler.ir.IRRoot;

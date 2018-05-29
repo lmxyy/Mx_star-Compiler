@@ -24,4 +24,5 @@ public interface IRVisitor {
     void visit(StaticSpace node);
     void visit(StaticString node);
     void visit(IntImmediate node);
+    void visit(StackFrame node);
 }
