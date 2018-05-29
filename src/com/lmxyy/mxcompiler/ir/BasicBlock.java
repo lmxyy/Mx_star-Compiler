@@ -133,37 +133,30 @@ public class BasicBlock {
                     case LEQ:
                         if (((BinaryOperationInstruction) instruction).getLhs() instanceof IntImmediate) {
                             append(new ComparisionInstruction(
-                                    this,((BinaryOperationInstruction) instruction).getDest(), LESS,
+                                    this,((BinaryOperationInstruction) instruction).getDest(), GEQ,
                                     ((BinaryOperationInstruction) instruction).getRhs(),
                                     ((BinaryOperationInstruction) instruction).getLhs())
                             );
                         }
                         else append(new ComparisionInstruction(
-                                this,((BinaryOperationInstruction) instruction).getDest(), GRTR,
+                                this,((BinaryOperationInstruction) instruction).getDest(), LEQ,
                                 ((BinaryOperationInstruction) instruction).getLhs(),
                                 ((BinaryOperationInstruction) instruction).getRhs())
                         );
-                        append(new TwoAddressInstruction(
-                                this,XOR,((BinaryOperationInstruction) instruction).getDest(),
-                                new IntImmediate(1))
-                        );
+
                         break;
                     case GEQ:
                         if (((BinaryOperationInstruction) instruction).getLhs() instanceof IntImmediate) {
                             append(new ComparisionInstruction(
-                                    this,((BinaryOperationInstruction) instruction).getDest(), GRTR,
+                                    this,((BinaryOperationInstruction) instruction).getDest(), LEQ,
                                     ((BinaryOperationInstruction) instruction).getRhs(),
                                     ((BinaryOperationInstruction) instruction).getLhs())
                             );
                         }
                         else append(new ComparisionInstruction(
-                                this,((BinaryOperationInstruction) instruction).getDest(), LESS,
+                                this,((BinaryOperationInstruction) instruction).getDest(), GEQ,
                                 ((BinaryOperationInstruction) instruction).getLhs(),
                                 ((BinaryOperationInstruction) instruction).getRhs())
-                        );
-                        append(new TwoAddressInstruction(
-                                this,XOR,((BinaryOperationInstruction) instruction).getDest(),
-                                new IntImmediate(1))
                         );
                         break;
                     case LESS:

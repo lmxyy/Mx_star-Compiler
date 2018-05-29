@@ -1251,6 +1251,12 @@ public class IRBuilder implements ASTVisitor {
             processSelfIncOrDec(node);
         else if (op == ExprOperator.Operator.NEG||op == ExprOperator.Operator.COMP) {
             visit(node.getExprs().get(0));
+            if (node.getExprs().get(0).intValue instanceof IntImmediate) {
+                if (op == ExprOperator.Operator.NEG)
+                    node.intValue = new IntImmediate(-((IntImmediate) node.getExprs().get(0).intValue).getVal());
+                else
+                    node.intValue = new IntImmediate(~((IntImmediate) node.getExprs().get(0).intValue).getVal());
+            }
             VirtualRegister reg = new VirtualRegister(null);
             UnaryOperationInstruction.Operator operator = UnaryOperationInstruction.Operator.NEG;
             if (op == ExprOperator.Operator.COMP)
