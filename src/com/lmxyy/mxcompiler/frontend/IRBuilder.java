@@ -494,7 +494,7 @@ public class IRBuilder implements ASTVisitor {
         } else {
             ExprNode record = ((ExpressionNode) node).getExprs().get(0);
             CallfunNode member = (CallfunNode) ((ExpressionNode) node).getExprs().get(1);
-            if (functionType == GlobalSymbolTable.stringLength || functionType == GlobalSymbolTable.arraySize) {
+            if (functionType == GlobalSymbolTable.arraySize) {
                 visit(record);
                 VirtualRegister reg = new VirtualRegister("size");
                 curBasicBlock.append(
@@ -502,7 +502,17 @@ public class IRBuilder implements ASTVisitor {
                                 curBasicBlock, reg, CompilerOption.getSizeInt(),
                                 record.intValue, 0));
                 node.intValue = reg;
-            } else if (functionType == GlobalSymbolTable.stringSubString) {
+            }
+            else if (functionType == GlobalSymbolTable.stringLength) {
+                visit(record);
+                member.getParams().forEach(param -> param.accept(this));
+                VirtualRegister reg = new VirtualRegister("length");
+                CallInstruction call = new CallInstruction(curBasicBlock, reg, irRoot.stringLength);
+                member.getParams().forEach(param -> call.appendArgReg(param.intValue));
+                curBasicBlock.append(call);
+                node.intValue = reg;
+            }
+            else if (functionType == GlobalSymbolTable.stringSubString) {
                 visit(record);
                 member.getParams().forEach(param -> param.accept(this));
                 VirtualRegister reg = new VirtualRegister("substr");

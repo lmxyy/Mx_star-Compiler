@@ -68,6 +68,16 @@ public class IRRoot {
                 add("arg1");
             }})
     );
+    public Function stringLength= new Function(new FunctionType(
+            GlobalSymbolTable.stringType,
+            "string.length",
+            new ArrayList<VartypeNode>() {{
+                add(GlobalSymbolTable.stringType);
+            }},
+            new ArrayList<String>() {{
+                add("arg0");
+            }})
+    );
 
     public Function funcPrintln = new Function(GlobalSymbolTable.funcPrintln);
     public Function funcPrint = new Function(GlobalSymbolTable.funcPrint);
