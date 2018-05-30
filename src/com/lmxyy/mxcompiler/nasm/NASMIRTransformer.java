@@ -241,10 +241,10 @@ public class NASMIRTransformer {
             }
         }
         else if (inst instanceof StoreInstruction) {
-            if (((LoadInstruction) inst).getAddr() instanceof StackSlot) {
-                StackSlot slot = (StackSlot) ((LoadInstruction) inst).getAddr();
-                ((LoadInstruction) inst).setAddr(NASMRegisterSet.RSP);
-                ((LoadInstruction) inst).setOffset(info.stackSlotOffset.get(slot));
+            if (((StoreInstruction) inst).getAddr() instanceof StackSlot) {
+                StackSlot slot = (StackSlot) ((StoreInstruction) inst).getAddr();
+                ((StoreInstruction) inst).setAddr(NASMRegisterSet.RSP);
+                ((StoreInstruction) inst).setOffset(info.stackSlotOffset.get(slot));
             }
         }
     }
@@ -261,9 +261,11 @@ public class NASMIRTransformer {
             modifyExit(func);
             for (BasicBlock basicBlock : func.getReversePostOrder()) {
                 for (IRInstruction inst = basicBlock.getHead(); inst != null; inst = inst.getNxt()) {
-                    modifyCall(func, info, basicBlock, (CallInstruction) inst);
+                    if (inst instanceof CallInstruction)
+                        modifyCall(func, info, basicBlock, (CallInstruction) inst);
                     modifyStackSlot(func, info, basicBlock, inst);
-                    removeSelfMove((MoveInstruction) inst);
+                    if (inst instanceof MoveInstruction)
+                        removeSelfMove((MoveInstruction) inst);
                 }
             }
         }

@@ -47,12 +47,12 @@ public abstract class IRInstruction {
     public void prepend(IRInstruction node) {
         if (pre != null) pre.linkNxt(node);
         else basicBlock.setHead(node);
-        node.linkPre(this);
+        linkPre(node);
     }
     public void append(IRInstruction node) {
         if (nxt != null) nxt.linkPre(node);
         else basicBlock.setTail(node);
-        node.linkNxt(this);
+        linkNxt(node);
     }
 
     public final Collection<Register> getUsedRegister() {

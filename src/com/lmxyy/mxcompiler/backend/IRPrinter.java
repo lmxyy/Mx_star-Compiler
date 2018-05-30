@@ -1,6 +1,7 @@
 package com.lmxyy.mxcompiler.backend;
 
 import com.lmxyy.mxcompiler.ir.*;
+import com.lmxyy.mxcompiler.nasm.NASMRegister;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -270,6 +271,11 @@ public class IRPrinter implements IRVisitor {
 
     }
 
+
+    @Override
+    public void visit(NASMRegister node) {
+        out.print(node.getName());
+    }
     public void visit(StaticData node) {
         node.accept(this);
     }
@@ -284,7 +290,6 @@ public class IRPrinter implements IRVisitor {
         if (definingStatic) out.printf("asciiz @%s %s\n", dataId(node), node.getString());
         else out.print("@" + dataId(node));
     }
-
 
     @Override
     public void visit(IntImmediate node) {

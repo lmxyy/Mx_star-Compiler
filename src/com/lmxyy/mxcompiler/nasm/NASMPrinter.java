@@ -49,15 +49,15 @@ public class NASMPrinter implements IRVisitor {
         out.println("\tsection .text");
         node.functions.values().forEach(func->func.accept(this));
         /* Static String */
-        out.println("\tsection .data");
+        out.println("\n\tsection .data");
         node.stringPool.forEach((a,b)->{
             out.println(dataId(b)+":");
             out.println("\tdb "+a.length()+','+a+','+0);
         });
-        out.println("\tsection .bss");
+        out.println("\n\tsection .bss");
         node.dataList.forEach(data->{
             out.println(dataId(data)+":");
-            out.println("\tdb resb "+data.getRegisterSize()*8);
+            out.println("\n\tdb resb "+data.getRegisterSize()*8);
         });
     }
 
@@ -73,7 +73,7 @@ public class NASMPrinter implements IRVisitor {
 
     @Override
     public void visit(Function node) {
-        out.println(node.getConvertedName()+":");
+        out.println('\n'+node.getConvertedName()+":");
         node.getReversePostOrder().forEach(basicBlock->visit(basicBlock));
     }
 
@@ -166,7 +166,7 @@ public class NASMPrinter implements IRVisitor {
 
     @Override
     public void visit(LoadInstruction node) {
-        out.print("\tmov");
+        out.print("\tmov ");
         node.getDest().accept(this);
         out.print(",[");
         node.getAddr().accept(this);
@@ -190,7 +190,7 @@ public class NASMPrinter implements IRVisitor {
         node.getAddr().accept(this);
         if (node.getOffset() > 0) out.print('+');
         out.print(node.getOffset());
-        out.print(',');
+        out.print("],");
         node.getValue().accept(this);
         out.print('\n');
     }
@@ -286,12 +286,12 @@ public class NASMPrinter implements IRVisitor {
 
     @Override
     public void visit(LeaveInstruction node) {
-        out.println("leave");
+        out.println("\tleave");
     }
 
     @Override
     public void visit(CltdInstruction node) {
-        out.println("cltd");
+        out.println("\tcltd");
     }
 
     @Override

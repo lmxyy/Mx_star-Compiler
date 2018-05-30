@@ -11,6 +11,7 @@ public class BranchInstruction extends EndInstruction {
         indicator = _indicator;
         ifTrue = _ifTrue;
         ifFalse = _ifFalse;
+        reloadUsedRegisterCollection();
     }
 
     public IntValue getIndicator() {

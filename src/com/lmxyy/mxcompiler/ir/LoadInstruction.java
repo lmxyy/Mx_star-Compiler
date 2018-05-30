@@ -17,6 +17,7 @@ public class LoadInstruction extends IRInstruction {
         offset = _offset;
         isStaticData = false;
         isLoadAddress = false;
+        reloadUsedRegisterCollection();
     }
     public LoadInstruction(BasicBlock _basicBlock,Register _dest,int _size,StaticData _addr,boolean _isLoadAddress) {
         this(_basicBlock,_dest,_size,_addr,0);

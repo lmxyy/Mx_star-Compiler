@@ -27,7 +27,7 @@ public class Function {
         return type;
     }
     public String getConvertedName() {
-        if (getName() == "main") return "main";
+        if (getName().equals("main")) return "main";
         else return "_"+getName();
     }
     public String getName() {

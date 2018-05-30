@@ -5,6 +5,8 @@ import java.util.Map;
 public class CltdInstruction extends IRInstruction {
     public CltdInstruction(BasicBlock _basicBlock) {
         super(_basicBlock);
+        reloadUsedRegisterCollection();
+
     }
 
 

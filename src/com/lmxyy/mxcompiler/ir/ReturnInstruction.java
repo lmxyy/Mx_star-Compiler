@@ -8,6 +8,7 @@ public class ReturnInstruction extends EndInstruction {
     public ReturnInstruction(BasicBlock _curBasicBlock,IntValue _retVal) {
         super(_curBasicBlock);
         retVal = _retVal;
+        reloadUsedRegisterCollection();
     }
 
     public IntValue getRetVal() {

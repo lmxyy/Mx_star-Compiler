@@ -10,6 +10,7 @@ public class HeapAllocateInstruction extends IRInstruction {
         super(_basicBlock);
         dest = _dest;
         allocSize = _allocSize;
+        reloadUsedRegisterCollection();
     }
 
     public Register getDest() {

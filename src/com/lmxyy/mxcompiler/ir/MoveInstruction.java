@@ -9,6 +9,7 @@ public class MoveInstruction extends IRInstruction {
         super(_curBasicBlock);
         source = _source;
         dest = _dest;
+        reloadUsedRegisterCollection();
     }
 
     public IntValue getSource() {

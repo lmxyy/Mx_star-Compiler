@@ -9,6 +9,7 @@ public class PopInstruction extends IRInstruction {
     public PopInstruction(BasicBlock _basicBlock,IntValue _oprand) {
         super(_basicBlock);
         oprand = _oprand;
+        reloadUsedRegisterCollection();
     }
 
 

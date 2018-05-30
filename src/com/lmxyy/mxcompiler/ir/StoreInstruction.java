@@ -16,6 +16,7 @@ public class StoreInstruction extends IRInstruction {
         size = _size;
         value = _value;
         isStaticData = false;
+        reloadUsedRegisterCollection();
     }
     public StoreInstruction(BasicBlock _basicBlock,IntValue _value,int _size,StaticData _addr) {
         this(_basicBlock,_addr,0,_size,_value);

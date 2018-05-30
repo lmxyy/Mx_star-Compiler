@@ -10,6 +10,7 @@ public class PushInstruction extends IRInstruction {
     public PushInstruction(BasicBlock _basicBlock,IntValue _oprand) {
         super(_basicBlock);
         oprand = _oprand;
+        reloadUsedRegisterCollection();
     }
 
     public PushInstruction(BasicBlock _basicBlock,IntValue _oprand,int _offset) {

@@ -8,6 +8,7 @@ public class JumpInstruction extends EndInstruction {
     public JumpInstruction(BasicBlock _curBasicBlock, BasicBlock _target) {
         super(_curBasicBlock);
         target = _target;
+        reloadUsedRegisterCollection();
     }
 
     public BasicBlock getTarget() {

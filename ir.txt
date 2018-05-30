@@ -1,32 +1,12 @@
-asciiz @string \n
-
-func A $this {
-
-%A.entry:
-    store 4 $this 1 0
-    store 4 $this 1 4
-    ret 0
-
-}
-
-func A.f $this $c {
-
-%A.f.entry:
-    store 4 $this $c 0
-    ret 0
-
-}
-
 func main {
 
 %main.entry:
     call _init 
-    $newaddress = alloc 8
-    call A $newaddress 
-    $a = move $newaddress
-    $t = call A.f $a 6 
-    $t_2 = load 4 $a 0
-    ret $t_2
+    $a = move 1
+    $b = move 1
+    $t = add $a $b
+    $c = move $t
+    ret $c
 
 }
 

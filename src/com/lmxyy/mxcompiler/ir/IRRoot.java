@@ -15,7 +15,7 @@ public class IRRoot {
     public Map<String,StaticString> stringPool = new LinkedHashMap<>();
 
     public IRRoot() {
-        stringPool.put("\\n",new StaticString("\\n"));
+
     }
 
     public Function stringSubString = new Function(GlobalSymbolTable.stringSubString);

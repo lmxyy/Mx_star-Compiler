@@ -38,8 +38,10 @@ public class StupidAllocator extends RegisterAllocator {
                         for (Register reg:used) {
                             if (reg instanceof VirtualRegister) {
                                 PhysicalRegister pr = ((VirtualRegister) reg).forcedPhysicalRegister;
-                                if (pr == null)
-                                    ((VirtualRegister) reg).forcedPhysicalRegister = registers.get(cnt++);
+                                if (pr == null) {
+                                    pr = registers.get(cnt++);
+                                    ((VirtualRegister) reg).forcedPhysicalRegister = pr;
+                                }
                                 func.usedPhysicalGeneralRegister.add(pr);
                                 regRenameMap.put(reg,pr);
                                 StackSlot sl = getStackSlop(func,(VirtualRegister) reg);

@@ -15,6 +15,7 @@ public class TwoAddressInstruction extends IRInstruction {
         operator = _operator;
         lhs = _lhs;
         rhs = _rhs;
+        reloadUsedRegisterCollection();
     }
 
     public BinaryOperationInstruction.Operator getOperator() {

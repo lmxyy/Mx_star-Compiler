@@ -16,6 +16,7 @@ public class UnaryOperationInstruction extends IRInstruction {
         dest = _dest;
         operator = _operator;
         oprand = _oprand;
+        reloadUsedRegisterCollection();
     }
 
     public Register getDest() {

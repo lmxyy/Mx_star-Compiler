@@ -5,6 +5,7 @@ import java.util.Map;
 public class LeaveInstruction extends IRInstruction {
     public LeaveInstruction(BasicBlock _basicBlock) {
         super(_basicBlock);
+        reloadUsedRegisterCollection();
     }
 
 

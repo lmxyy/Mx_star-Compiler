@@ -13,6 +13,7 @@ public class CallInstruction extends IRInstruction {
         super(_basicBlock);
         register = _register;
         function = _function;
+        reloadUsedRegisterCollection();
     }
 
     public void appendArgReg(IntValue reg) {
