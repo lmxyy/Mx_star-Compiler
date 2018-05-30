@@ -1,8 +1,8 @@
 package com.lmxyy.mxcompiler.ir;
 
-public class PhysicalRegister extends Register {
-    @Override
-    public void accept(IRVisitor visitor) {
-        visitor.visit(this);
-    }
+public abstract class PhysicalRegister extends Register {
+    public abstract void accept(IRVisitor visitor);
+
+    public abstract boolean isCallerSave();
+    public abstract boolean isCalleeSave();
 }

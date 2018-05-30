@@ -5,6 +5,13 @@ import com.lmxyy.mxcompiler.ir.*;
 import java.util.*;
 
 public class GlobalVariableResolver {
+
+    private static class FunctionInfo {
+        Map<StaticData, VirtualRegister> staticMap = new HashMap<>();
+        Set<StaticData> writtenStatic = new HashSet<>();
+        Set<StaticData> recursiveStaticUse = new HashSet<>();
+    }
+
     private IRRoot irRoot;
     private Map<Function,Set<Function>> calleeSetMap = new HashMap<>();
     private Map<Function,FunctionInfo> funcInfo = new HashMap<>();
@@ -16,12 +23,6 @@ public class GlobalVariableResolver {
             staticMap.put(data,reg);
         }
         return reg;
-    }
-
-    private static class FunctionInfo {
-        Map<StaticData, VirtualRegister> staticMap = new HashMap<>();
-        Set<StaticData> writtenStatic = new HashSet<>();
-        Set<StaticData> recursiveStaticUse = new HashSet<>();
     }
 
     public GlobalVariableResolver(IRRoot _irRoot) {
@@ -83,6 +84,7 @@ public class GlobalVariableResolver {
         for (Function func : irRoot.functions.values()) {
             FunctionInfo info = funcInfo.get(func);
             Set<Function> calleeSet = calleeSetMap.get(func);
+            func.calleeSet = calleeSet;
             info.recursiveStaticUse.addAll(info.staticMap.keySet());
             calleeSet.forEach(callee->info.recursiveStaticUse.addAll(funcInfo.get(callee).staticMap.keySet()));
         }

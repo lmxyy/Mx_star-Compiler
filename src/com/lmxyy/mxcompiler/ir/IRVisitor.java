@@ -18,11 +18,14 @@ public interface IRVisitor {
     void visit(StoreInstruction node);
     void visit(ReturnInstruction node);
     void visit(TwoAddressInstruction node);
+    void visit(PushInstruction node);
+    void visit(PopInstruction node);
+    void visit(LeaveInstruction node);
 
     void visit(VirtualRegister node);
     void visit(PhysicalRegister node);
     void visit(StaticSpace node);
     void visit(StaticString node);
     void visit(IntImmediate node);
-    void visit(StackFrame node);
+    void visit(StackSlot node);
 }

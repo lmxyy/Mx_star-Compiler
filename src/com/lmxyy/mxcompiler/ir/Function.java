@@ -7,10 +7,13 @@ import java.util.*;
 public class Function {
     FunctionType type;
     public BasicBlock startBasicBlock = null,exitBasicBlock = null;
-    public List<VirtualRegister> argVarRegList = new ArrayList<>();
+    public List<VirtualRegister> argRegList = new ArrayList<>();
     public List<ReturnInstruction> retInstruction = new ArrayList<>();
 
     public Set<PhysicalRegister> usedPhysicalGeneralRegister = new HashSet<>();
+    public Map<VirtualRegister,StackSlot> argStackSlopMap = new HashMap<>();
+    public Set<StackSlot> stackSlots = new HashSet<>();
+    public Set<Function> calleeSet = new HashSet<>();
 
     private Set<BasicBlock> visited = null;
     private List<BasicBlock> reversePostOrder = null;

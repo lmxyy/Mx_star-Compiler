@@ -1,5 +1,6 @@
 package com.lmxyy.mxcompiler.nasm;
 
+import com.lmxyy.mxcompiler.ir.IRVisitor;
 import com.lmxyy.mxcompiler.ir.PhysicalRegister;
 
 public class NASMRegister extends PhysicalRegister {
@@ -29,12 +30,16 @@ public class NASMRegister extends PhysicalRegister {
         return isGeneral;
     }
 
+    @Override
     public boolean isCallerSave() {
         return isCallerSave;
     }
 
+    @Override
     public boolean isCalleeSave() {
         return isCalleeSave;
     }
 
+    @Override
+    public void accept(IRVisitor visitor) { visitor.visit(this); }
 }

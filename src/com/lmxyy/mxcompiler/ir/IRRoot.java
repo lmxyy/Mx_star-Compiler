@@ -68,7 +68,7 @@ public class IRRoot {
                 add("arg1");
             }})
     );
-    public Function stringLength= new Function(new FunctionType(
+    /*public Function stringLength= new Function(new FunctionType(
             GlobalSymbolTable.stringType,
             "string.length",
             new ArrayList<VartypeNode>() {{
@@ -77,7 +77,7 @@ public class IRRoot {
             new ArrayList<String>() {{
                 add("arg0");
             }})
-    );
+    );*/
 
     public Function funcPrintln = new Function(GlobalSymbolTable.funcPrintln);
     public Function funcPrint = new Function(GlobalSymbolTable.funcPrint);
@@ -111,6 +111,7 @@ public class IRRoot {
         if (function == stringConcat) return true;
         if (function == stringEqual) return true;
         if (function == stringLeq) return true;
+//        if (function == stringLength) return true;
         if (function == funcPrint) return true;
         if (function == funcPrintInt) return true;
         if (function == funcPrintln) return true;

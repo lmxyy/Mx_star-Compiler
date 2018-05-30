@@ -8,15 +8,15 @@ import java.util.*;
 public class StupidAllocator extends RegisterAllocator {
     private IRRoot irRoot;
     private List<PhysicalRegister> registers = new ArrayList<>();
-    private Map<VirtualRegister,StackFrame> stackFrameMap = new HashMap<>();
+    private Map<VirtualRegister,StackSlot> stackSlopMap = new HashMap<>();
 
-    private StackFrame getStackFrame(Function curFunc,VirtualRegister vr) {
-        StackFrame sf = stackFrameMap.get(vr);
-        if (sf == null) {
-            sf = new StackFrame(curFunc,vr.getHintName());
-            stackFrameMap.put(vr,sf);
+    private StackSlot getStackSlop(Function curFunc, VirtualRegister vr) {
+        StackSlot sl = stackSlopMap.get(vr);
+        if (sl == null) {
+            sl = new StackSlot(curFunc,vr.getHintName());
+            stackSlopMap.put(vr,sl);
         }
-        return sf;
+        return sl;
     }
 
     public StupidAllocator(IRRoot _irRoot, Collection<PhysicalRegister> _registers) {
@@ -25,7 +25,8 @@ public class StupidAllocator extends RegisterAllocator {
     }
 
     private void processFunction(Function func) {
-        stackFrameMap.clear();
+        stackSlopMap.clear();
+        stackSlopMap.putAll(func.argStackSlopMap);
 
         Map<Register,Register> regRenameMap = new HashMap<>();
         for (BasicBlock basicBlock:func.getReversePostOrder()) {
@@ -41,8 +42,8 @@ public class StupidAllocator extends RegisterAllocator {
                                     ((VirtualRegister) reg).forcedPhysicalRegister = registers.get(cnt++);
                                 func.usedPhysicalGeneralRegister.add(pr);
                                 regRenameMap.put(reg,pr);
-                                StackFrame sf = getStackFrame(func,(VirtualRegister) reg);
-                                inst.prepend(new LoadInstruction(basicBlock,pr,CompilerOption.getSizeInt(),sf,0));
+                                StackSlot sl = getStackSlop(func,(VirtualRegister) reg);
+                                inst.prepend(new LoadInstruction(basicBlock,pr,CompilerOption.getSizeInt(),sl,0));
                             }
                         }
                         inst.setUsedRegister(regRenameMap);
@@ -53,7 +54,7 @@ public class StupidAllocator extends RegisterAllocator {
                     for (int i = 0;i < argRegs.size();++i) {
                         IntValue argReg = argRegs.get(i);
                         if (argReg instanceof VirtualRegister) {
-                            argRegs.set(i,getStackFrame(func,(VirtualRegister) argReg));
+                            argRegs.set(i,getStackSlop(func,(VirtualRegister) argReg));
                         }
                     }
                 }
@@ -61,13 +62,14 @@ public class StupidAllocator extends RegisterAllocator {
                 if (definedReg != null&&definedReg instanceof VirtualRegister) {
                     PhysicalRegister pr = ((VirtualRegister) definedReg).forcedPhysicalRegister;
                     if (pr == null) pr = registers.get(cnt++);
-                    StackFrame sf = getStackFrame(func,(VirtualRegister) definedReg);
-                    inst.append(new StoreInstruction(basicBlock,sf,CompilerOption.getSizeInt(),0,pr));
+                    StackSlot sl = getStackSlop(func,(VirtualRegister) definedReg);
+                    inst.append(new StoreInstruction(basicBlock,sl,CompilerOption.getSizeInt(),0,pr));
                     inst.setDefinedRegister(pr);
                     inst = inst.getNxt();
                 }
             }
         }
+        func.stackSlots.addAll(stackSlopMap.values());
     }
 
     public void run() {
