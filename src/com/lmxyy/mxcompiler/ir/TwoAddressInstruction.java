@@ -17,6 +17,18 @@ public class TwoAddressInstruction extends IRInstruction {
         rhs = _rhs;
     }
 
+    public BinaryOperationInstruction.Operator getOperator() {
+        return operator;
+    }
+
+    public Register getLhs() {
+        return lhs;
+    }
+
+    public IntValue getRhs() {
+        return rhs;
+    }
+
     @Override
     public void accept(IRVisitor visitor) { visitor.visit(this); }
 

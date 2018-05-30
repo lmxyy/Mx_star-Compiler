@@ -35,6 +35,12 @@ public class StoreInstruction extends IRInstruction {
         return value;
     }
 
+    public void setAddr(IntValue _addr) {
+        addr = _addr;
+    }
+    public void setOffset(int _offset) {
+        offset = _offset;
+    }
     @Override
     public void accept(IRVisitor visitor) {
         visitor.visit(this);

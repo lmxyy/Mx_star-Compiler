@@ -1,11 +1,19 @@
 package com.lmxyy.mxcompiler.compiler;
 
 import com.lmxyy.mxcompiler.ast.ProgNode;
+import com.lmxyy.mxcompiler.backend.GlobalVariableResolver;
+import com.lmxyy.mxcompiler.backend.IRPrinter;
+import com.lmxyy.mxcompiler.backend.IRTransformer;
+import com.lmxyy.mxcompiler.backend.StupidAllocator;
 import com.lmxyy.mxcompiler.frontend.ASTBuilder;
 import com.lmxyy.mxcompiler.frontend.IRBuilder;
 import com.lmxyy.mxcompiler.frontend.IRPrebuilder;
 import com.lmxyy.mxcompiler.frontend.SemanticChecker;
 import com.lmxyy.mxcompiler.ir.IRRoot;
+import com.lmxyy.mxcompiler.nasm.NASMIRTransformer;
+import com.lmxyy.mxcompiler.nasm.NASMPrinter;
+import com.lmxyy.mxcompiler.nasm.NASMRegisterSet;
+import com.lmxyy.mxcompiler.nasm.RegisterInjector;
 import com.lmxyy.mxcompiler.parser.Mx_starLexer;
 import com.lmxyy.mxcompiler.parser.Mx_starParser;
 import com.lmxyy.mxcompiler.parser.SyntaxErrorListener;
@@ -17,6 +25,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -63,7 +72,14 @@ public class Compiler {
 //        String irInfoPath = "/Users/limuyang/Desktop/Mx_star-Compiler/ir.txt";
 //        IRPrinter irPrinter = new IRPrinter(new PrintStream(irInfoPath));
 //        irPrinter.visit(irRoot);
-//        new IRTransformer(irRoot).run();
+        new IRTransformer(irRoot).run();
+        new GlobalVariableResolver(irRoot).run();
+        new StupidAllocator(irRoot,NASMRegisterSet.general).run();
+        new RegisterInjector(irRoot).run();
+        new NASMIRTransformer(irRoot).run();
+        String asmInfoPath = "/Users/limuyang/Desktop/Mx_star-Compiler/asm.asm";
+        NASMPrinter nasmPrinter = new NASMPrinter(new PrintStream(asmInfoPath));
+        nasmPrinter.visit(irRoot);
     }
 
     public boolean run() throws Exception{

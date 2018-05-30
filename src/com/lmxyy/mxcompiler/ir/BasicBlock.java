@@ -1,5 +1,7 @@
 package com.lmxyy.mxcompiler.ir;
 
+import com.lmxyy.mxcompiler.nasm.NASMRegisterSet;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -123,12 +125,37 @@ public class BasicBlock {
         instructions.forEach(instruction -> {
             if (instruction instanceof BinaryOperationInstruction) {
                 switch (((BinaryOperationInstruction) instruction).getOperator()) {
-                    case DIV: case MOD:
+                    case DIV:
+                        append(new MoveInstruction(
+                            this,((BinaryOperationInstruction) instruction).getLhs(),
+                            NASMRegisterSet.RAX
+                        ));
+                        append(new CltdInstruction(this));
                         append(new TwoAddressInstruction(
                                 this,((BinaryOperationInstruction) instruction).getOperator(),
                                 ((BinaryOperationInstruction) instruction).getDest(),
                                 ((BinaryOperationInstruction) instruction).getRhs())
                         );
+                        append(new MoveInstruction(
+                                this, NASMRegisterSet.RAX,
+                                ((BinaryOperationInstruction) instruction).getDest()
+                        ));
+                        break;
+                    case MOD:
+                        append(new MoveInstruction(
+                                this,((BinaryOperationInstruction) instruction).getLhs(),
+                                NASMRegisterSet.RAX
+                        ));
+                        append(new CltdInstruction(this));
+                        append(new TwoAddressInstruction(
+                                this,((BinaryOperationInstruction) instruction).getOperator(),
+                                ((BinaryOperationInstruction) instruction).getDest(),
+                                ((BinaryOperationInstruction) instruction).getRhs())
+                        );
+                        append(new MoveInstruction(
+                                this, NASMRegisterSet.RDX,
+                                ((BinaryOperationInstruction) instruction).getDest()
+                        ));
                         break;
                     case LEQ:
                         if (((BinaryOperationInstruction) instruction).getLhs() instanceof IntImmediate) {
@@ -207,6 +234,17 @@ public class BasicBlock {
                         append(new MoveInstruction(this,reg,(Register) lhs));
                         break;
                 }
+            }
+            else if (instruction instanceof UnaryOperationInstruction) {
+                VirtualRegister reg = new VirtualRegister(null);
+                IntValue oprand = ((UnaryOperationInstruction) instruction).getOprand();
+                Register dest = ((UnaryOperationInstruction) instruction).getDest();
+                append(new MoveInstruction(this,oprand,reg));
+                append(new UnaryOperationInstruction(this,reg,
+                        ((UnaryOperationInstruction) instruction).getOperator(),reg
+                ));
+                if (!(oprand instanceof IntImmediate))
+                    append(new MoveInstruction(this,reg,(Register) oprand));
             }
             else append(instruction);
         });

@@ -27,11 +27,8 @@ public class Function {
         return type;
     }
     public String getConvertedName() {
-        if (type == null) return null;
-        else {
-            String name = type.getName();
-            return name;
-        }
+        if (getName() == "main") return "main";
+        else return "_"+getName();
     }
     public String getName() {
         if (type == null) return null;

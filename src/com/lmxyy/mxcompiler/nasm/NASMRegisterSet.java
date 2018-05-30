@@ -19,14 +19,14 @@ public class NASMRegisterSet {
     public static NASMRegister RBP = new NASMRegister(0,"R5",false,false,true);
     public static NASMRegister RSI = new NASMRegister(0,"R6",false,false,true);
     public static NASMRegister RDI = new NASMRegister(0,"R7",false,false,true);
-    public static NASMRegister R8 = new NASMRegister(0,"R8",false,false,false);
-    public static NASMRegister R9 = new NASMRegister(0,"R9",false,false,false);
-    public static NASMRegister R10 = new NASMRegister(0,"R10",false,false,false);
-    public static NASMRegister R11 = new NASMRegister(0,"R11",false,false,false);
-    public static NASMRegister R12 = new NASMRegister(0,"R12",false,false,true);
-    public static NASMRegister R13 = new NASMRegister(0,"R13",false,false,true);
-    public static NASMRegister R14 = new NASMRegister(0,"R14",false,false,true);
-    public static NASMRegister R15 = new NASMRegister(0,"R15",false,false,true);
+    public static NASMRegister R8 = new NASMRegister(0,"R8",true,false,false);
+    public static NASMRegister R9 = new NASMRegister(0,"R9",true,false,false);
+    public static NASMRegister R10 = new NASMRegister(0,"R10",true,false,false);
+    public static NASMRegister R11 = new NASMRegister(0,"R11",true,false,false);
+    public static NASMRegister R12 = new NASMRegister(0,"R12",true,false,true);
+    public static NASMRegister R13 = new NASMRegister(0,"R13",true,false,true);
+    public static NASMRegister R14 = new NASMRegister(0,"R14",true,false,true);
+    public static NASMRegister R15 = new NASMRegister(0,"R15",true,false,true);
 
     public static final Collection<PhysicalRegister> all;
     public static final Collection<PhysicalRegister> general;

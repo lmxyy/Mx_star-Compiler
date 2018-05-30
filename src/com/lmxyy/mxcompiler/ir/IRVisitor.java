@@ -1,6 +1,8 @@
 package com.lmxyy.mxcompiler.ir;
 
 
+import com.lmxyy.mxcompiler.nasm.NASMRegister;
+
 public interface IRVisitor {
     void visit(IRRoot node);
     void visit(BasicBlock node);
@@ -21,9 +23,11 @@ public interface IRVisitor {
     void visit(PushInstruction node);
     void visit(PopInstruction node);
     void visit(LeaveInstruction node);
+    void visit(CltdInstruction node);
 
     void visit(VirtualRegister node);
     void visit(PhysicalRegister node);
+    void visit(NASMRegister node);
     void visit(StaticSpace node);
     void visit(StaticString node);
     void visit(IntImmediate node);

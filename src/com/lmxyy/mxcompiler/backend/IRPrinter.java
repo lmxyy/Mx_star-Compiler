@@ -36,8 +36,8 @@ public class IRPrinter implements IRVisitor {
         return id;
     }
     private String labelId(BasicBlock basicBlock) {
-        String id = labelMap.get(basicBlock);
-        if (id == null) {
+            String id = labelMap.get(basicBlock);
+            if (id == null) {
             id = newId(basicBlock.getHintName(), counterBB);
             labelMap.put(basicBlock, id);
         }
@@ -74,8 +74,8 @@ public class IRPrinter implements IRVisitor {
     @Override
     public void visit(Function node) {
         regMap = new HashMap<>(); counterReg = new IdentityHashMap<>();
-        out.printf("func %s ",node.getConvertedName());
-        node.argVarRegList.forEach(reg->out.printf("$%s ",regId(reg)));
+        out.printf("func %s ",node.getName());
+        node.argRegList.forEach(reg->out.printf("$%s ",regId(reg)));
         out.println("{\n");
         node.getReversePostOrder().forEach(basicBlock->visit(basicBlock));
         out.println("}\n");
@@ -159,8 +159,8 @@ public class IRPrinter implements IRVisitor {
             visit(node.getRegister());
             out.print(" = ");
         }
-        out.printf("call %s ",node.getFunction().getConvertedName());
-        node.getArgArgRegList().forEach(arg -> {
+        out.printf("call %s ",node.getFunction().getName());
+        node.getArgRegList().forEach(arg -> {
             arg.accept(this);
             out.print(" ");
         });
@@ -181,6 +181,7 @@ public class IRPrinter implements IRVisitor {
     public void visit(JumpInstruction node) {
         out.printf("    jump %%%s\n\n", labelId(node.getTarget()));
     }
+
     @Override
     public void visit(ReturnInstruction node) {
         out.print("    ret ");
@@ -228,6 +229,31 @@ public class IRPrinter implements IRVisitor {
     }
 
     @Override
+    public void visit(PushInstruction node) {
+
+    }
+
+    @Override
+    public void visit(PopInstruction node) {
+
+    }
+
+    @Override
+    public void visit(LeaveInstruction node) {
+
+    }
+
+    @Override
+    public void visit(CltdInstruction node) {
+
+    }
+
+    @Override
+    public void visit(StackSlot node) {
+
+    }
+
+    @Override
     public void visit(TwoAddressInstruction node) {
 
     }
@@ -249,7 +275,7 @@ public class IRPrinter implements IRVisitor {
     }
     @Override
     public void visit(StaticSpace node) {
-        if (definingStatic) out.printf("space @%s %d\n", dataId(node), node.getLength());
+        if (definingStatic) out.printf("space @%s %d\n", dataId(node), node.getRegisterSize());
         else out.print("@" + dataId(node));
     }
 

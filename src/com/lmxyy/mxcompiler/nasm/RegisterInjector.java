@@ -41,28 +41,19 @@ public class RegisterInjector {
         }
     }
 
-    private void modifyFunctionCall(Function func,BasicBlock basicBlock,CallInstruction inst) {
-        if (irRoot.isBuiltinFunction(inst.getFunction())) {
-            // TODO
-        }
-        else {
-            // TODO
-        }
-    }
-
     private void modifyHeapAllocation(Function func,BasicBlock basicBlock,HeapAllocateInstruction inst) {
         if (func.argRegList.size() > 0)
             inst.append(new StoreInstruction(
-                    basicBlock, NASMRegisterSet.R8, 0,wordSize,
+                    basicBlock, NASMRegisterSet.RDI, 0,wordSize,
                     func.argStackSlopMap.get(func.argRegList.get(0)))
             );
-        inst.prepend(new MoveInstruction(basicBlock, inst.getAllocSize(), NASMRegisterSet.R8));
+        inst.prepend(new MoveInstruction(basicBlock, inst.getAllocSize(), NASMRegisterSet.RDI));
         inst.append(new MoveInstruction(basicBlock, NASMRegisterSet.RAX, inst.getDest()));
         if (func.argRegList.size() > 0)
-            inst.append(
-                    new LoadInstruction(basicBlock, NASMRegisterSet.R8, wordSize,
-                            func.argStackSlopMap.get(func.argRegList.get(0)), 0)
-            );
+            // TODO There may have some bugs here.
+            inst.append(new LoadInstruction(basicBlock, NASMRegisterSet.RDI, wordSize,
+                    func.argStackSlopMap.get(func.argRegList.get(0)), 0
+            ));
     }
 
     public void run() {
@@ -72,8 +63,6 @@ public class RegisterInjector {
                 for (IRInstruction inst = basicBlock.getHead();inst != null;inst = inst.getNxt()) {
                     if (inst instanceof HeapAllocateInstruction)
                         modifyHeapAllocation(func,basicBlock,(HeapAllocateInstruction) inst);
-                    else if (inst instanceof CallInstruction)
-                        modifyFunctionCall(func,basicBlock,(CallInstruction) inst);
                 }
             }
         }

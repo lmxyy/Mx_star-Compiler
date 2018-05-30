@@ -6,7 +6,7 @@ import com.lmxyy.mxcompiler.utils.CompilerOption;
 
 public class IRTransformer {
     private IRRoot irRoot;
-    private final int sizeWord = CompilerOption.getSizeInt();
+    private final int wordSize = CompilerOption.getSizeInt();
 
     public IRTransformer(IRRoot _irRoot){
         irRoot = _irRoot;

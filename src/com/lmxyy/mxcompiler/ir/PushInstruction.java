@@ -18,6 +18,18 @@ public class PushInstruction extends IRInstruction {
         isAddress = true;
     }
 
+    public IntValue getOprand() {
+        return oprand;
+    }
+
+    public boolean isAddress() {
+        return isAddress;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
     @Override
     public void accept(IRVisitor visitor) {
         visitor.visit(this);
