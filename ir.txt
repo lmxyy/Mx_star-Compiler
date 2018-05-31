@@ -1,21 +1,28 @@
-space @a 8
-space @b 8
+space @c 8
+space @x 8
+
+func lol $x {
+
+%lol.entry:
+    $t = add $x 1
+    ret $t
+
+}
 
 func main {
 
 %main.entry:
     call _init 
-    $t = add @a @b
-    $c = move $t
-    ret $c
+    ret @x
 
 }
 
 func _init {
 
 %_init.entry:
-    @a = move 1
-    @b = move 2
+    @c = move 123
+    $t = call lol @c 
+    @x = move $t
     ret 0
 
 }

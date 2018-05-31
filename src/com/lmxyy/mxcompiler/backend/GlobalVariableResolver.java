@@ -44,6 +44,7 @@ public class GlobalVariableResolver {
                     if (!irRoot.isBuiltinFunction(((CallInstruction) inst).getFunction())) {
                         calleeSet.add(((CallInstruction) inst).getFunction());
                     }
+                    ((CallInstruction) inst).callReloadUsedRegisterCollection();
                 }
                 Collection<Register> used = inst.getUsedRegister();
                 if (!used.isEmpty()) {

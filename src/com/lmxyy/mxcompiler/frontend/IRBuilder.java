@@ -1229,7 +1229,7 @@ public class IRBuilder implements ASTVisitor {
                         );
                 }
             }
-            else { //调用类内部的函数
+            else { // Call builtin function
                 if (record.getType().getType().getDimension() > 0) {
                     processBuiltinMethod(node,GlobalSymbolTable.arraySize);
                 }

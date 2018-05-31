@@ -29,6 +29,9 @@ public class CallInstruction extends IRInstruction {
     public List<IntValue> getArgRegList() {
         return argRegList;
     }
+    public void callReloadUsedRegisterCollection() {
+        reloadUsedRegisterCollection();
+    }
 
     @Override
     public void accept(IRVisitor visitor) {
@@ -37,9 +40,14 @@ public class CallInstruction extends IRInstruction {
     @Override
     protected void reloadUsedRegisterCollection() {
         usedRegister.clear();
-        usedIntValue.clear();
         for (IntValue arg : argRegList) {
             if (arg instanceof Register)
+                usedRegister.add((Register) arg);
+            usedIntValue.add(arg);
+        }
+        usedIntValue.clear();
+        for (IntValue arg : argRegList) {
+            if (arg instanceof IntValue)
                 usedRegister.add((Register) arg);
             usedIntValue.add(arg);
         }
