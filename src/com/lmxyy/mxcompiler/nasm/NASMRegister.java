@@ -6,13 +6,16 @@ import com.lmxyy.mxcompiler.ir.PhysicalRegister;
 public class NASMRegister extends PhysicalRegister {
     private final int id;
     private final String name;
+    private final String name_8;
     private final boolean isGeneral;
     private final boolean isCallerSave;
     private final boolean isCalleeSave;
+    private boolean flag = false;
 
-    public NASMRegister(int _id,String _name,boolean _isGeneral,boolean _isCallerSave,boolean _isCalleeSave) {
+    public NASMRegister(int _id,String _name,String _name_8,boolean _isGeneral,boolean _isCallerSave,boolean _isCalleeSave) {
         id = _id;
         name = _name;
+        name_8 = _name_8;
         isGeneral = _isGeneral;
         isCallerSave = _isCallerSave;
         isCalleeSave = _isCalleeSave;
@@ -23,7 +26,12 @@ public class NASMRegister extends PhysicalRegister {
     }
 
     public String getName() {
-        return name;
+        if (!flag) return name;
+        else return name_8;
+    }
+
+    public void setFlag(boolean _flag) {
+        flag = _flag;
     }
 
     public boolean isGeneral() {

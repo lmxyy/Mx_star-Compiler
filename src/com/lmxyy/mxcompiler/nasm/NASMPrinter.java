@@ -110,34 +110,40 @@ public class NASMPrinter implements IRVisitor {
 
     @Override
     public void visit(ComparisionInstruction node) {
-        out.println("\tcmp ");
+        out.print("\tcmp ");
         node.getLhs().accept(this);
-        out.println(',');
+        out.print(',');
         node.getRhs().accept(this);
+        out.print("\n");
+        out.print("\tmov ");
+        node.getDest().accept(this);
+        out.print(",0");
         out.print("\n\t");
         switch (node.getOperator()) {
             case EQU:
-                out.println("sete ");
+                out.print("sete ");
                 break;
             case NEQ:
-                out.println("setne ");
+                out.print("setne ");
                 break;
             case LESS:
-                out.println("setl ");
+                out.print("setl ");
                 break;
             case LEQ:
-                out.println("setle ");
+                out.print("setle ");
                 break;
             case GRTR:
-                out.println("setg ");
+                out.print("setg ");
                 break;
             case GEQ:
-                out.println("setge ");
+                out.print("setge ");
                 break;
             default: System.err.println("Unknown comparision operator."); break;
         }
+        ((NASMRegister)node.getDest()).setFlag(true);
         node.getDest().accept(this);
-        out.print('\n');
+        ((NASMRegister)node.getDest()).setFlag(false);
+        out.print("\n");
     }
 
     @Override
@@ -149,7 +155,7 @@ public class NASMPrinter implements IRVisitor {
     public void visit(BranchInstruction node) {
         out.print("\tcmp ");
         node.getIndicator().accept(this);
-        out.println("1");
+        out.println(",1");
         out.println("\tjz "+labelId(node.getIfTrue()));
         out.println("\tjnz "+labelId(node.getIfFalse()));
     }

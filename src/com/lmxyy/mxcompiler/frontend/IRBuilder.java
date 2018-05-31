@@ -370,7 +370,7 @@ public class IRBuilder implements ASTVisitor {
         } else {
             curBasicBlock.append(
                     new ArithmeticInstruction(
-                            curBasicBlock, (Register) node.intValue, op, oprand.intValue, one
+                            curBasicBlock, (Register) oprand.intValue, op, oprand.intValue, one
                     )
             );
         }

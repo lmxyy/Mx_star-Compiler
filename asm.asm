@@ -6,29 +6,31 @@ main:
 main..main.entry:
 	push rbp
 	mov rbp,rsp
-	sub rsp,96
+	sub rsp,64
 	call __init
 	mov r8,1
-	mov [rsp+24],r8
-	mov r8,1
-	mov [rsp+40],r8
-	mov r8,[rsp+24]
-	mov r9,r8
-	mov [rsp+16],r9
-	mov r8,[rsp+40]
-	add r8,r8
-	mov [rsp+24],r8
-	mov r8,[rsp+24]
-	mov [rsp+32],r8
-	mov r8,[rsp+16]
-	mov [rsp+24],r8
-	mov r8,[rsp+32]
-	mov r9,r8
-	mov [rsp+8],r9
-	mov r8,[rsp+8]
-	mov rax,r8
+	mov [rbp-16],r8
+	jmp main..for_cond
+main..for_cond:
+	mov r8,[rbp-16]
+	cmp r8,10
+	mov r9,0
+	setle r9b
+	mov [rbp-8],r9
+	mov r8,[rbp-8]
+	cmp r8,1
+	jz main..for_loop
+	jnz main..for_after
+main..for_after:
+	mov rax,0
 	leave
 	ret
+main..for_loop:
+	jmp main..for_step
+main..for_step:
+	add r8,1
+	mov [rbp-16],r8
+	jmp main..for_cond
 
 __init:
 __init.._init.entry:

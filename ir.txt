@@ -2,11 +2,22 @@ func main {
 
 %main.entry:
     call _init 
-    $a = move 1
-    $b = move 1
-    $t = add $a $b
-    $c = move $t
-    ret $c
+    $i = move 1
+    jump %for_cond
+
+%for_cond:
+    $t = sle $i 10
+    br $t %for_loop %for_after
+
+%for_after:
+    ret 0
+
+%for_loop:
+    jump %for_step
+
+%for_step:
+    $i = add $i 1
+    jump %for_cond
 
 }
 

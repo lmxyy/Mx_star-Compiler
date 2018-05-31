@@ -236,15 +236,15 @@ public class NASMIRTransformer {
         if (inst instanceof LoadInstruction) {
             if (((LoadInstruction) inst).getAddr() instanceof StackSlot) {
                 StackSlot slot = (StackSlot) ((LoadInstruction) inst).getAddr();
-                ((LoadInstruction) inst).setAddr(NASMRegisterSet.RSP);
-                ((LoadInstruction) inst).setOffset(info.stackSlotOffset.get(slot));
+                ((LoadInstruction) inst).setAddr(NASMRegisterSet.RBP);
+                ((LoadInstruction) inst).setOffset(-info.stackSlotOffset.get(slot));
             }
         }
         else if (inst instanceof StoreInstruction) {
             if (((StoreInstruction) inst).getAddr() instanceof StackSlot) {
                 StackSlot slot = (StackSlot) ((StoreInstruction) inst).getAddr();
-                ((StoreInstruction) inst).setAddr(NASMRegisterSet.RSP);
-                ((StoreInstruction) inst).setOffset(info.stackSlotOffset.get(slot));
+                ((StoreInstruction) inst).setAddr(NASMRegisterSet.RBP);
+                ((StoreInstruction) inst).setOffset(-info.stackSlotOffset.get(slot));
             }
         }
     }

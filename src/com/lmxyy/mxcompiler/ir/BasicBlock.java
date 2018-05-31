@@ -224,15 +224,27 @@ public class BasicBlock {
                             lhs = ((BinaryOperationInstruction) instruction).getRhs();
                             rhs = ((BinaryOperationInstruction) instruction).getLhs();
                         }
-                        VirtualRegister reg = new VirtualRegister(null);
-                        append(new MoveInstruction(this,lhs,reg));
-                        append(new TwoAddressInstruction(
-                                this, ((BinaryOperationInstruction) instruction).getOperator(),
-                                (Register)lhs,rhs));
-                        append(new MoveInstruction(this,lhs,
-                                ((BinaryOperationInstruction) instruction).getDest()));
-                        append(new MoveInstruction(this,reg,(Register) lhs));
-                        break;
+                        if (lhs == ((BinaryOperationInstruction) instruction).getDest()) {
+                            append(new TwoAddressInstruction(
+                                    this, ((BinaryOperationInstruction) instruction).getOperator(),
+                                    (Register) lhs, rhs));
+                        }
+                        else if (rhs == ((BinaryOperationInstruction) instruction).getDest()) {
+                            append(new TwoAddressInstruction(
+                                    this, ((BinaryOperationInstruction) instruction).getOperator(),
+                                    (Register) rhs, lhs));
+                        }
+                        else {
+                            VirtualRegister reg = new VirtualRegister(null);
+                            append(new MoveInstruction(this, lhs, reg));
+                            append(new TwoAddressInstruction(
+                                    this, ((BinaryOperationInstruction) instruction).getOperator(),
+                                    (Register) lhs, rhs));
+                            append(new MoveInstruction(this, lhs,
+                                    ((BinaryOperationInstruction) instruction).getDest()));
+                            append(new MoveInstruction(this, reg, (Register) lhs));
+                            break;
+                        }
                 }
             }
             else if (instruction instanceof UnaryOperationInstruction) {

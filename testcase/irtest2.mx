@@ -6,5 +6,5 @@ int main()
     if (a != 1)
     	c = a;
     else c = b;
-    return 0;
+    return c;
 }
