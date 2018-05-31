@@ -1,0 +1,40 @@
+	global main
+
+	section .text
+
+main:
+main..main.entry:
+	push rbp
+	mov rbp,rsp
+	sub rsp,80
+	call __init
+	mov r8,___a
+	mov [rbp-24],r8
+	add ___a,___b
+	mov r8,___a
+	mov [rbp-8],r8
+	mov r8,[rbp-24]
+	mov ___a,r8
+	mov r8,[rbp-8]
+	mov r9,r8
+	mov [rbp-16],r9
+	mov r8,[rbp-16]
+	mov rax,r8
+	leave
+	ret
+
+__init:
+__init.._init.entry:
+	push rbp
+	mov rbp,rsp
+	sub rsp,48
+	mov ___a,1
+	mov ___b,2
+	leave
+	ret
+
+	section .data
+
+	section .bss
+___a:	resb 	64
+___b:	resb 	64

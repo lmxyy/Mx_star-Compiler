@@ -55,7 +55,7 @@ public class LoadInstruction extends IRInstruction {
     @Override
     protected void reloadUsedRegisterCollection() {
         usedRegister.clear();
-        if (addr instanceof Register) usedRegister.add((Register) dest);
+        if (addr instanceof Register) usedRegister.add((Register) addr);
         usedIntValue.clear();
         usedIntValue.add(addr);
     }

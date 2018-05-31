@@ -1,29 +1,21 @@
+space @a 8
+space @b 8
+
 func main {
 
 %main.entry:
     call _init 
-    $i = move 1
-    jump %for_cond
-
-%for_cond:
-    $t = sle $i 10
-    br $t %for_loop %for_after
-
-%for_after:
-    ret 0
-
-%for_loop:
-    jump %for_step
-
-%for_step:
-    $i = add $i 1
-    jump %for_cond
+    $t = add @a @b
+    $c = move $t
+    ret $c
 
 }
 
 func _init {
 
 %_init.entry:
+    @a = move 1
+    @b = move 2
     ret 0
 
 }

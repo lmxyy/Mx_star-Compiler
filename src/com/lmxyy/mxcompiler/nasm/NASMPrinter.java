@@ -51,13 +51,13 @@ public class NASMPrinter implements IRVisitor {
         /* Static String */
         out.println("\n\tsection .data");
         node.stringPool.forEach((a,b)->{
-            out.println(dataId(b)+":");
+            out.println("___"+dataId(b)+":");
             out.println("\tdb "+a.length()+','+a+','+0);
         });
         out.println("\n\tsection .bss");
         node.dataList.forEach(data->{
-            out.println(dataId(data)+":");
-            out.println("\n\tdb resb "+data.getRegisterSize()*8);
+            out.println("___"+dataId(data)+":");
+            out.println("\tresb "+data.getRegisterSize()*8);
         });
     }
 
@@ -177,7 +177,7 @@ public class NASMPrinter implements IRVisitor {
         out.print(",[");
         node.getAddr().accept(this);
         if (node.getOffset() > 0) out.print('+');
-        out.print(node.getOffset());
+        if (node.getOffset() != 0) out.print(node.getOffset());
         out.print("]\n");
     }
 
@@ -195,7 +195,7 @@ public class NASMPrinter implements IRVisitor {
         out.print("\tmov [");
         node.getAddr().accept(this);
         if (node.getOffset() > 0) out.print('+');
-        out.print(node.getOffset());
+        if (node.getOffset() != 0) out.print(node.getOffset());
         out.print("],");
         node.getValue().accept(this);
         out.print('\n');
@@ -318,12 +318,12 @@ public class NASMPrinter implements IRVisitor {
 
     @Override
     public void visit(StaticSpace node) {
-        out.print(node.getHintName());
+        out.print("___"+node.getHintName());
     }
 
     @Override
     public void visit(StaticString node) {
-        out.print(node.getHintName());
+        out.print("___"+node.getHintName());
     }
 
     @Override

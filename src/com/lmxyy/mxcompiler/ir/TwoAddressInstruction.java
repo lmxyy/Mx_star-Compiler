@@ -36,6 +36,7 @@ public class TwoAddressInstruction extends IRInstruction {
     @Override
     protected void reloadUsedRegisterCollection() {
         usedRegister.clear();
+        if (lhs instanceof Register) usedRegister.add((Register) lhs);
         if (rhs instanceof Register) usedRegister.add((Register) rhs);
         usedIntValue.clear();
         usedIntValue.add(rhs);
@@ -48,6 +49,7 @@ public class TwoAddressInstruction extends IRInstruction {
 
     @Override
     public void setUsedRegister(Map<Register, Register> regMap) {
+        if (lhs instanceof Register) lhs = regMap.get(lhs);
         if (rhs instanceof Register) rhs = regMap.get(rhs);
         reloadUsedRegisterCollection();
     }

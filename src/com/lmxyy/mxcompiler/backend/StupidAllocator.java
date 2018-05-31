@@ -32,42 +32,74 @@ public class StupidAllocator extends RegisterAllocator {
         for (BasicBlock basicBlock:func.getReversePostOrder()) {
             for (IRInstruction inst = basicBlock.getHead();inst != null;inst = inst.getNxt()) {
                 int cnt = 0;
-                if (!(inst instanceof CallInstruction)) {
+                regRenameMap.clear();
+                if (inst instanceof TwoAddressInstruction) {
                     Collection<Register> used = inst.getUsedRegister();
-                    if (!used.isEmpty()) {
-                        for (Register reg:used) {
-                            if (reg instanceof VirtualRegister) {
-                                PhysicalRegister pr = ((VirtualRegister) reg).forcedPhysicalRegister;
-                                if (pr == null) {
-                                    pr = registers.get(cnt++);
-                                    ((VirtualRegister) reg).forcedPhysicalRegister = pr;
-                                }
-                                func.usedPhysicalGeneralRegister.add(pr);
-                                regRenameMap.put(reg,pr);
-                                StackSlot sl = getStackSlop(func,(VirtualRegister) reg);
-                                inst.prepend(new LoadInstruction(basicBlock,pr,CompilerOption.getSizeInt(),sl,0));
-                            }
-                        }
-                        inst.setUsedRegister(regRenameMap);
+                    used.forEach(reg->regRenameMap.put(reg,reg));
+                    if (((TwoAddressInstruction) inst).getRhs() instanceof VirtualRegister) {
+                        VirtualRegister reg = (VirtualRegister) ((TwoAddressInstruction) inst).getRhs();
+                        PhysicalRegister pr = regRenameMap.get(reg) == reg?
+                                registers.get(cnt++):(PhysicalRegister)regRenameMap.get(reg);
+                        StackSlot sl = getStackSlop(func, (VirtualRegister) reg);
+                        if (regRenameMap.get(reg) != pr)
+                            inst.prepend(new LoadInstruction(basicBlock, pr, CompilerOption.getSizeInt(), sl, 0));
+                        regRenameMap.put(reg,pr);
+                        func.usedPhysicalGeneralRegister.add(pr);
                     }
+                    if (((TwoAddressInstruction) inst).getLhs() instanceof VirtualRegister) {
+                        VirtualRegister reg = (VirtualRegister) ((TwoAddressInstruction) inst).getLhs();
+                        PhysicalRegister pr = regRenameMap.get(reg) == reg ?
+                                registers.get(cnt++) : (PhysicalRegister) regRenameMap.get(reg);
+                        StackSlot sl = getStackSlop(func, (VirtualRegister) reg);
+                        if (regRenameMap.get(reg) != pr)
+                            inst.prepend(new LoadInstruction(basicBlock, pr, CompilerOption.getSizeInt(), sl, 0));
+                        regRenameMap.put(reg, pr);
+                        func.usedPhysicalGeneralRegister.add(pr);
+                        inst.append(new StoreInstruction(basicBlock, sl, CompilerOption.getSizeInt(), 0, pr));
+                        inst.setUsedRegister(regRenameMap);
+                        inst = inst.getNxt();
+                    }
+                    else inst.setUsedRegister(regRenameMap);
                 }
                 else {
-                    List<IntValue> argRegs = ((CallInstruction) inst).getArgRegList();
-                    for (int i = 0;i < argRegs.size();++i) {
-                        IntValue argReg = argRegs.get(i);
-                        if (argReg instanceof VirtualRegister) {
-                            argRegs.set(i,getStackSlop(func,(VirtualRegister) argReg));
+                    if (inst instanceof CallInstruction) {
+                        List<IntValue> argRegs = ((CallInstruction) inst).getArgRegList();
+                        for (int i = 0; i < argRegs.size(); ++i) {
+                            IntValue argReg = argRegs.get(i);
+                            if (argReg instanceof VirtualRegister) {
+                                argRegs.set(i, getStackSlop(func, (VirtualRegister) argReg));
+                            }
                         }
                     }
-                }
-                Register definedReg = inst.getDefinedRegister();
-                if (definedReg != null&&definedReg instanceof VirtualRegister) {
-                    PhysicalRegister pr = ((VirtualRegister) definedReg).forcedPhysicalRegister;
-                    if (pr == null) pr = registers.get(cnt++);
-                    StackSlot sl = getStackSlop(func,(VirtualRegister) definedReg);
-                    inst.append(new StoreInstruction(basicBlock,sl,CompilerOption.getSizeInt(),0,pr));
-                    inst.setDefinedRegister(pr);
-                    inst = inst.getNxt();
+                    else {
+                        Collection<Register> used = inst.getUsedRegister();
+                        used.forEach(reg->regRenameMap.put(reg,reg));
+                        if (!used.isEmpty()) {
+                            for (Register reg : used) {
+                                if (reg instanceof VirtualRegister) {
+                                    PhysicalRegister pr = regRenameMap.get(reg) == reg ?
+                                            registers.get(cnt++) : (PhysicalRegister) regRenameMap.get(reg);
+                                    StackSlot sl = getStackSlop(func, (VirtualRegister) reg);
+                                    if (regRenameMap.get(reg) != pr)
+                                        inst.prepend(new LoadInstruction(basicBlock, pr, CompilerOption.getSizeInt(), sl, 0));
+                                    regRenameMap.put(reg, pr);
+                                    func.usedPhysicalGeneralRegister.add(pr);
+                                }
+                            }
+                            inst.setUsedRegister(regRenameMap);
+                        }
+                        Register definedReg = inst.getDefinedRegister();
+                        if (definedReg != null&&definedReg instanceof VirtualRegister) {
+                            PhysicalRegister pr = regRenameMap.get(definedReg) == null ?
+                                    registers.get(cnt++) : (PhysicalRegister) regRenameMap.get(definedReg);
+                            StackSlot sl = getStackSlop(func, (VirtualRegister) definedReg);
+                            regRenameMap.put(definedReg, pr);
+                            func.usedPhysicalGeneralRegister.add(pr);
+                            inst.setDefinedRegister(pr);
+                            inst.append(new StoreInstruction(basicBlock, sl, CompilerOption.getSizeInt(), 0, pr));
+                            inst = inst.getNxt();
+                        }
+                    }
                 }
             }
         }

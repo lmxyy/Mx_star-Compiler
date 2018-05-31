@@ -70,7 +70,7 @@ public class GlobalVariableResolver {
         IRInstruction i = b.getHead();
         staticMap.forEach((data,reg) -> {
             i.prepend(new LoadInstruction(
-                    b,staticMap.get(data),data.getRegisterSize(),
+                    b,reg,data.getRegisterSize(),
                     data,data instanceof StaticString
             ));
         });

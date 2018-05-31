@@ -1,11 +1,11 @@
-int N = 100000;
+int N = 100;
 int main()
 {
-    int sum = 0,i = 0;
-    while (i < N)
+    int sum = 0,i = 1;
+    while (i <= N)
     {
-	sum = sum+i;
+	sum = sum+1;
 	i++;
     }
-    return 0;
+    return sum;
 }
