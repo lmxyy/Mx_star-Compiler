@@ -28,6 +28,7 @@ public class Function {
     }
     public String getConvertedName() {
         if (getName().equals("main")) return "main";
+        else if (IRRoot.isBuiltinFunction(this)) return getName();
         else return "_"+getName();
     }
     public String getName() {
@@ -36,7 +37,6 @@ public class Function {
             return type.getName();
         }
     }
-
 
     private void dfsPostOrd(BasicBlock basicBlock) {
         if (visited.contains(basicBlock)) return;

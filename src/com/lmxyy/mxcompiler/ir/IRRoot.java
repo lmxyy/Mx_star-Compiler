@@ -1,6 +1,7 @@
 package com.lmxyy.mxcompiler.ir;
 
 import com.lmxyy.mxcompiler.ast.VartypeNode;
+import com.lmxyy.mxcompiler.nasm.NASMRegisterSet;
 import com.lmxyy.mxcompiler.symbol.FunctionType;
 import com.lmxyy.mxcompiler.symbol.GlobalSymbolTable;
 
@@ -13,14 +14,29 @@ public class IRRoot {
     public Map<String,Function> functions = new LinkedHashMap<>();
     public List<StaticData> dataList = new ArrayList<>();
     public Map<String,StaticString> stringPool = new LinkedHashMap<>();
+    public static List<Function> builtinFunctions = new ArrayList<>();
 
     public IRRoot() {
+        builtinFunctions.add(stringSubString);
+        builtinFunctions.add(stringParseInt);
+        builtinFunctions.add(stringConcat);
+        builtinFunctions.add(stringEqual);
+        builtinFunctions.add(stringLess);
+        builtinFunctions.add(stringLeq);
 
+        builtinFunctions.add(funcPrintln);
+        builtinFunctions.add(funcPrint);
+        builtinFunctions.add(funcPrintlnInt);
+        builtinFunctions.add(funcPrintInt);
+        builtinFunctions.add(funcGetString);
+        builtinFunctions.add(funcGetInt);
+        builtinFunctions.add(funcToString);
+        builtinFunctions.forEach(func->func.usedPhysicalGeneralRegister.addAll(NASMRegisterSet.all));
     }
 
-    public Function stringSubString = new Function(GlobalSymbolTable.stringSubString);
-    public Function stringParseInt = new Function(GlobalSymbolTable.stringParseInt);
-    public Function stringConcat = new Function(new FunctionType(
+    public static Function stringSubString = new Function(GlobalSymbolTable.stringSubString);
+    public static Function stringParseInt = new Function(GlobalSymbolTable.stringParseInt);
+    public static Function stringConcat = new Function(new FunctionType(
             GlobalSymbolTable.stringType,
             "string.concat",
             new ArrayList<VartypeNode>() {{
@@ -32,7 +48,7 @@ public class IRRoot {
                 add("arg1");
             }})
     );
-    public Function stringEqual = new Function(new FunctionType(
+    public static Function stringEqual = new Function(new FunctionType(
             GlobalSymbolTable.stringType,
             "string.equal",
             new ArrayList<VartypeNode>() {{
@@ -44,7 +60,7 @@ public class IRRoot {
                 add("arg1");
             }})
     );
-    public Function stringLess = new Function(new FunctionType(
+    public static Function stringLess = new Function(new FunctionType(
             GlobalSymbolTable.stringType,
             "string.less",
             new ArrayList<VartypeNode>() {{
@@ -56,7 +72,7 @@ public class IRRoot {
                 add("arg1");
             }})
     );
-    public Function stringLeq= new Function(new FunctionType(
+    public static Function stringLeq= new Function(new FunctionType(
             GlobalSymbolTable.stringType,
             "string.leq",
             new ArrayList<VartypeNode>() {{
@@ -79,11 +95,11 @@ public class IRRoot {
             }})
     );*/
 
-    public Function funcPrintln = new Function(GlobalSymbolTable.funcPrintln);
-    public Function funcPrint = new Function(GlobalSymbolTable.funcPrint);
-    public Function funcPrintlnInt = new Function(new FunctionType(
+    public static Function funcPrintln = new Function(GlobalSymbolTable.funcPrintln);
+    public static Function funcPrint = new Function(GlobalSymbolTable.funcPrint);
+    public static Function funcPrintlnInt = new Function(new FunctionType(
             GlobalSymbolTable.voidType,
-            "_printlnint",
+            "printlnint",
             new ArrayList<VartypeNode>() {{
                 add(GlobalSymbolTable.intType);
             }},
@@ -91,9 +107,9 @@ public class IRRoot {
                 add("arg0");
             }})
     );
-    public Function funcPrintInt = new Function(new FunctionType(
+    public static Function funcPrintInt = new Function(new FunctionType(
             GlobalSymbolTable.voidType,
-            "_printint",
+            "printint",
             new ArrayList<VartypeNode>() {{
                 add(GlobalSymbolTable.intType);
             }},
@@ -101,22 +117,16 @@ public class IRRoot {
                 add("arg0");
             }})
     );;
-    public Function funcGetString = new Function(GlobalSymbolTable.funcGetString);
-    public Function funcGetInt = new Function(GlobalSymbolTable.funcGetInt);
-    public Function funcToString = new Function(GlobalSymbolTable.funcToString);
+    public static Function funcGetString = new Function(GlobalSymbolTable.funcGetString);
+    public static Function funcGetInt = new Function(GlobalSymbolTable.funcGetInt);
+    public static Function funcToString = new Function(GlobalSymbolTable.funcToString);
 
-    public boolean isBuiltinFunction(Function function) {
-        if (function == stringSubString) return true;
-        if (function == stringParseInt) return true;
-        if (function == stringConcat) return true;
-        if (function == stringEqual) return true;
-        if (function == stringLeq) return true;
-//        if (function == stringLength) return true;
-        if (function == funcPrint) return true;
-        if (function == funcPrintInt) return true;
-        if (function == funcPrintln) return true;
-        if (function == funcPrintlnInt) return true;
-        return false;
+    public List<Function> getBuiltinFunctions() {
+        return builtinFunctions;
+    }
+
+    public static boolean isBuiltinFunction(Function function) {
+        return builtinFunctions.contains(function);
     }
 
     public void accept(IRVisitor visitor) {

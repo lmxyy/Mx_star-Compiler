@@ -45,22 +45,30 @@ public class NASMPrinter implements IRVisitor {
     @Override
     public void visit(IRRoot node) {
         /* TODO Some Global Information here. */
-        out.println("\tglobal main\n");
-        out.println("\textern malloc\n");
+        out.println("global main\n");
 
-        out.println("\tsection .text");
+        out.println("extern malloc");
+//        out.println("\textern puts");
+//        out.println("\textern __stack_chk_fail");
+
+        out.println("section .text");
         node.functions.values().forEach(func->func.accept(this));
         /* Static String */
         out.println("\n\tsection .data");
         node.stringPool.forEach((a,b)->{
             out.println("___"+dataId(b)+":");
-            out.println("\tdb "+a.length()+','+a+','+0);
+            int dec = 0;
+            for (int i = 0;i < a.length();++i) {
+                if (a.charAt(i) == '\\') ++dec;
+            }
+            out.println("\tdq "+(a.length()-dec)+",\""+a+"\","+0);
         });
-        out.println("\n\tsection .bss");
+        out.println("\nsection .bss");
         node.dataList.forEach(data->{
             out.println("___"+dataId(data)+":");
             out.println("\tresb "+data.getRegisterSize()*8);
         });
+
     }
 
     @Override
@@ -176,11 +184,15 @@ public class NASMPrinter implements IRVisitor {
     public void visit(LoadInstruction node) {
         out.print("\tmov ");
         node.getDest().accept(this);
-        out.print(",qword [");
+        if (node.getAddr() instanceof StaticString)
+            out.print(",");
+        else out.print(",qword [");
         node.getAddr().accept(this);
         if (node.getOffset() > 0) out.print('+');
         if (node.getOffset() != 0) out.print(node.getOffset());
-        out.print("]\n");
+        if (node.getAddr() instanceof StaticString)
+            out.print("\n");
+        else out.print("]\n");
     }
 
     @Override

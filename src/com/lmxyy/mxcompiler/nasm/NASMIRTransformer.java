@@ -289,6 +289,15 @@ public class NASMIRTransformer {
 
     public void run() {
         irRoot.functions.values().forEach(func->calcFrame(func));
+        irRoot.getBuiltinFunctions().forEach(func->{
+            FunctionInfo info = new FunctionInfo();
+            infoMap.put(func, info);
+
+            for (PhysicalRegister pr:func.usedPhysicalGeneralRegister) {
+                if (pr.isCallerSave()) info.usedCallerSaveRegister.add(pr);
+                if (pr.isCalleeSave()) info.usedCalleeSaveRegister.add(pr);
+            }
+        });
 
         calcRecursiveRegisterUse();
 

@@ -1,42 +1,117 @@
-func tak $x $y $z {
-
-%tak.entry:
-    $t = slt $y $x
-    br $t %if_true %if_false
-
-%if_true:
-    $t_2 = sub $x 1
-    $t_3 = call tak $t_2 $y $z 
-    $t_4 = sub $y 1
-    $t_5 = call tak $t_4 $z $x 
-    $t_6 = sub $z 1
-    $t_7 = call tak $t_6 $x $y 
-    $t_8 = call tak $t_3 $t_5 $t_7 
-    $t_9 = add 1 $t_8
-    $returnValue = move $t_9
-    jump %tak.exit
-
-%if_false:
-    $returnValue = move $z
-    jump %tak.exit
-
-%tak.exit:
-    ret $returnValue
-
-}
+space @N 8
+space @b 8
+space @resultCount 8
+asciiz @string  
+asciiz @string_2 Total: 
 
 func main {
 
 %main.entry:
     call _init 
-    $t = call tak 18 12 6 
-    ret $t
+    $i = move 0
+    $i = move 1
+    jump %for_cond
+
+%for_cond:
+    $t = sle $i @N
+    br $t %for_loop %for_after
+
+%for_after:
+    $i = move 2
+    jump %for_cond_2
+
+%for_cond_2:
+    $t_2 = sle $i @N
+    br $t_2 %for_loop_2 %for_after_2
+
+%for_after_2:
+    call print @string_2 
+    call _printlnint @resultCount 
+    ret 0
+
+%for_loop_2:
+    $t_3 = mul $i 1
+    $t_3 = add @b $t_3
+    $t_3 = load 1 $t_3 8
+    br $t_3 %if_true %if_after
+
+%if_after:
+    jump %for_step
+
+%for_step:
+    $t_4 = move $i
+    $i = add $i 1
+    jump %for_cond_2
+
+%if_true:
+    $count = move 2
+    $t_5 = sgt $i 3
+    br $t_5 %lhs_true %lhs_false
+
+%lhs_true:
+    $t_6 = sub $i 2
+    $t_7 = mul $t_6 1
+    $t_7 = add @b $t_7
+    $t_7 = load 1 $t_7 8
+    $t_8 = move $t_7
+    jump %lhs_merge
+
+%lhs_false:
+    $t_8 = move 0
+    jump %lhs_merge
+
+%lhs_merge:
+    br $t_8 %if_true_2 %if_after_2
+
+%if_true_2:
+    $t_9 = move @resultCount
+    @resultCount = add @resultCount 1
+    $t_10 = sub $i 2
+    call _printint $t_10 
+    call print @string 
+    call _printlnint $i 
+    jump %if_after_2
+
+%if_after_2:
+    jump %while_cond
+
+%while_cond:
+    $t_11 = mul $i $count
+    $t_12 = sle $t_11 @N
+    br $t_12 %while_loop %while_after
+
+%while_after:
+%while_loop:
+    $t_13 = mul $i $count
+    $t_14 = mul $t_13 1
+    $t_14 = add @b $t_14
+    store 1 $t_14 0 8
+    $t_15 = move $count
+    $count = add $count 1
+    jump %while_cond
+
+%for_loop:
+    $t_16 = mul $i 1
+    $t_16 = add @b $t_16
+    store 1 $t_16 1 8
+    jump %for_step_2
+
+%for_step_2:
+    $t_17 = move $i
+    $i = add $i 1
+    jump %for_cond
 
 }
 
 func _init {
 
 %_init.entry:
+    @N = move 15000
+    $newaddress = move 15009
+    $newaddress = alloc $newaddress
+    store 8 $newaddress 15001 0
+    @b = move $newaddress
+    @resultCount = move 0
     ret 0
 
 }

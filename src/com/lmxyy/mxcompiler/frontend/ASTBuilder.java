@@ -527,7 +527,8 @@ public class ASTBuilder extends Mx_starBaseVisitor<Node> {
             return ret;
         }
         else if (ctx.Stringliteral() != null) {
-            StringliteralNode ret = new StringliteralNode(ctx.Stringliteral().getText());
+            String s = ctx.Stringliteral().getText();
+            StringliteralNode ret = new StringliteralNode(s.substring(1,s.length()-1));
             ret.setLocation(Location.fromCtx(ctx));
             return ret;
         }
