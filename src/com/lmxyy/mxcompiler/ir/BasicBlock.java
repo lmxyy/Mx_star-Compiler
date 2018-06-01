@@ -130,7 +130,7 @@ public class BasicBlock {
                             this,((BinaryOperationInstruction) instruction).getLhs(),
                             NASMRegisterSet.RAX
                         ));
-                        append(new CdqInstruction(this));
+                        append(new CqoInstruction(this));
                         append(new TwoAddressInstruction(
                                 this,((BinaryOperationInstruction) instruction).getOperator(),
                                 ((BinaryOperationInstruction) instruction).getDest(),
@@ -146,7 +146,7 @@ public class BasicBlock {
                                 this,((BinaryOperationInstruction) instruction).getLhs(),
                                 NASMRegisterSet.RAX
                         ));
-                        append(new CdqInstruction(this));
+                        append(new CqoInstruction(this));
                         append(new TwoAddressInstruction(
                                 this,((BinaryOperationInstruction) instruction).getOperator(),
                                 ((BinaryOperationInstruction) instruction).getDest(),

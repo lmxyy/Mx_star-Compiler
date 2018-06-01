@@ -92,7 +92,9 @@ public class StupidAllocator extends RegisterAllocator {
                         regRenameMap.put(reg, pr);
                         func.usedPhysicalGeneralRegister.add(pr);
                     }
-                    if (((TwoAddressInstruction) inst).getLhs() instanceof VirtualRegister) {
+                    if (((TwoAddressInstruction) inst).getLhs() instanceof VirtualRegister&&
+                            ((TwoAddressInstruction) inst).getOperator() != BinaryOperationInstruction.Operator.DIV &&
+                            ((TwoAddressInstruction) inst).getOperator() != BinaryOperationInstruction.Operator.MOD) {
                         VirtualRegister reg = (VirtualRegister) ((TwoAddressInstruction) inst).getLhs();
                         PhysicalRegister pr = regRenameMap.get(reg) == reg ?
                                 registers.get(cnt++) : (PhysicalRegister) regRenameMap.get(reg);

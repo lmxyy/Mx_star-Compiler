@@ -18,19 +18,32 @@ public class IRRoot {
 
     public IRRoot() {
         builtinFunctions.add(stringSubString);
+        stringSubString.setCallName("_Z15stringSubStringPcii");
         builtinFunctions.add(stringParseInt);
+        stringParseInt.setCallName("_Z14stringParseIntPc");
         builtinFunctions.add(stringConcat);
+        stringConcat.setCallName("_Z12stringConcatPcS_");
         builtinFunctions.add(stringEqual);
+        stringEqual.setCallName("_Z9stringEquPcS_");
         builtinFunctions.add(stringLess);
+        stringEqual.setCallName("_Z10stringLessPcS_");
         builtinFunctions.add(stringLeq);
+        stringLeq.setCallName("_Z9stringLeqPcS_");
 
         builtinFunctions.add(funcPrintln);
+        funcPrintln.setCallName("_Z7printlnPc");
         builtinFunctions.add(funcPrint);
+        funcPrint.setCallName("_Z5printPc");
         builtinFunctions.add(funcPrintlnInt);
+        funcPrintlnInt.setCallName("_Z10printlnInti");
         builtinFunctions.add(funcPrintInt);
+        funcPrintInt.setCallName("_Z8printInti");
         builtinFunctions.add(funcGetString);
+        funcGetString.setCallName("_Z9getStringv");
         builtinFunctions.add(funcGetInt);
+        funcGetInt.setCallName("_Z6getIntv");
         builtinFunctions.add(funcToString);
+        funcToString.setCallName("_Z8toStringi");
         builtinFunctions.forEach(func->func.usedPhysicalGeneralRegister.addAll(NASMRegisterSet.all));
     }
 

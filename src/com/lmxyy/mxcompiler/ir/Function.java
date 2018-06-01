@@ -18,6 +18,8 @@ public class Function {
     private Set<BasicBlock> visited = null;
     private List<BasicBlock> reversePostOrder = null;
 
+    private String callName = null;
+
     public Function(FunctionType _type) {
         type = _type;
         startBasicBlock = new BasicBlock(this,type.getName()+".entry");
@@ -28,8 +30,8 @@ public class Function {
     }
     public String getConvertedName() {
         if (getName().equals("main")) return "main";
-        else if (IRRoot.isBuiltinFunction(this)) return getName();
-        else return "_"+getName();
+        else if (IRRoot.isBuiltinFunction(this)) return callName;
+        else return "___"+getName();
     }
     public String getName() {
         if (type == null) return null;
@@ -53,6 +55,10 @@ public class Function {
     public List<BasicBlock> getReversePostOrder() {
         if (reversePostOrder == null) calcReversePostOrder();
         return reversePostOrder;
+    }
+
+    public void setCallName(String _callName) {
+        callName = _callName;
     }
 
     @Override

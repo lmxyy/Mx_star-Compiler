@@ -2,8 +2,8 @@ package com.lmxyy.mxcompiler.ir;
 
 import java.util.Map;
 
-public class CdqInstruction extends IRInstruction {
-    public CdqInstruction(BasicBlock _basicBlock) {
+public class CqoInstruction extends IRInstruction {
+    public CqoInstruction(BasicBlock _basicBlock) {
         super(_basicBlock);
         reloadUsedRegisterCollection();
 
