@@ -1294,7 +1294,7 @@ public class NASMPrinter implements IRVisitor {
                 }
                 else s = s+a.charAt(i);
             }
-            out.print("\tdb 0,0,0,0,0,0,0,"+(s.length()));
+            out.print("\tdb "+(s.length())+",0,0,0,0,0,0,0");
             for (int i = 0;i < s.length();++i) {
                 out.print(","+(int)(s.charAt(i)));
             }
