@@ -1268,7 +1268,6 @@ public class NASMPrinter implements IRVisitor {
 
     @Override
     public void visit(IRRoot node) {
-        /* TODO Some Global Information here. */
         out.println("global main\n");
 
         out.println("extern malloc");
@@ -1388,7 +1387,13 @@ public class NASMPrinter implements IRVisitor {
     @Override
     public void visit(BranchInstruction node) {
         out.print("\tcmp ");
+        if (node.getIndicator() instanceof NASMRegister) {
+            ((NASMRegister) node.getIndicator()).setFlag(true);
+        }
         node.getIndicator().accept(this);
+        if (node.getIndicator() instanceof NASMRegister) {
+            ((NASMRegister) node.getIndicator()).setFlag(false);
+        }
         out.println(",1");
         out.println("\tjz "+labelId(node.getIfTrue()));
         out.println("\tjnz "+labelId(node.getIfFalse()));
@@ -1406,10 +1411,18 @@ public class NASMPrinter implements IRVisitor {
 
     @Override
     public void visit(LoadInstruction node) {
+//        if (node.getSize() == 1) {
+//            out.print("\tmov ");
+//            node.getDest().accept(this);
+//            out.println(",0");
+//        }
         out.print("\tmov ");
+        ((NASMRegister) node.getDest()).setFlag(node.getSize() == 1);
         node.getDest().accept(this);
+        ((NASMRegister) node.getDest()).setFlag(false);
         if (node.getAddr() instanceof StaticString)
             out.print(",");
+        else if (node.getSize() == 1) out.print(",byte [");
         else out.print(",qword [");
         node.getAddr().accept(this);
         if (node.getOffset() > 0) out.print('+');
@@ -1430,12 +1443,20 @@ public class NASMPrinter implements IRVisitor {
 
     @Override
     public void visit(StoreInstruction node) {
-        out.print("\tmov qword [");
+        if (node.getSize() == 1)
+            out.print("\tmov byte [");
+        else out.print("\tmov qword [");
         node.getAddr().accept(this);
         if (node.getOffset() > 0) out.print('+');
         if (node.getOffset() != 0) out.print(node.getOffset());
         out.print("],");
+        if (node.getValue() instanceof NASMRegister) {
+            ((NASMRegister)node.getValue()).setFlag(node.getSize() == 1);
+        }
         node.getValue().accept(this);
+        if (node.getValue() instanceof NASMRegister) {
+            ((NASMRegister)node.getValue()).setFlag(false);
+        }
         out.print('\n');
     }
 

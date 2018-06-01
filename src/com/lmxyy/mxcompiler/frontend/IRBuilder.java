@@ -912,12 +912,12 @@ public class IRBuilder implements ASTVisitor {
 
         curBasicBlock = basicBlockTrue;
         visit(node.getBlock1());
-        basicBlockTrue.end(new JumpInstruction(curBasicBlock,basicBlockAfter));
+        curBasicBlock.end(new JumpInstruction(curBasicBlock,basicBlockAfter));
 
         if (node.isHasElse()) {
             curBasicBlock = basicBlockFalse;
             visit(node.getBlock2());
-            basicBlockFalse.end(new JumpInstruction(curBasicBlock,basicBlockAfter));
+            curBasicBlock.end(new JumpInstruction(curBasicBlock,basicBlockAfter));
         }
 
         curBasicBlock = basicBlockAfter;

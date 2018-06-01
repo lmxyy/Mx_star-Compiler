@@ -1,102 +1,8 @@
-space @a 8
-space @n 8
+space @N 8
+space @b 8
+space @resultCount 8
 asciiz @string  
-asciiz @string_2 \n
-
-func qsrt $l $r {
-
-%qsrt.entry:
-    $i = move $l
-    $j = move $r
-    $t = add $l $r
-    $t_2 = div $t 2
-    $t_3 = mul $t_2 8
-    $t_3 = add @a $t_3
-    $t_3 = load 8 $t_3 8
-    $x = move $t_3
-    jump %while_cond
-
-%while_cond:
-    $t_4 = sle $i $j
-    br $t_4 %while_loop %while_after
-
-%while_after:
-    $t_5 = slt $l $j
-    br $t_5 %if_true %if_after
-
-%if_true:
-    $t_6 = call qsrt $l $j 
-    jump %if_after
-
-%if_after:
-    $t_7 = slt $i $r
-    br $t_7 %if_true_2 %if_after_2
-
-%if_true_2:
-    $t_8 = call qsrt $i $r 
-    jump %if_after_2
-
-%if_after_2:
-    ret 0
-
-%while_loop:
-    jump %while_cond_2
-
-%while_cond_2:
-    $t_9 = mul $i 8
-    $t_9 = add @a $t_9
-    $t_9 = load 8 $t_9 8
-    $t_10 = slt $t_9 $x
-    br $t_10 %while_loop_2 %while_after_2
-
-%while_after_2:
-    jump %while_cond_3
-
-%while_cond_3:
-    $t_11 = mul $j 8
-    $t_11 = add @a $t_11
-    $t_11 = load 8 $t_11 8
-    $t_12 = sgt $t_11 $x
-    br $t_12 %while_loop_3 %while_after_3
-
-%while_after_3:
-    $t_13 = sle $i $j
-    br $t_13 %if_true_3 %if_after_3
-
-%if_true_3:
-    $t_14 = mul $i 8
-    $t_14 = add @a $t_14
-    $t_14 = load 8 $t_14 8
-    $temp = move $t_14
-    $t_15 = mul $j 8
-    $t_15 = add @a $t_15
-    $t_15 = load 8 $t_15 8
-    $t_16 = mul $i 8
-    $t_16 = add @a $t_16
-    store 8 $t_16 $t_15 8
-    $t_17 = mul $j 8
-    $t_17 = add @a $t_17
-    store 8 $t_17 $temp 8
-    $t_18 = move $i
-    $i = add $i 1
-    $t_19 = move $j
-    $j = sub $j 1
-    jump %if_after_3
-
-%if_after_3:
-    jump %while_cond
-
-%while_loop_3:
-    $t_20 = move $j
-    $j = sub $j 1
-    jump %while_cond_3
-
-%while_loop_2:
-    $t_21 = move $i
-    $i = add $i 1
-    jump %while_cond_2
-
-}
+asciiz @string_2 Total: 
 
 func main {
 
@@ -107,45 +13,93 @@ func main {
     jump %for_cond
 
 %for_cond:
-    $t = sle $i @n
+    $t = sle $i @N
     br $t %for_loop %for_after
 
 %for_after:
-    $t_2 = call qsrt 1 @n 
-    $i = move 1
+    $i = move 2
     jump %for_cond_2
 
 %for_cond_2:
-    $t_3 = sle $i @n
-    br $t_3 %for_loop_2 %for_after_2
-
-%for_loop_2:
-    $t_4 = mul $i 8
-    $t_4 = add @a $t_4
-    $t_4 = load 8 $t_4 8
-    call printint $t_4 
-    call print @string 
-    jump %for_step
-
-%for_step:
-    $t_5 = move $i
-    $i = add $i 1
-    jump %for_cond_2
+    $t_2 = sle $i @N
+    br $t_2 %for_loop_2 %for_after_2
 
 %for_after_2:
     call print @string_2 
+    call printlnint @resultCount 
     ret 0
 
+%for_loop_2:
+    $t_3 = mul $i 1
+    $t_3 = add @b $t_3
+    $t_3 = load 1 $t_3 8
+    br $t_3 %if_true %if_after
+
+%if_true:
+    $count = move 2
+    $t_4 = sgt $i 3
+    br $t_4 %lhs_true %lhs_false
+
+%lhs_true:
+    $t_5 = sub $i 2
+    $t_6 = mul $t_5 1
+    $t_6 = add @b $t_6
+    $t_6 = load 1 $t_6 8
+    $t_7 = move $t_6
+    jump %lhs_merge
+
+%lhs_false:
+    $t_7 = move 0
+    jump %lhs_merge
+
+%lhs_merge:
+    br $t_7 %if_true_2 %if_after_2
+
+%if_true_2:
+    $t_8 = move @resultCount
+    @resultCount = add @resultCount 1
+    $t_9 = sub $i 2
+    call printint $t_9 
+    call print @string 
+    call printlnint $i 
+    jump %if_after_2
+
+%if_after_2:
+    jump %while_cond
+
+%while_cond:
+    $t_10 = mul $i $count
+    $t_11 = sle $t_10 @N
+    br $t_11 %while_loop %while_after
+
+%while_after:
+    jump %if_after
+
+%if_after:
+    jump %for_step
+
+%for_step:
+    $t_12 = move $i
+    $i = add $i 1
+    jump %for_cond_2
+
+%while_loop:
+    $t_13 = mul $i $count
+    $t_14 = mul $t_13 1
+    $t_14 = add @b $t_14
+    store 1 $t_14 0 8
+    $t_15 = move $count
+    $count = add $count 1
+    jump %while_cond
+
 %for_loop:
-    $t_6 = add @n 1
-    $t_7 = sub $t_6 $i
-    $t_8 = mul $i 8
-    $t_8 = add @a $t_8
-    store 8 $t_8 $t_7 8
+    $t_16 = mul $i 1
+    $t_16 = add @b $t_16
+    store 1 $t_16 1 8
     jump %for_step_2
 
 %for_step_2:
-    $t_9 = move $i
+    $t_17 = move $i
     $i = add $i 1
     jump %for_cond
 
@@ -154,11 +108,12 @@ func main {
 func _init {
 
 %_init.entry:
-    $newaddress = move 80808
+    @N = move 15000
+    $newaddress = move 15009
     $newaddress = alloc $newaddress
-    store 8 $newaddress 10100 0
-    @a = move $newaddress
-    @n = move 10000
+    store 8 $newaddress 15001 0
+    @b = move $newaddress
+    @resultCount = move 0
     ret 0
 
 }
