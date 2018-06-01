@@ -46,6 +46,8 @@ public class NASMPrinter implements IRVisitor {
     public void visit(IRRoot node) {
         /* TODO Some Global Information here. */
         out.println("\tglobal main\n");
+        out.println("\textern malloc\n");
+
         out.println("\tsection .text");
         node.functions.values().forEach(func->func.accept(this));
         /* Static String */
@@ -174,7 +176,7 @@ public class NASMPrinter implements IRVisitor {
     public void visit(LoadInstruction node) {
         out.print("\tmov ");
         node.getDest().accept(this);
-        out.print(",[");
+        out.print(",qword [");
         node.getAddr().accept(this);
         if (node.getOffset() > 0) out.print('+');
         if (node.getOffset() != 0) out.print(node.getOffset());
@@ -192,7 +194,7 @@ public class NASMPrinter implements IRVisitor {
 
     @Override
     public void visit(StoreInstruction node) {
-        out.print("\tmov [");
+        out.print("\tmov qword [");
         node.getAddr().accept(this);
         if (node.getOffset() > 0) out.print('+');
         if (node.getOffset() != 0) out.print(node.getOffset());
@@ -271,7 +273,7 @@ public class NASMPrinter implements IRVisitor {
     public void visit(PushInstruction node) {
         out.print("\tpush ");
         if (node.isAddress()) {
-            out.print('[');
+            out.print("qword [");
             node.getOprand().accept(this);
             if (node.getOffset() > 0) out.print('+');
             out.print(node.getOffset());

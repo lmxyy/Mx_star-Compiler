@@ -1,7 +1,6 @@
 package com.lmxyy.mxcompiler.backend;
 
 import com.lmxyy.mxcompiler.ir.*;
-import com.lmxyy.mxcompiler.nasm.NASMRegister;
 import com.lmxyy.mxcompiler.nasm.NASMRegisterSet;
 import com.lmxyy.mxcompiler.utils.CompilerOption;
 
@@ -77,7 +76,10 @@ public class StupidAllocator extends RegisterAllocator {
             for (IRInstruction inst = basicBlock.getHead(); inst != null; inst = inst.getNxt()) {
                 int cnt = 0;
                 regRenameMap.clear();
-                if (inst instanceof TwoAddressInstruction) {
+                if (inst instanceof HeapAllocateInstruction) {
+                    continue;
+                }
+                else if (inst instanceof TwoAddressInstruction) {
                     Collection<Register> used = inst.getUsedRegister();
                     used.forEach(reg -> regRenameMap.put(reg, reg));
                     if (((TwoAddressInstruction) inst).getRhs() instanceof VirtualRegister) {

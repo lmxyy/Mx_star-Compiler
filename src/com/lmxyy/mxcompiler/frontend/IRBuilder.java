@@ -88,18 +88,27 @@ public class IRBuilder implements ASTVisitor {
         IntValue unitSize = new IntImmediate(node.getType().getRegisterSize());
         VirtualRegister reg = new VirtualRegister(null);
 
-        curBasicBlock.append(
-                new ArithmeticInstruction(
-                        curBasicBlock, reg, BinaryOperationInstruction.Operator.MUL,
-                        subscript.intValue, unitSize
-                )
-        );
-        curBasicBlock.append(
-                new ArithmeticInstruction(
-                        curBasicBlock, reg, BinaryOperationInstruction.Operator.ADD,
-                        array.intValue, reg
-                )
-        );
+        if (subscript.intValue instanceof IntImmediate) {
+            int offset = ((IntImmediate) unitSize).getVal()*((IntImmediate) subscript.intValue).getVal();
+            curBasicBlock.append(new ArithmeticInstruction(
+                            curBasicBlock, reg, BinaryOperationInstruction.Operator.ADD, array.intValue,
+                            new IntImmediate(offset)
+            ));
+        }
+        else {
+            curBasicBlock.append(
+                    new ArithmeticInstruction(
+                            curBasicBlock, reg, BinaryOperationInstruction.Operator.MUL,
+                            subscript.intValue, unitSize
+                    )
+            );
+            curBasicBlock.append(
+                    new ArithmeticInstruction(
+                            curBasicBlock, reg, BinaryOperationInstruction.Operator.ADD,
+                            array.intValue, reg
+                    )
+            );
+        }
 
         if (needAddr) {
             node.address = reg;
@@ -278,18 +287,25 @@ public class IRBuilder implements ASTVisitor {
                         node.getVartype().getName()
                 );
                 needAddr = oldNeedAddr;
-                curBasicBlock.append(
-                        new ArithmeticInstruction(
-                                curBasicBlock, reg, BinaryOperationInstruction.Operator.MUL, dim.intValue,
-                                new IntImmediate(baseType.getRegisterSize())
-                        )
-                );
-                curBasicBlock.append(
-                        new ArithmeticInstruction(
-                                curBasicBlock, reg, BinaryOperationInstruction.Operator.ADD, reg,
-                                new IntImmediate(CompilerOption.getSizeInt())
-                        )
-                );
+                if (dim.intValue instanceof IntImmediate) {
+                    int size = ((IntImmediate) dim.intValue).getVal()*baseType.getRegisterSize()
+                            +CompilerOption.getSizeInt();
+                    curBasicBlock.append(new MoveInstruction(curBasicBlock,new IntImmediate(size),reg));
+                }
+                else {
+                    curBasicBlock.append(
+                            new ArithmeticInstruction(
+                                    curBasicBlock, reg, BinaryOperationInstruction.Operator.MUL, dim.intValue,
+                                    new IntImmediate(baseType.getRegisterSize())
+                            )
+                    );
+                    curBasicBlock.append(
+                            new ArithmeticInstruction(
+                                    curBasicBlock, reg, BinaryOperationInstruction.Operator.ADD, reg,
+                                    new IntImmediate(CompilerOption.getSizeInt())
+                            )
+                    );
+                }
                 curBasicBlock.append(new HeapAllocateInstruction(curBasicBlock, reg, reg));
                 curBasicBlock.append(
                         new StoreInstruction(
@@ -310,18 +326,25 @@ public class IRBuilder implements ASTVisitor {
                         node.getVartype().getName()
                 );
                 needAddr = oldNeedAddr;
-                curBasicBlock.append(
-                        new ArithmeticInstruction(
-                                curBasicBlock, reg, BinaryOperationInstruction.Operator.MUL, dim.intValue,
-                                new IntImmediate(baseType.getRegisterSize())
-                        )
-                );
-                curBasicBlock.append(
-                        new ArithmeticInstruction(
-                                curBasicBlock, reg, BinaryOperationInstruction.Operator.ADD, reg,
-                                new IntImmediate(CompilerOption.getSizeInt())
-                        )
-                );
+                if (dim.intValue instanceof IntImmediate) {
+                    int size = ((IntImmediate) dim.intValue).getVal()*baseType.getRegisterSize()
+                            +CompilerOption.getSizeInt();
+                    curBasicBlock.append(new MoveInstruction(curBasicBlock,new IntImmediate(size),reg));
+                }
+                else {
+                    curBasicBlock.append(
+                            new ArithmeticInstruction(
+                                    curBasicBlock, reg, BinaryOperationInstruction.Operator.MUL, dim.intValue,
+                                    new IntImmediate(baseType.getRegisterSize())
+                            )
+                    );
+                    curBasicBlock.append(
+                            new ArithmeticInstruction(
+                                    curBasicBlock, reg, BinaryOperationInstruction.Operator.ADD, reg,
+                                    new IntImmediate(CompilerOption.getSizeInt())
+                            )
+                    );
+                }
                 curBasicBlock.append(new HeapAllocateInstruction(curBasicBlock, reg, reg));
                 curBasicBlock.append(
                         new StoreInstruction(
