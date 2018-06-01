@@ -7,62 +7,17 @@ main:
 main..main.entry:
 	push rbp
 	mov rbp,rsp
-	sub rsp,160
+	sub rsp,96
 	mov r8,___string
-	mov qword [rbp-88],r8
-	mov r8,___string
-	mov qword [rbp-80],r8
+	mov qword [rbp-24],r8
 	call ____init
-	mov r8,qword [rbp-88]
-	mov r9,r8
-	mov qword [rbp-48],r9
-	mov r8,qword [rbp-80]
-	mov r9,r8
-	mov qword [rbp-72],r9
-	mov qword [rbp-96],r9
-	mov qword [rbp-104],r8
-	mov rsi,qword [rbp-72]
-	mov rdi,qword [rbp-48]
-	call _Z12stringConcatPcS_
-	mov r8,qword [rbp-104]
-	mov r9,qword [rbp-96]
-	mov r8,rax
-	mov qword [rbp-16],r8
-	mov r8,qword [rbp-16]
-	mov r9,r8
-	mov qword [rbp-32],r9
-	mov r8,qword [rbp-32]
-	mov r9,qword [r8]
-	mov qword [rbp-8],r9
-	mov r8,qword [rbp-32]
-	mov r9,r8
-	mov qword [rbp-56],r9
-	mov r8,qword [rbp-32]
-	add r8,5
-	mov qword [rbp-32],r8
-	mov r8,qword [rbp-32]
-	mov r9,r8
-	mov qword [rbp-64],r9
-	mov r8,qword [rbp-56]
-	mov r9,r8
-	mov qword [rbp-32],r9
-	mov r8,qword [rbp-64]
-	mov r8,qword [r8+8]
-	mov qword [rbp-64],r8
-	mov r8,qword [rbp-8]
-	mov r9,r8
-	mov qword [rbp-24],r9
-	mov r8,qword [rbp-64]
-	mov r9,qword [rbp-8]
-	add r9,r8
-	mov qword [rbp-8],r9
-	mov r8,qword [rbp-8]
-	mov r9,r8
-	mov qword [rbp-40],r9
 	mov r8,qword [rbp-24]
 	mov r9,r8
 	mov qword [rbp-8],r9
-	mov r8,qword [rbp-40]
+	mov r8,qword [rbp-8]
+	mov r9,qword [r8]
+	mov qword [rbp-16],r9
+	mov r8,qword [rbp-16]
 	mov rax,r8
 	leave
 	ret
@@ -78,8 +33,6 @@ ____init.._init.entry:
 	section .data
 ___string:
 	dq 3,"aaa",0
-___string_2:
-	dq 5,"bbbbb",0
 
 section .bss
 

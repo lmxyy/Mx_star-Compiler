@@ -1,36 +1,12 @@
-func gcd $x $y {
-
-%gcd.entry:
-    $t = rem $x $y
-    $t_2 = seq $t 0
-    br $t_2 %if_true %if_false
-
-%if_false:
-    $t_3 = rem $x $y
-    $t_4 = call gcd $y $t_3 
-    $returnValue = move $t_4
-    jump %gcd.exit
-
-%if_true:
-    $returnValue = move $y
-    jump %gcd.exit
-
-%gcd.exit:
-    ret $returnValue
-
-}
+asciiz @string aaa
 
 func main {
 
 %main.entry:
     call _init 
-    $t = call gcd 10 1 
-    call printlnint $t 
-    $t_2 = call gcd 34986 3087 
-    call printlnint $t_2 
-    $t_3 = call gcd 2907 1539 
-    call printlnint $t_3 
-    ret 0
+    $s1 = move @string
+    $size = load 8 $s1 0
+    ret $size
 
 }
 
