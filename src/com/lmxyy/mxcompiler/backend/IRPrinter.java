@@ -245,7 +245,7 @@ public class IRPrinter implements IRVisitor {
     }
 
     @Override
-    public void visit(CltdInstruction node) {
+    public void visit(CdqInstruction node) {
 
     }
 

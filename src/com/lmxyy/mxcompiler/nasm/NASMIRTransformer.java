@@ -172,7 +172,7 @@ public class NASMIRTransformer {
                 }
                 else if (i == 2) {
                     if (val instanceof IntImmediate) {
-                        inst.prepend(new MoveInstruction(basicBlock,val,NASMRegisterSet.RSI));
+                        inst.prepend(new MoveInstruction(basicBlock,val,NASMRegisterSet.RDX));
                     }
                     else {
                         inst.prepend(new LoadInstruction(

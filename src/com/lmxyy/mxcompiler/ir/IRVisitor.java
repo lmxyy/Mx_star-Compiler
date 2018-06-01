@@ -23,7 +23,7 @@ public interface IRVisitor {
     void visit(PushInstruction node);
     void visit(PopInstruction node);
     void visit(LeaveInstruction node);
-    void visit(CltdInstruction node);
+    void visit(CdqInstruction node);
 
     void visit(VirtualRegister node);
     void visit(PhysicalRegister node);

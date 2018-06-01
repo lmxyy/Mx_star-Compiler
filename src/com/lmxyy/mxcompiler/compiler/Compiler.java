@@ -77,9 +77,9 @@ public class Compiler {
         new RegisterInjector(irRoot).run();
         new StupidAllocator(irRoot,NASMRegisterSet.general).run();
         new NASMIRTransformer(irRoot).run();
-        String asmInfoPath = "/Users/limuyang/Desktop/Mx_star-Compiler/asm.asm";
-        NASMPrinter nasmPrinter = new NASMPrinter(new PrintStream(asmInfoPath));
-//        NASMPrinter nasmPrinter = new NASMPrinter(new PrintStream(System.out));
+//        String asmInfoPath = "/Users/limuyang/Desktop/Mx_star-Compiler/asm.asm";
+//        NASMPrinter nasmPrinter = new NASMPrinter(new PrintStream(asmInfoPath));
+        NASMPrinter nasmPrinter = new NASMPrinter(new PrintStream(System.out));
 
         nasmPrinter.visit(irRoot);
     }
