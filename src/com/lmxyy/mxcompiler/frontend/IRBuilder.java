@@ -946,7 +946,7 @@ public class IRBuilder implements ASTVisitor {
 
         curBasicBlock = basicBlockLoop;
         visit(node.getBlock());
-        basicBlockLoop.end(new JumpInstruction(curBasicBlock,basicBlockCond));
+        curBasicBlock.end(new JumpInstruction(curBasicBlock,basicBlockCond));
 
         curBasicBlock = basicBlockAfter;
         loopStepBlock = oldLoopStepBlock; loopAfterBlock = oldLoopAfterBlock;

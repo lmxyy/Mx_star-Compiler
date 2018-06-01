@@ -131,11 +131,21 @@ public class BasicBlock {
                             NASMRegisterSet.RAX
                         ));
                         append(new CqoInstruction(this));
-                        append(new TwoAddressInstruction(
-                                this,((BinaryOperationInstruction) instruction).getOperator(),
-                                ((BinaryOperationInstruction) instruction).getDest(),
-                                ((BinaryOperationInstruction) instruction).getRhs())
-                        );
+                        if (((BinaryOperationInstruction) instruction).getRhs() instanceof IntImmediate) {
+                            VirtualRegister reg = new VirtualRegister(null);
+                            append(new MoveInstruction(this,((BinaryOperationInstruction) instruction).getRhs(),reg));
+                            append(new TwoAddressInstruction(
+                                    this, ((BinaryOperationInstruction) instruction).getOperator(),
+                                    ((BinaryOperationInstruction) instruction).getDest(),reg
+                            ));
+                        }
+                        else {
+                            append(new TwoAddressInstruction(
+                                    this, ((BinaryOperationInstruction) instruction).getOperator(),
+                                    ((BinaryOperationInstruction) instruction).getDest(),
+                                    ((BinaryOperationInstruction) instruction).getRhs())
+                            );
+                        }
                         append(new MoveInstruction(
                                 this, NASMRegisterSet.RAX,
                                 ((BinaryOperationInstruction) instruction).getDest()
@@ -147,11 +157,21 @@ public class BasicBlock {
                                 NASMRegisterSet.RAX
                         ));
                         append(new CqoInstruction(this));
-                        append(new TwoAddressInstruction(
-                                this,((BinaryOperationInstruction) instruction).getOperator(),
-                                ((BinaryOperationInstruction) instruction).getDest(),
-                                ((BinaryOperationInstruction) instruction).getRhs())
-                        );
+                        if (((BinaryOperationInstruction) instruction).getRhs() instanceof IntImmediate) {
+                            VirtualRegister reg = new VirtualRegister(null);
+                            append(new MoveInstruction(this,((BinaryOperationInstruction) instruction).getRhs(),reg));
+                            append(new TwoAddressInstruction(
+                                    this, ((BinaryOperationInstruction) instruction).getOperator(),
+                                    ((BinaryOperationInstruction) instruction).getDest(),reg
+                            ));
+                        }
+                        else {
+                            append(new TwoAddressInstruction(
+                                    this, ((BinaryOperationInstruction) instruction).getOperator(),
+                                    ((BinaryOperationInstruction) instruction).getDest(),
+                                    ((BinaryOperationInstruction) instruction).getRhs())
+                            );
+                        }
                         append(new MoveInstruction(
                                 this, NASMRegisterSet.RDX,
                                 ((BinaryOperationInstruction) instruction).getDest()
