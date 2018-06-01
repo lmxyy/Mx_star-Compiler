@@ -1280,11 +1280,25 @@ public class NASMPrinter implements IRVisitor {
         out.println("\n\tsection .data");
         node.stringPool.forEach((a,b)->{
             out.println("___"+dataId(b)+":");
-            int dec = 0;
+            String s = "";
             for (int i = 0;i < a.length();++i) {
-                if (a.charAt(i) == '\\') ++dec;
+                if (a.charAt(i) == '\\') {
+                    if (a.charAt(i+1) == 'n') {
+                        s = s+'\n';
+                    }
+                    else if (a.charAt(i+1) == '\\') {
+                        s = s+'\\';
+                    }
+                    else s = s+'\"';
+                    ++i;
+                }
+                else s = s+a.charAt(i);
             }
-            out.println("\tdq "+(a.length()-dec)+",\""+a+"\","+0);
+            out.print("\tdb 0,0,0,0,0,0,0,"+(s.length()));
+            for (int i = 0;i < s.length();++i) {
+                out.print(","+(int)(s.charAt(i)));
+            }
+            out.println(",0");
         });
         out.println("\nsection .bss");
         node.dataList.forEach(data->{
