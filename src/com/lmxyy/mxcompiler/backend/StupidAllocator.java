@@ -10,6 +10,7 @@ public class StupidAllocator extends RegisterAllocator {
     private IRRoot irRoot;
     private List<PhysicalRegister> registers = new ArrayList<>();
     private Map<VirtualRegister,StackSlot> stackSlopMap = new HashMap<>();
+    private final int wordSize = CompilerOption.getSizeInt();
 
     private StackSlot getStackSlop(Function curFunc, VirtualRegister vr) {
         StackSlot sl = stackSlopMap.get(vr);
@@ -65,6 +66,16 @@ public class StupidAllocator extends RegisterAllocator {
             ));
         }
         /* TODO Other arguments */
+        for (int i = 6;i < func.argRegList.size();++i) {
+            firstInst.prepend(new LoadInstruction(
+                    entryBasicBlock,NASMRegisterSet.RDI,CompilerOption.getSizeInt(),
+                    NASMRegisterSet.RBP,(i-4)*wordSize
+            ));
+            firstInst.prepend(new StoreInstruction(
+                    entryBasicBlock,func.argStackSlopMap.get(func.argRegList.get(i)),0,
+                    CompilerOption.getSizeInt(),NASMRegisterSet.RDI
+            ));
+        }
     }
 
     private void processFunction(Function func) {

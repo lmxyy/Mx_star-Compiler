@@ -138,7 +138,7 @@ public class NASMIRTransformer {
         int pushNum = 0;
         for (int i = inst.getArgRegList().size() - 1; i >= 0; --i) {
             IntValue val = inst.getArgRegList().get(i);
-            if (i > 6) {
+            if (i >= 6) {
                 ++pushNum;
                 if (val instanceof IntImmediate) {
                     inst.prepend(new PushInstruction(basicBlock, val));
