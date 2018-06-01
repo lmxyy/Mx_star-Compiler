@@ -26,6 +26,7 @@ int stringParseInt(char *a) {
 
 char* stringConcat(char *a,char *b) {
     int now = 0,l1 = *((long *)a),l2 = *((long *)b);
+    // printf("%d %d\n",l1,l2);
     char * ret = (char*) malloc(l1+l2+9);
     (*(long *)ret) = l1+l2;
     ret += 8; a += 8; b += 8;
@@ -34,7 +35,7 @@ char* stringConcat(char *a,char *b) {
     for (int i = 0;i < l2;++i)
 	ret[now++] = b[i];
     ret[now] = 0;
-    return ret;
+    return ret-8;
 }
 
 int stringEqu(char *a,char *b) {

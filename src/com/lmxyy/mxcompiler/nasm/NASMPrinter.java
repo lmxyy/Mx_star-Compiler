@@ -78,7 +78,7 @@ public class NASMPrinter implements IRVisitor {
                 "extern malloc\n" +
                 "\n" +
                 "\n" +
-                "SECTION .text\n" +
+                "SECTION .text \n" +
                 "\n" +
                 "_Z15stringSubStringPcii:\n" +
                 "        push    r15\n" +
@@ -159,28 +159,27 @@ public class NASMPrinter implements IRVisitor {
                 "        push    r14\n" +
                 "        push    r13\n" +
                 "        push    r12\n" +
-                "        mov     r12, rsi\n" +
+                "        mov     r13, rsi\n" +
                 "        push    rbp\n" +
                 "        push    rbx\n" +
                 "        sub     rsp, 24\n" +
                 "        mov     rbx, qword [rdi]\n" +
                 "        mov     rbp, qword [rsi]\n" +
                 "        mov     qword [rsp+8H], rdi\n" +
-                "        lea     r13d, [rbp+rbx]\n" +
-                "        lea     edi, [r13+9H]\n" +
-                "        movsxd  r13, r13d\n" +
+                "        lea     r15d, [rbp+rbx]\n" +
+                "        lea     edi, [r15+9H]\n" +
+                "        movsxd  r15, r15d\n" +
                 "        movsxd  rdi, edi\n" +
                 "        call    malloc\n" +
                 "        test    ebx, ebx\n" +
-                "        mov     qword [rax], r13\n" +
-                "        mov     r15, rax\n" +
-                "        lea     r13, [rax+8H]\n" +
+                "        mov     r12, rax\n" +
+                "        mov     qword [rax], r15\n" +
                 "        mov     rcx, qword [rsp+8H]\n" +
                 "        jle     L_006\n" +
                 "        lea     edx, [rbx-1H]\n" +
+                "        lea     rdi, [rax+8H]\n" +
                 "        lea     rsi, [rcx+8H]\n" +
                 "        mov     r14d, ebx\n" +
-                "        mov     rdi, r13\n" +
                 "        movsxd  rbx, ebx\n" +
                 "        add     rdx, 1\n" +
                 "        call    memcpy\n" +
@@ -189,14 +188,14 @@ public class NASMPrinter implements IRVisitor {
                 "        movsxd  rax, r14d\n" +
                 "        lea     edx, [rbp-1H]\n" +
                 "        lea     ebx, [r14+rbp]\n" +
-                "        lea     rdi, [r15+rax+8H]\n" +
-                "        lea     rsi, [r12+8H]\n" +
+                "        lea     rdi, [r12+rax+8H]\n" +
+                "        lea     rsi, [r13+8H]\n" +
                 "        add     rdx, 1\n" +
                 "        movsxd  rbx, ebx\n" +
                 "        call    memcpy\n" +
-                "L_005:  mov     byte [r15+rbx+8H], 0\n" +
+                "L_005:  mov     byte [r12+rbx+8H], 0\n" +
                 "        add     rsp, 24\n" +
-                "        mov     rax, r13\n" +
+                "        mov     rax, r12\n" +
                 "        pop     rbx\n" +
                 "        pop     rbp\n" +
                 "        pop     r12\n" +
@@ -209,19 +208,15 @@ public class NASMPrinter implements IRVisitor {
                 "\n" +
                 "\n" +
                 "\n" +
-                "ALIGN   16\n" +
+                "ALIGN   8\n" +
                 "L_006:  xor     ebx, ebx\n" +
                 "        xor     r14d, r14d\n" +
                 "        jmp     L_004\n" +
                 "\n" +
                 "\n" +
-                "\n" +
-                "\n" +
-                "\n" +
-                "\n" +
+                "        nop\n" +
                 "\n" +
                 "ALIGN   16\n" +
-                "\n" +
                 "_Z9stringEquPcS_:\n" +
                 "        sub     rsp, 8\n" +
                 "        add     rsi, 8\n" +
@@ -1561,12 +1556,12 @@ public class NASMPrinter implements IRVisitor {
 
     @Override
     public void visit(StaticSpace node) {
-        out.print("___"+node.getHintName());
+        out.print("___"+dataId(node));
     }
 
     @Override
     public void visit(StaticString node) {
-        out.print("___"+node.getHintName());
+        out.print("___"+dataId(node));
     }
 
     @Override

@@ -1,12 +1,19 @@
 asciiz @string aaa
+asciiz @string_2 bbbbb
 
 func main {
 
 %main.entry:
     call _init 
     $s1 = move @string
-    $size = load 8 $s1 0
-    ret $size
+    $s2 = move @string_2
+    $t = call string.concat $s1 $s2 
+    $s3 = move $t
+    $size = load 8 $s3 0
+    $ord = add $s3 5
+    $ord = load 1 $ord 8
+    $t_2 = add $size $ord
+    ret $t_2
 
 }
 

@@ -33,7 +33,7 @@ extern memcpy
 extern malloc
 
 
-SECTION .text   6
+SECTION .text 
 
 _Z15stringSubStringPcii:
         push    r15
@@ -114,28 +114,27 @@ _Z12stringConcatPcS_:
         push    r14
         push    r13
         push    r12
-        mov     r12, rsi
+        mov     r13, rsi
         push    rbp
         push    rbx
         sub     rsp, 24
         mov     rbx, qword [rdi]
         mov     rbp, qword [rsi]
         mov     qword [rsp+8H], rdi
-        lea     r13d, [rbp+rbx]
-        lea     edi, [r13+9H]
-        movsxd  r13, r13d
+        lea     r15d, [rbp+rbx]
+        lea     edi, [r15+9H]
+        movsxd  r15, r15d
         movsxd  rdi, edi
         call    malloc
         test    ebx, ebx
-        mov     qword [rax], r13
-        mov     r15, rax
-        lea     r13, [rax+8H]
+        mov     r12, rax
+        mov     qword [rax], r15
         mov     rcx, qword [rsp+8H]
         jle     L_006
         lea     edx, [rbx-1H]
+        lea     rdi, [rax+8H]
         lea     rsi, [rcx+8H]
         mov     r14d, ebx
-        mov     rdi, r13
         movsxd  rbx, ebx
         add     rdx, 1
         call    memcpy
@@ -144,14 +143,14 @@ L_004:  test    ebp, ebp
         movsxd  rax, r14d
         lea     edx, [rbp-1H]
         lea     ebx, [r14+rbp]
-        lea     rdi, [r15+rax+8H]
-        lea     rsi, [r12+8H]
+        lea     rdi, [r12+rax+8H]
+        lea     rsi, [r13+8H]
         add     rdx, 1
         movsxd  rbx, ebx
         call    memcpy
-L_005:  mov     byte [r15+rbx+8H], 0
+L_005:  mov     byte [r12+rbx+8H], 0
         add     rsp, 24
-        mov     rax, r13
+        mov     rax, r12
         pop     rbx
         pop     rbp
         pop     r12
@@ -164,19 +163,15 @@ L_005:  mov     byte [r15+rbx+8H], 0
 
 
 
-ALIGN   16
+ALIGN   8
 L_006:  xor     ebx, ebx
         xor     r14d, r14d
         jmp     L_004
 
 
-
-
-
-
+        nop
 
 ALIGN   16
-
 _Z9stringEquPcS_:
         sub     rsp, 8
         add     rsi, 8
