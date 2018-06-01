@@ -1,36 +1,73 @@
-func tak $x $y $z {
-
-%tak.entry:
-    $t = slt $y $x
-    br $t %if_true %if_false
-
-%if_true:
-    $t_2 = sub $x 1
-    $t_3 = call tak $t_2 $y $z 
-    $t_4 = sub $y 1
-    $t_5 = call tak $t_4 $z $x 
-    $t_6 = sub $z 1
-    $t_7 = call tak $t_6 $x $y 
-    $t_8 = call tak $t_3 $t_5 $t_7 
-    $t_9 = add 1 $t_8
-    $returnValue = move $t_9
-    jump %tak.exit
-
-%if_false:
-    $returnValue = move $z
-    jump %tak.exit
-
-%tak.exit:
-    ret $returnValue
-
-}
-
 func main {
 
 %main.entry:
     call _init 
-    $t = call tak 18 12 6 
-    ret $t
+    $a = move 5
+    $b = move 0
+    $c = move 0
+    $t = sne $b 0
+    br $t %lhs_true %lhs_false
+
+%lhs_false:
+    $t_2 = move 0
+    jump %lhs_merge
+
+%lhs_true:
+    $t_3 = div $a $b
+    $t_4 = sne $t_3 1
+    $t_2 = move $t_4
+    jump %lhs_merge
+
+%lhs_merge:
+    $d = move $t_2
+    br $d %if_true %if_false
+
+%if_true:
+    $c = move 10
+    jump %if_after
+
+%if_false:
+    $c = move 20
+    jump %if_after
+
+%if_after:
+    $e = move 0
+    $t_5 = seq $c 10
+    br $t_5 %lhs_true_2 %lhs_false_2
+
+%lhs_true_2:
+    $t_6 = div $a $b
+    $t_7 = seq $t_6 0
+    $t_8 = move $t_7
+    jump %lhs_merge_2
+
+%lhs_false_2:
+    $t_8 = move 0
+    jump %lhs_merge_2
+
+%lhs_merge_2:
+    br $t_8 %lhs_true_3 %lhs_false_3
+
+%lhs_false_3:
+    $t_9 = move 0
+    jump %lhs_merge_3
+
+%lhs_true_3:
+    $t_10 = seq $a 5
+    $t_9 = move $t_10
+    jump %lhs_merge_3
+
+%lhs_merge_3:
+    $t_11 = xor $t_9 1
+    $e = move $t_11
+    br $e %if_true_2 %if_after_2
+
+%if_true_2:
+    $c = move 30
+    jump %if_after_2
+
+%if_after_2:
+    ret $c
 
 }
 

@@ -299,7 +299,7 @@ public class NASMPrinter implements IRVisitor {
 
     @Override
     public void visit(CltdInstruction node) {
-        out.println("\tcltd");
+        out.println("\tcdqe");
     }
 
     @Override
