@@ -268,15 +268,25 @@ public class BasicBlock {
                 }
             }
             else if (instruction instanceof UnaryOperationInstruction) {
-                VirtualRegister reg = new VirtualRegister(null);
                 IntValue oprand = ((UnaryOperationInstruction) instruction).getOprand();
                 Register dest = ((UnaryOperationInstruction) instruction).getDest();
-                append(new MoveInstruction(this,oprand,reg));
-                append(new UnaryOperationInstruction(this,reg,
+                if (oprand instanceof IntImmediate) {
+                    if (((UnaryOperationInstruction) instruction).getOperator() == UnaryOperationInstruction.Operator.NEG)
+                        append(new MoveInstruction(
+                            this, new IntImmediate(-((IntImmediate) oprand).getVal()), dest
+                        ));
+                    else append(new MoveInstruction(
+                            this, new IntImmediate(~((IntImmediate) oprand).getVal()), dest
+                    ));
+                }
+                else {
+                    VirtualRegister reg = new VirtualRegister(null);
+                    append(new MoveInstruction(this,oprand,reg));
+                    append(new UnaryOperationInstruction(this,reg,
                         ((UnaryOperationInstruction) instruction).getOperator(),reg
-                ));
-                if (!(oprand instanceof IntImmediate))
-                    append(new MoveInstruction(this,reg,(Register) oprand));
+                    ));
+                    append(new MoveInstruction(this,reg,dest));
+                }
             }
             else append(instruction);
         });
