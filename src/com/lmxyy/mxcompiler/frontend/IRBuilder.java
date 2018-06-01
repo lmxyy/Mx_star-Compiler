@@ -795,6 +795,7 @@ public class IRBuilder implements ASTVisitor {
             }
             curFunction.retInstruction.clear();
             exitBasicBlock.end(new ReturnInstruction(exitBasicBlock,newRetVal));
+            curFunction.exitBasicBlock = exitBasicBlock;
         } else curFunction.exitBasicBlock = curFunction.retInstruction.get(0).getBasicBlock();
 
         curFunction.exitBasicBlock.getPred().retainAll(curFunction.getReversePostOrder());

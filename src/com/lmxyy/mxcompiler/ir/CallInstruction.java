@@ -43,13 +43,11 @@ public class CallInstruction extends IRInstruction {
         for (IntValue arg : argRegList) {
             if (arg instanceof Register)
                 usedRegister.add((Register) arg);
-            usedIntValue.add(arg);
         }
         usedIntValue.clear();
         for (IntValue arg : argRegList) {
             if (arg instanceof IntValue)
-                usedRegister.add((Register) arg);
-            usedIntValue.add(arg);
+                usedIntValue.add(arg);
         }
     }
 

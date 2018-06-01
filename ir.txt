@@ -1,131 +1,36 @@
+func tak $x $y $z {
+
+%tak.entry:
+    $t = slt $y $x
+    br $t %if_true %if_false
+
+%if_true:
+    $t_2 = sub $x 1
+    $t_3 = call tak $t_2 $y $z 
+    $t_4 = sub $y 1
+    $t_5 = call tak $t_4 $z $x 
+    $t_6 = sub $z 1
+    $t_7 = call tak $t_6 $x $y 
+    $t_8 = call tak $t_3 $t_5 $t_7 
+    $t_9 = add 1 $t_8
+    $returnValue = move $t_9
+    jump %tak.exit
+
+%if_false:
+    $returnValue = move $z
+    jump %tak.exit
+
+%tak.exit:
+    ret $returnValue
+
+}
+
 func main {
 
 %main.entry:
     call _init 
-    $la = move 5
-    $lb = move 10
-    $a = move 0
-    $newaddress = mul $lb 8
-    $newaddress = add $newaddress 8
-    $newaddress = alloc $newaddress
-    store 8 $newaddress $lb 0
-    $b = move $newaddress
-    $newaddress_2 = move 24
-    $newaddress_2 = alloc $newaddress_2
-    store 8 $newaddress_2 2 0
-    $c = move $newaddress_2
-    $newaddress_3 = mul $la 8
-    $newaddress_3 = add $newaddress_3 8
-    $newaddress_3 = alloc $newaddress_3
-    store 8 $newaddress_3 $la 0
-    $a = move $newaddress_3
-    $t = add $c 0
-    store 8 $t $a 8
-    $t_2 = add $c 8
-    store 8 $t_2 $b 8
-    $cnt = move 0
-    $i = move 0
-    $j = move 0
-    $i = move 0
-    jump %for_cond
-
-%for_cond:
-    $t_3 = slt $i 2
-    br $t_3 %for_loop %for_after
-
-%for_loop:
-    $j = move 0
-    jump %for_cond_2
-
-%for_cond_2:
-    $t_4 = slt $j $la
-    br $t_4 %for_loop_2 %for_after_2
-
-%for_after_2:
-    jump %for_step
-
-%for_step:
-    $i = add $i 1
-    jump %for_cond
-
-%for_loop_2:
-    $cnt = add $cnt 1
-    $t_5 = mul $i 8
-    $t_5 = add $c $t_5
-    $t_5 = load 8 $t_5 8
-    $t_6 = mul $j 8
-    $t_6 = add $t_5 $t_6
-    store 8 $t_6 $cnt 8
-    jump %for_step_2
-
-%for_step_2:
-    $j = add $j 1
-    jump %for_cond_2
-
-%for_after:
-    $j = move $la
-    jump %for_cond_3
-
-%for_cond_3:
-    $t_7 = slt $j $lb
-    br $t_7 %for_loop_3 %for_after_3
-
-%for_after_3:
-    $sum = move 0
-    $i = move 0
-    jump %for_cond_4
-
-%for_cond_4:
-    $t_8 = slt $i $la
-    br $t_8 %for_loop_4 %for_after_4
-
-%for_loop_4:
-    $t_9 = mul $i 8
-    $t_9 = add $a $t_9
-    $t_9 = load 8 $t_9 8
-    $t_10 = add $sum $t_9
-    $sum = move $t_10
-    jump %for_step_3
-
-%for_step_3:
-    $i = add $i 1
-    jump %for_cond_4
-
-%for_after_4:
-    $i = move 0
-    jump %for_cond_5
-
-%for_cond_5:
-    $t_11 = slt $i $lb
-    br $t_11 %for_loop_5 %for_after_5
-
-%for_after_5:
-    ret $sum
-
-%for_loop_5:
-    $t_12 = mul $i 8
-    $t_12 = add $b $t_12
-    $t_12 = load 8 $t_12 8
-    $t_13 = add $sum $t_12
-    $sum = move $t_13
-    jump %for_step_4
-
-%for_step_4:
-    $i = add $i 1
-    jump %for_cond_5
-
-%for_loop_3:
-    $cnt = add $cnt 1
-    $t_14 = add $c 8
-    $t_14 = load 8 $t_14 8
-    $t_15 = mul $j 8
-    $t_15 = add $t_14 $t_15
-    store 8 $t_15 $cnt 8
-    jump %for_step_5
-
-%for_step_5:
-    $j = add $j 1
-    jump %for_cond_3
+    $t = call tak 18 12 6 
+    ret $t
 
 }
 
