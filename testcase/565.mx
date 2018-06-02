@@ -38,12 +38,16 @@ int find(int ending, int start, int flag) {
         visit[i] = 0;
     }
     f[1]=start;
+    println(toString(start));
+
     visit[start]=1;
     pre[start]=0;
     flag=0;
     while (open<closed && flag==0) {
-        open++;
+	open++;
         i=f[open];
+	println(toString(i));
+
         for (j = 1; j <= ending; j++)
             if (c[i][j]>0 && visit[j]==0) {
                 visit[j]=1;
@@ -82,10 +86,12 @@ int main() {
     flag = 0;
 
     build(start, ending);
-    while (find(ending, start, flag)>0) {
-        improve(ending);
-    }
-    	println(toString(ans));
+    find(ending,start,flag);
+    // while (find(ending, start, flag)>0) {
+    // 	println("lalala");
+    //     improve(ending);
+    // }
+    // 	println(toString(ans));
     return 0;
 }
 

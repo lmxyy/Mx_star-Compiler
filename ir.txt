@@ -1,230 +1,174 @@
-space @n 8
-space @a 8
-asciiz @string  
-asciiz @string_2 \n
+space @N 8
+space @head 8
+space @startx 8
+space @starty 8
+space @targetx 8
+space @targety 8
+space @x 8
+space @y 8
+space @xlist 8
+space @ylist 8
+space @tail 8
+space @ok 8
+space @now 8
+space @step 8
+space @i 8
+space @j 8
+asciiz @string no solution!\n
 
-func exchange $x $y {
+func origin $N {
 
-%exchange.entry:
-    $t = mul $x 8
-    $t = add @a $t
-    $t = load 8 $t 8
-    $t_2 = move $t
-    $t_3 = mul $y 8
-    $t_3 = add @a $t_3
-    $t_3 = load 8 $t_3 8
-    $t_4 = mul $x 8
-    $t_4 = add @a $t_4
-    store 8 $t_4 $t_3 8
-    $t_5 = mul $y 8
-    $t_5 = add @a $t_5
-    store 8 $t_5 $t_2 8
-    ret 0
-
-}
-
-func makeHeap {
-
-%makeHeap.entry:
-    $i = move 0
-    $t = move 0
-    $j = move 0
-    $t_2 = sub @n 1
-    $t_3 = div $t_2 2
-    $i = move $t_3
-    $t = move 0
-    $j = move 0
-    jump %while_cond
-
-%while_cond:
-    $t_4 = sge $i 0
-    br $t_4 %while_loop %while_after
-
-%while_after:
-    ret 0
-
-%while_loop:
-    $t_5 = mul $i 2
-    $j = move $t_5
-    $t_6 = mul $i 2
-    $t_7 = add $t_6 1
-    $t_8 = slt $t_7 @n
-    br $t_8 %lhs_true %lhs_false
-
-%lhs_false:
-    $t_9 = move 0
-    jump %lhs_merge
-
-%lhs_true:
-    $t_10 = mul $i 2
-    $t_11 = add $t_10 1
-    $t_12 = mul $t_11 8
-    $t_12 = add @a $t_12
-    $t_12 = load 8 $t_12 8
-    $t_13 = mul $i 2
-    $t_14 = mul $t_13 8
-    $t_14 = add @a $t_14
-    $t_14 = load 8 $t_14 8
-    $t_15 = slt $t_12 $t_14
-    $t_9 = move $t_15
-    jump %lhs_merge
-
-%lhs_merge:
-    br $t_9 %if_true %if_after
-
-%if_true:
-    $t_16 = mul $i 2
-    $t_17 = add $t_16 1
-    $j = move $t_17
-    jump %if_after
-
-%if_after:
-    $t_18 = mul $i 8
-    $t_18 = add @a $t_18
-    $t_18 = load 8 $t_18 8
-    $t_19 = mul $j 8
-    $t_19 = add @a $t_19
-    $t_19 = load 8 $t_19 8
-    $t_20 = sgt $t_18 $t_19
-    br $t_20 %if_true_2 %if_after_2
-
-%if_true_2:
-    $t_21 = call exchange $i $j 
-    jump %if_after_2
-
-%if_after_2:
-    $t_22 = sub $i 1
-    $i = move $t_22
-    jump %while_cond
-
-}
-
-func adjustHeap $n {
-
-%adjustHeap.entry:
-    $i = move 0
-    $j = move 0
-    $t = move 0
-    jump %while_cond_2
-
-%while_cond_2:
-    $t_2 = mul $i 2
-    $t_3 = slt $t_2 $n
-    br $t_3 %while_loop_2 %while_after_2
-
-%while_loop_2:
-    $t_4 = mul $i 2
-    $j = move $t_4
-    $t_5 = mul $i 2
-    $t_6 = add $t_5 1
-    $t_7 = slt $t_6 $n
-    br $t_7 %lhs_true_2 %lhs_false_2
-
-%lhs_false_2:
-    $t_8 = move 0
-    jump %lhs_merge_2
-
-%lhs_true_2:
-    $t_9 = mul $i 2
-    $t_10 = add $t_9 1
-    $t_11 = mul $t_10 8
-    $t_11 = add @a $t_11
-    $t_11 = load 8 $t_11 8
-    $t_12 = mul $i 2
-    $t_13 = mul $t_12 8
-    $t_13 = add @a $t_13
-    $t_13 = load 8 $t_13 8
-    $t_14 = slt $t_11 $t_13
-    $t_8 = move $t_14
-    jump %lhs_merge_2
-
-%lhs_merge_2:
-    br $t_8 %if_true_3 %if_after_3
-
-%if_true_3:
-    $t_15 = mul $i 2
-    $t_16 = add $t_15 1
-    $j = move $t_16
-    jump %if_after_3
-
-%if_after_3:
-    $t_17 = mul $i 8
-    $t_17 = add @a $t_17
-    $t_17 = load 8 $t_17 8
-    $t_18 = mul $j 8
-    $t_18 = add @a $t_18
-    $t_18 = load 8 $t_18 8
-    $t_19 = sgt $t_17 $t_18
-    br $t_19 %if_true_4 %if_false
-
-%if_false:
-    jump %while_after_2
-
-%if_true_4:
-    $t_20 = mul $i 8
-    $t_20 = add @a $t_20
-    $t_20 = load 8 $t_20 8
-    $t_21 = move $t_20
-    $t_22 = mul $j 8
-    $t_22 = add @a $t_22
-    $t_22 = load 8 $t_22 8
-    $t_23 = mul $i 8
-    $t_23 = add @a $t_23
-    store 8 $t_23 $t_22 8
-    $t_24 = mul $j 8
-    $t_24 = add @a $t_24
-    store 8 $t_24 $t_21 8
-    $i = move $j
-    jump %if_after_4
-
-%if_after_4:
-    jump %while_cond_2
-
-%while_after_2:
-    ret 0
-
-}
-
-func heapSort {
-
-%heapSort.entry:
-    $t = move 0
-    $k = move 0
-    $t = move 0
-    $k = move 0
+%origin.entry:
+    $newaddress = mul $N 8
+    $newaddress = add $newaddress 8
+    $newaddress = alloc $newaddress
+    store 8 $newaddress $N 0
+    @step = move $newaddress
+    @i = move 0
     jump %for_cond
 
 %for_cond:
-    $t_2 = slt $k @n
-    br $t_2 %for_loop %for_after
+    $t = slt @i $N
+    br $t %for_loop %for_after
+
+%for_after:
+    ret 0
 
 %for_loop:
-    $t_3 = add @a 0
-    $t_3 = load 8 $t_3 8
-    $t = move $t_3
-    $t_4 = sub @n $k
-    $t_5 = sub $t_4 1
-    $t_6 = mul $t_5 8
-    $t_6 = add @a $t_6
-    $t_6 = load 8 $t_6 8
-    $t_7 = add @a 0
-    store 8 $t_7 $t_6 8
-    $t_8 = sub @n $k
-    $t_9 = sub $t_8 1
-    $t_10 = mul $t_9 8
-    $t_10 = add @a $t_10
-    store 8 $t_10 $t 8
-    $t_11 = sub @n $k
-    $t_12 = sub $t_11 1
-    $t_13 = call adjustHeap $t_12 
+    $newaddress_2 = mul $N 8
+    $newaddress_2 = add $newaddress_2 8
+    $newaddress_2 = alloc $newaddress_2
+    store 8 $newaddress_2 $N 0
+    $t_2 = mul @i 8
+    $t_2 = add @step $t_2
+    store 8 $t_2 $newaddress_2 8
+    @j = move 0
+    jump %for_cond_2
+
+%for_cond_2:
+    $t_3 = slt @j $N
+    br $t_3 %for_loop_2 %for_after_2
+
+%for_after_2:
     jump %for_step
 
 %for_step:
-    $t_14 = add $k 1
-    $k = move $t_14
+    $t_4 = move @i
+    @i = add @i 1
     jump %for_cond
 
-%for_after:
+%for_loop_2:
+    $t_5 = mul @i 8
+    $t_5 = add @step $t_5
+    $t_5 = load 8 $t_5 8
+    $t_6 = mul @j 8
+    $t_6 = add $t_5 $t_6
+    store 8 $t_6 0 8
+    jump %for_step_2
+
+%for_step_2:
+    $t_7 = move @j
+    @j = add @j 1
+    jump %for_cond_2
+
+}
+
+func check $a $N {
+
+%check.entry:
+    $t = slt $a $N
+    br $t %lhs_true %lhs_false
+
+%lhs_false:
+    $t_2 = move 0
+    jump %lhs_merge
+
+%lhs_true:
+    $t_3 = sge $a 0
+    $t_2 = move $t_3
+    jump %lhs_merge
+
+%lhs_merge:
+    ret $t_2
+
+}
+
+func addList $x $y {
+
+%addList.entry:
+    $t = call check $x @N 
+    br $t %lhs_true_2 %lhs_false_2
+
+%lhs_false_2:
+    $t_2 = move 0
+    jump %lhs_merge_2
+
+%lhs_true_2:
+    $t_3 = call check $y @N 
+    $t_2 = move $t_3
+    jump %lhs_merge_2
+
+%lhs_merge_2:
+    br $t_2 %lhs_true_3 %lhs_false_3
+
+%lhs_true_3:
+    $t_4 = mul $x 8
+    $t_4 = add @step $t_4
+    $t_4 = load 8 $t_4 8
+    $t_5 = mul $y 8
+    $t_5 = add $t_4 $t_5
+    $t_5 = load 8 $t_5 8
+    $t_6 = neg 1
+    $t_7 = seq $t_5 $t_6
+    $t_8 = move $t_7
+    jump %lhs_merge_3
+
+%lhs_false_3:
+    $t_8 = move 0
+    jump %lhs_merge_3
+
+%lhs_merge_3:
+    br $t_8 %if_true %if_after
+
+%if_true:
+    $t_9 = add @tail 1
+    @tail = move $t_9
+    $t_10 = mul @tail 8
+    $t_10 = add @xlist $t_10
+    store 8 $t_10 $x 8
+    $t_11 = mul @tail 8
+    $t_11 = add @ylist $t_11
+    store 8 $t_11 $y 8
+    $t_12 = add @now 1
+    $t_13 = mul $x 8
+    $t_13 = add @step $t_13
+    $t_13 = load 8 $t_13 8
+    $t_14 = mul $y 8
+    $t_14 = add $t_13 $t_14
+    store 8 $t_14 $t_12 8
+    $t_15 = seq $x @targetx
+    br $t_15 %lhs_true_4 %lhs_false_4
+
+%lhs_true_4:
+    $t_16 = seq $y @targety
+    $t_17 = move $t_16
+    jump %lhs_merge_4
+
+%lhs_false_4:
+    $t_17 = move 0
+    jump %lhs_merge_4
+
+%lhs_merge_4:
+    br $t_17 %if_true_2 %if_after_2
+
+%if_true_2:
+    @ok = move 1
+    jump %if_after_2
+
+%if_after_2:
+    jump %if_after
+
+%if_after:
     ret 0
 
 }
@@ -233,69 +177,156 @@ func main {
 
 %main.entry:
     call _init 
-    $i = move 0
-    $gottenstring = call getString 
-    $parsedint = call string.parseInt $gottenstring 
-    @n = move $parsedint
-    $newaddress = mul @n 8
-    $newaddress = add $newaddress 8
-    $newaddress = alloc $newaddress
-    store 8 $newaddress @n 0
-    @a = move $newaddress
-    $i = move 0
-    jump %for_cond_2
-
-%for_cond_2:
-    $size = load 8 @a 0
-    $t = slt $i $size
-    br $t %for_loop_2 %for_after_2
-
-%for_after_2:
-    $t_2 = call makeHeap 
-    $t_3 = call heapSort 
-    $i = move 0
+    $t = call origin 106 
+    $gottenint = call getInt 
+    @N = move $gottenint
+    $t_2 = sub @N 1
+    @targety = move $t_2
+    @targetx = move @targety
+    @i = move 0
     jump %for_cond_3
 
 %for_cond_3:
-    $size_2 = load 8 @a 0
-    $t_4 = slt $i $size_2
-    br $t_4 %for_loop_3 %for_after_3
+    $t_3 = slt @i @N
+    br $t_3 %for_loop_3 %for_after_3
 
 %for_after_3:
-    call print @string_2 
+    jump %while_cond
+
+%while_cond:
+    $t_4 = sle @head @tail
+    br $t_4 %while_loop %while_after
+
+%while_loop:
+    $t_5 = mul @head 8
+    $t_5 = add @xlist $t_5
+    $t_5 = load 8 $t_5 8
+    @x = move $t_5
+    $t_6 = mul @head 8
+    $t_6 = add @ylist $t_6
+    $t_6 = load 8 $t_6 8
+    @y = move $t_6
+    $t_7 = mul @x 8
+    $t_7 = add @step $t_7
+    $t_7 = load 8 $t_7 8
+    $t_8 = mul @y 8
+    $t_8 = add $t_7 $t_8
+    $t_8 = load 8 $t_8 8
+    @now = move $t_8
+    $t_9 = sub @x 1
+    $t_10 = sub @y 2
+    $t_11 = call addList $t_9 $t_10 
+    $t_12 = sub @x 1
+    $t_13 = add @y 2
+    $t_14 = call addList $t_12 $t_13 
+    $t_15 = add @x 1
+    $t_16 = sub @y 2
+    $t_17 = call addList $t_15 $t_16 
+    $t_18 = add @x 1
+    $t_19 = add @y 2
+    $t_20 = call addList $t_18 $t_19 
+    $t_21 = sub @x 2
+    $t_22 = sub @y 1
+    $t_23 = call addList $t_21 $t_22 
+    $t_24 = sub @x 2
+    $t_25 = add @y 1
+    $t_26 = call addList $t_24 $t_25 
+    $t_27 = add @x 2
+    $t_28 = sub @y 1
+    $t_29 = call addList $t_27 $t_28 
+    $t_30 = add @x 2
+    $t_31 = add @y 1
+    $t_32 = call addList $t_30 $t_31 
+    $t_33 = seq @ok 1
+    br $t_33 %if_true_3 %if_after_3
+
+%if_true_3:
+    jump %while_after
+
+%while_after:
+    $t_34 = seq @ok 1
+    br $t_34 %if_true_4 %if_false
+
+%if_true_4:
+    $t_35 = mul @targetx 8
+    $t_35 = add @step $t_35
+    $t_35 = load 8 $t_35 8
+    $t_36 = mul @targety 8
+    $t_36 = add $t_35 $t_36
+    $t_36 = load 8 $t_36 8
+    call printlnint $t_36 
+    jump %if_after_4
+
+%if_false:
+    call print @string 
+    jump %if_after_4
+
+%if_after_4:
     ret 0
 
+%if_after_3:
+    $t_37 = add @head 1
+    @head = move $t_37
+    jump %while_cond
+
 %for_loop_3:
-    $t_5 = mul $i 8
-    $t_5 = add @a $t_5
-    $t_5 = load 8 $t_5 8
-    call printint $t_5 
-    call print @string 
-    jump %for_step_2
+    @j = move 0
+    jump %for_cond_4
 
-%for_step_2:
-    $t_6 = add $i 1
-    $i = move $t_6
-    jump %for_cond_3
+%for_cond_4:
+    $t_38 = slt @j @N
+    br $t_38 %for_loop_4 %for_after_4
 
-%for_loop_2:
-    $t_7 = mul $i 8
-    $t_7 = add @a $t_7
-    store 8 $t_7 $i 8
+%for_loop_4:
+    $t_39 = neg 1
+    $t_40 = mul @i 8
+    $t_40 = add @step $t_40
+    $t_40 = load 8 $t_40 8
+    $t_41 = mul @j 8
+    $t_41 = add $t_40 $t_41
+    store 8 $t_41 $t_39 8
     jump %for_step_3
 
 %for_step_3:
-    $t_8 = add $i 1
-    $i = move $t_8
-    jump %for_cond_2
+    $t_42 = move @j
+    @j = add @j 1
+    jump %for_cond_4
+
+%for_after_4:
+    jump %for_step_4
+
+%for_step_4:
+    $t_43 = move @i
+    @i = add @i 1
+    jump %for_cond_3
 
 }
 
 func _init {
 
 %_init.entry:
-    @n = move 0
-    @a = move 0
+    @N = move 0
+    @head = move 0
+    @startx = move 0
+    @starty = move 0
+    @targetx = move 0
+    @targety = move 0
+    @x = move 0
+    @y = move 0
+    $newaddress = move 96008
+    $newaddress = alloc $newaddress
+    store 8 $newaddress 12000 0
+    @xlist = move $newaddress
+    $newaddress_2 = move 96008
+    $newaddress_2 = alloc $newaddress_2
+    store 8 $newaddress_2 12000 0
+    @ylist = move $newaddress_2
+    @tail = move 0
+    @ok = move 0
+    @now = move 0
+    @step = move 0
+    @i = move 0
+    @j = move 0
     ret 0
 
 }

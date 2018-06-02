@@ -1192,6 +1192,9 @@ public class IRBuilder implements ASTVisitor {
                 node.intValue = reg;
             }
         }
+        if (node.basicBlockTrue != null) {
+            curBasicBlock.end(new BranchInstruction(curBasicBlock,node.intValue,node.basicBlockTrue,node.basicBlockFalse));
+        }
     }
 
     @Override

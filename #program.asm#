@@ -3,38 +3,1168 @@ global main
 extern malloc
 section .text
 
+___origin:
+___origin..origin.entry:
+	push rbp
+	mov rbp,rsp
+	sub rsp,224
+	mov qword [rbp-128],rdi
+	mov r8,qword [___i]
+	mov qword [rbp-144],r8
+	mov r8,qword [___j]
+	mov qword [rbp-56],r8
+	mov r8,qword [___step]
+	mov qword [rbp-88],r8
+	mov r8,qword [rbp-128]
+	mov r9,r8
+	mov qword [rbp-16],r9
+	mov r8,qword [rbp-128]
+	imul r8,8
+	mov qword [rbp-128],r8
+	mov r8,qword [rbp-128]
+	mov r9,r8
+	mov qword [rbp-72],r9
+	mov r8,qword [rbp-16]
+	mov r9,r8
+	mov qword [rbp-128],r9
+	mov r8,qword [rbp-72]
+	add r8,8
+	mov qword [rbp-72],r8
+	mov r8,qword [rbp-72]
+	mov rdi,r8
+	call malloc
+	mov rdi,qword [rbp-128]
+	mov r8,rax
+	mov qword [rbp-72],r8
+	mov qword [rbp-128],rdi
+	mov r8,qword [rbp-72]
+	mov r9,qword [rbp-128]
+	mov qword [r8],r9
+	mov r8,qword [rbp-72]
+	mov r9,r8
+	mov qword [rbp-88],r9
+	mov r8,0
+	mov qword [rbp-144],r8
+	jmp ___origin..for_cond
+___origin..for_cond:
+	mov r8,qword [rbp-144]
+	mov r9,qword [rbp-128]
+	cmp r8,r9
+	mov r10,0
+	setl r10b
+	mov qword [rbp-8],r10
+	mov r8,qword [rbp-8]
+	cmp r8b,1
+	jz ___origin..for_loop
+	jnz ___origin..for_after
+___origin..for_after:
+	mov r8,qword [rbp-144]
+	mov qword [___i],r8
+	mov r8,qword [rbp-56]
+	mov qword [___j],r8
+	mov r8,qword [rbp-88]
+	mov qword [___step],r8
+	leave
+	ret
+___origin..for_loop:
+	mov r8,qword [rbp-128]
+	mov r9,r8
+	mov qword [rbp-32],r9
+	mov r8,qword [rbp-128]
+	imul r8,8
+	mov qword [rbp-128],r8
+	mov r8,qword [rbp-128]
+	mov r9,r8
+	mov qword [rbp-24],r9
+	mov r8,qword [rbp-32]
+	mov r9,r8
+	mov qword [rbp-128],r9
+	mov r8,qword [rbp-24]
+	add r8,8
+	mov qword [rbp-24],r8
+	mov r8,qword [rbp-24]
+	mov rdi,r8
+	call malloc
+	mov rdi,qword [rbp-128]
+	mov r8,rax
+	mov qword [rbp-24],r8
+	mov qword [rbp-128],rdi
+	mov r8,qword [rbp-24]
+	mov r9,qword [rbp-128]
+	mov qword [r8],r9
+	mov r8,qword [rbp-144]
+	mov r9,r8
+	mov qword [rbp-48],r9
+	mov r8,qword [rbp-144]
+	imul r8,8
+	mov qword [rbp-144],r8
+	mov r8,qword [rbp-144]
+	mov r9,r8
+	mov qword [rbp-96],r9
+	mov r8,qword [rbp-48]
+	mov r9,r8
+	mov qword [rbp-144],r9
+	mov r8,qword [rbp-88]
+	mov r9,qword [rbp-96]
+	add r9,r8
+	mov qword [rbp-96],r9
+	mov r8,qword [rbp-96]
+	mov r9,qword [rbp-24]
+	mov qword [r8+8],r9
+	mov r8,0
+	mov qword [rbp-56],r8
+	jmp ___origin..for_cond_2
+___origin..for_cond_2:
+	mov r8,qword [rbp-56]
+	mov r9,qword [rbp-128]
+	cmp r8,r9
+	mov r10,0
+	setl r10b
+	mov qword [rbp-112],r10
+	mov r8,qword [rbp-112]
+	cmp r8b,1
+	jz ___origin..for_loop_2
+	jnz ___origin..for_after_2
+___origin..for_after_2:
+	jmp ___origin..for_step
+___origin..for_step:
+	mov r8,qword [rbp-144]
+	mov r9,r8
+	mov qword [rbp-136],r9
+	mov r8,qword [rbp-144]
+	add r8,1
+	mov qword [rbp-144],r8
+	jmp ___origin..for_cond
+___origin..for_loop_2:
+	mov r8,qword [rbp-144]
+	mov r9,r8
+	mov qword [rbp-64],r9
+	mov r8,qword [rbp-144]
+	imul r8,8
+	mov qword [rbp-144],r8
+	mov r8,qword [rbp-144]
+	mov r9,r8
+	mov qword [rbp-104],r9
+	mov r8,qword [rbp-64]
+	mov r9,r8
+	mov qword [rbp-144],r9
+	mov r8,qword [rbp-88]
+	mov r9,qword [rbp-104]
+	add r9,r8
+	mov qword [rbp-104],r9
+	mov r8,qword [rbp-104]
+	mov r8,qword [r8+8]
+	mov qword [rbp-104],r8
+	mov r8,qword [rbp-56]
+	mov r9,r8
+	mov qword [rbp-40],r9
+	mov r8,qword [rbp-56]
+	imul r8,8
+	mov qword [rbp-56],r8
+	mov r8,qword [rbp-56]
+	mov r9,r8
+	mov qword [rbp-80],r9
+	mov r8,qword [rbp-40]
+	mov r9,r8
+	mov qword [rbp-56],r9
+	mov r8,qword [rbp-104]
+	mov r9,qword [rbp-80]
+	add r9,r8
+	mov qword [rbp-80],r9
+	mov r8,qword [rbp-80]
+	mov qword [r8+8],0
+	jmp ___origin..for_step_2
+___origin..for_step_2:
+	mov r8,qword [rbp-56]
+	mov r9,r8
+	mov qword [rbp-120],r9
+	mov r8,qword [rbp-56]
+	add r8,1
+	mov qword [rbp-56],r8
+	jmp ___origin..for_cond_2
+
+___check:
+___check..check.entry:
+	push rbp
+	mov rbp,rsp
+	sub rsp,112
+	mov qword [rbp-32],rdi
+	mov qword [rbp-16],rsi
+	mov r8,qword [rbp-32]
+	mov r9,qword [rbp-16]
+	cmp r8,r9
+	mov r10,0
+	setl r10b
+	mov qword [rbp-24],r10
+	mov r8,qword [rbp-24]
+	cmp r8b,1
+	jz ___check..lhs_true
+	jnz ___check..lhs_false
+___check..lhs_false:
+	mov r8,0
+	mov qword [rbp-8],r8
+	jmp ___check..lhs_merge
+___check..lhs_true:
+	mov r8,qword [rbp-32]
+	cmp r8,0
+	mov r9,0
+	setge r9b
+	mov qword [rbp-40],r9
+	mov r8,qword [rbp-40]
+	mov r9,r8
+	mov qword [rbp-8],r9
+	jmp ___check..lhs_merge
+___check..lhs_merge:
+	mov r8,qword [rbp-8]
+	mov rax,r8
+	leave
+	ret
+
+___addList:
+___addList..addList.entry:
+	push rbp
+	mov rbp,rsp
+	sub rsp,96
+	mov qword [rbp-32],rdi
+	mov qword [rbp-24],rsi
+	mov r8,qword [___N]
+	mov qword [rbp-16],r8
+	mov qword [rbp-40],r8
+	mov qword [rbp-48],rdi
+	mov qword [rbp-56],rsi
+	mov rsi,qword [rbp-16]
+	mov rdi,qword [rbp-32]
+	call ___check
+	mov rsi,qword [rbp-56]
+	mov rdi,qword [rbp-48]
+	mov r8,qword [rbp-40]
+	mov r8,rax
+	mov qword [rbp-8],r8
+
 main:
 main..main.entry:
 	push rbp
 	mov rbp,rsp
-	sub rsp,96
+	sub rsp,752
+	mov r8,qword [___x]
+	mov qword [rbp-248],r8
+	mov r8,qword [___tail]
+	mov qword [rbp-72],r8
+	mov r8,qword [___ok]
+	mov qword [rbp-568],r8
+	mov r8,qword [___N]
+	mov qword [rbp-8],r8
+	mov r8,qword [___y]
+	mov qword [rbp-96],r8
+	mov r8,qword [___head]
+	mov qword [rbp-480],r8
+	mov r8,qword [___step]
+	mov qword [rbp-176],r8
+	mov r8,qword [___i]
+	mov qword [rbp-624],r8
 	mov r8,___string
-	mov qword [rbp-24],r8
+	mov qword [rbp-48],r8
+	mov r8,qword [___xlist]
+	mov qword [rbp-648],r8
+	mov r8,qword [___now]
+	mov qword [rbp-440],r8
+	mov r8,qword [___j]
+	mov qword [rbp-272],r8
+	mov r8,qword [___targety]
+	mov qword [rbp-56],r8
+	mov r8,qword [___targetx]
+	mov qword [rbp-576],r8
+	mov r8,qword [___ylist]
+	mov qword [rbp-240],r8
+	mov r8,qword [rbp-624]
+	mov qword [___i],r8
+	mov r8,qword [rbp-248]
+	mov qword [___x],r8
+	mov r8,qword [rbp-440]
+	mov qword [___now],r8
+	mov r8,qword [rbp-272]
+	mov qword [___j],r8
+	mov r8,qword [rbp-8]
+	mov qword [___N],r8
+	mov r8,qword [rbp-56]
+	mov qword [___targety],r8
+	mov r8,qword [rbp-576]
+	mov qword [___targetx],r8
+	mov r8,qword [rbp-96]
+	mov qword [___y],r8
+	mov r8,qword [rbp-480]
+	mov qword [___head],r8
+	mov qword [rbp-680],r9
+	mov qword [rbp-696],r8
 	call ____init
-	mov r8,qword [rbp-24]
+	mov r8,qword [rbp-696]
+	mov r9,qword [rbp-680]
+	mov r8,qword [___ylist]
+	mov qword [rbp-240],r8
+	mov r8,qword [___targetx]
+	mov qword [rbp-576],r8
+	mov r8,qword [___targety]
+	mov qword [rbp-56],r8
+	mov r8,qword [___j]
+	mov qword [rbp-272],r8
+	mov r8,qword [___now]
+	mov qword [rbp-440],r8
+	mov r8,qword [___xlist]
+	mov qword [rbp-648],r8
+	mov r8,qword [___i]
+	mov qword [rbp-624],r8
+	mov r8,qword [___step]
+	mov qword [rbp-176],r8
+	mov r8,qword [___head]
+	mov qword [rbp-480],r8
+	mov r8,qword [___y]
+	mov qword [rbp-96],r8
+	mov r8,qword [___N]
+	mov qword [rbp-8],r8
+	mov r8,qword [___ok]
+	mov qword [rbp-568],r8
+	mov r8,qword [___tail]
+	mov qword [rbp-72],r8
+	mov r8,qword [___x]
+	mov qword [rbp-248],r8
+	mov r8,qword [rbp-624]
+	mov qword [___i],r8
+	mov r8,qword [rbp-272]
+	mov qword [___j],r8
+	mov qword [rbp-680],r9
+	mov qword [rbp-688],r10
+	mov qword [rbp-696],r8
+	mov qword [rbp-704],rdi
+	mov rdi,106
+	call ___origin
+	mov rdi,qword [rbp-704]
+	mov r8,qword [rbp-696]
+	mov r10,qword [rbp-688]
+	mov r9,qword [rbp-680]
+	mov r8,rax
+	mov qword [rbp-424],r8
+	mov r8,qword [___j]
+	mov qword [rbp-272],r8
+	mov r8,qword [___i]
+	mov qword [rbp-624],r8
+	mov r8,qword [___step]
+	mov qword [rbp-176],r8
+	mov r8,1
+	mov qword [rbp-8],r8
+	mov r8,qword [rbp-8]
+	mov r9,r8
+	mov qword [rbp-664],r9
+	mov r8,qword [rbp-8]
+	sub r8,1
+	mov qword [rbp-8],r8
+	mov r8,qword [rbp-8]
+	mov r9,r8
+	mov qword [rbp-280],r9
+	mov r8,qword [rbp-664]
 	mov r9,r8
 	mov qword [rbp-8],r9
+	mov r8,qword [rbp-280]
+	mov r9,r8
+	mov qword [rbp-56],r9
+	mov r8,qword [rbp-56]
+	mov r9,r8
+	mov qword [rbp-576],r9
+	mov r8,0
+	mov qword [rbp-624],r8
+	jmp main..for_cond
+main..for_cond:
+	mov r8,qword [rbp-624]
+	mov r9,qword [rbp-8]
+	cmp r8,r9
+	mov r10,0
+	setl r10b
+	mov qword [rbp-488],r10
+	mov r8,qword [rbp-488]
+	cmp r8b,1
+	jz main..for_loop
+	jnz main..for_after
+main..for_after:
+	jmp main..while_cond
+main..while_cond:
+	mov r8,qword [rbp-480]
+	mov r9,qword [rbp-72]
+	cmp r8,r9
+	mov r10,0
+	setle r10b
+	mov qword [rbp-504],r10
+	mov r8,qword [rbp-504]
+	cmp r8b,1
+	jz main..while_loop
+	jnz main..while_after
+main..while_loop:
+	mov r8,qword [rbp-480]
+	mov r9,r8
+	mov qword [rbp-200],r9
+	mov r8,qword [rbp-480]
+	imul r8,8
+	mov qword [rbp-480],r8
+	mov r8,qword [rbp-480]
+	mov r9,r8
+	mov qword [rbp-24],r9
+	mov r8,qword [rbp-200]
+	mov r9,r8
+	mov qword [rbp-480],r9
+	mov r8,qword [rbp-648]
+	mov r9,qword [rbp-24]
+	add r9,r8
+	mov qword [rbp-24],r9
+	mov r8,qword [rbp-24]
+	mov r8,qword [r8+8]
+	mov qword [rbp-24],r8
+	mov r8,qword [rbp-24]
+	mov r9,r8
+	mov qword [rbp-248],r9
+	mov r8,qword [rbp-480]
+	mov r9,r8
+	mov qword [rbp-544],r9
+	mov r8,qword [rbp-480]
+	imul r8,8
+	mov qword [rbp-480],r8
+	mov r8,qword [rbp-480]
+	mov r9,r8
+	mov qword [rbp-640],r9
+	mov r8,qword [rbp-544]
+	mov r9,r8
+	mov qword [rbp-480],r9
+	mov r8,qword [rbp-240]
+	mov r9,qword [rbp-640]
+	add r9,r8
+	mov qword [rbp-640],r9
+	mov r8,qword [rbp-640]
+	mov r8,qword [r8+8]
+	mov qword [rbp-640],r8
+	mov r8,qword [rbp-640]
+	mov r9,r8
+	mov qword [rbp-96],r9
+	mov r8,qword [rbp-248]
+	mov r9,r8
+	mov qword [rbp-616],r9
+	mov r8,qword [rbp-248]
+	imul r8,8
+	mov qword [rbp-248],r8
+	mov r8,qword [rbp-248]
+	mov r9,r8
+	mov qword [rbp-496],r9
+	mov r8,qword [rbp-616]
+	mov r9,r8
+	mov qword [rbp-248],r9
+	mov r8,qword [rbp-176]
+	mov r9,qword [rbp-496]
+	add r9,r8
+	mov qword [rbp-496],r9
+	mov r8,qword [rbp-496]
+	mov r8,qword [r8+8]
+	mov qword [rbp-496],r8
+	mov r8,qword [rbp-96]
+	mov r9,r8
+	mov qword [rbp-600],r9
+	mov r8,qword [rbp-96]
+	imul r8,8
+	mov qword [rbp-96],r8
+	mov r8,qword [rbp-96]
+	mov r9,r8
+	mov qword [rbp-456],r9
+	mov r8,qword [rbp-600]
+	mov r9,r8
+	mov qword [rbp-96],r9
+	mov r8,qword [rbp-496]
+	mov r9,qword [rbp-456]
+	add r9,r8
+	mov qword [rbp-456],r9
+	mov r8,qword [rbp-456]
+	mov r8,qword [r8+8]
+	mov qword [rbp-456],r8
+	mov r8,qword [rbp-456]
+	mov r9,r8
+	mov qword [rbp-440],r9
+	mov r8,qword [rbp-248]
+	mov r9,r8
+	mov qword [rbp-296],r9
+	mov r8,qword [rbp-248]
+	sub r8,1
+	mov qword [rbp-248],r8
+	mov r8,qword [rbp-248]
+	mov r9,r8
+	mov qword [rbp-448],r9
+	mov r8,qword [rbp-296]
+	mov r9,r8
+	mov qword [rbp-248],r9
+	mov r8,qword [rbp-96]
+	mov r9,r8
+	mov qword [rbp-392],r9
+	mov r8,qword [rbp-96]
+	sub r8,2
+	mov qword [rbp-96],r8
+	mov r8,qword [rbp-96]
+	mov r9,r8
+	mov qword [rbp-64],r9
+	mov r8,qword [rbp-392]
+	mov r9,r8
+	mov qword [rbp-96],r9
 	mov r8,qword [rbp-8]
-	mov r9,qword [r8]
+	mov qword [___N],r8
+	mov qword [rbp-680],r9
+	mov qword [rbp-688],r10
+	mov qword [rbp-696],r8
+	mov qword [rbp-704],rdi
+	mov qword [rbp-712],rsi
+	mov rsi,qword [rbp-64]
+	mov rdi,qword [rbp-448]
+	call ___addList
+	mov rsi,qword [rbp-712]
+	mov rdi,qword [rbp-704]
+	mov r8,qword [rbp-696]
+	mov r10,qword [rbp-688]
+	mov r9,qword [rbp-680]
+	mov r8,rax
+	mov qword [rbp-104],r8
+	mov r8,qword [rbp-248]
+	mov r9,r8
+	mov qword [rbp-224],r9
+	mov r8,qword [rbp-248]
+	sub r8,1
+	mov qword [rbp-248],r8
+	mov r8,qword [rbp-248]
+	mov r9,r8
+	mov qword [rbp-160],r9
+	mov r8,qword [rbp-224]
+	mov r9,r8
+	mov qword [rbp-248],r9
+	mov r8,qword [rbp-96]
+	mov r9,r8
+	mov qword [rbp-464],r9
+	mov r8,qword [rbp-96]
+	add r8,2
+	mov qword [rbp-96],r8
+	mov r8,qword [rbp-96]
+	mov r9,r8
+	mov qword [rbp-584],r9
+	mov r8,qword [rbp-464]
+	mov r9,r8
+	mov qword [rbp-96],r9
+	mov r8,qword [rbp-8]
+	mov qword [___N],r8
+	mov qword [rbp-680],r9
+	mov qword [rbp-688],r10
+	mov qword [rbp-696],r8
+	mov qword [rbp-704],rdi
+	mov qword [rbp-712],rsi
+	mov rsi,qword [rbp-584]
+	mov rdi,qword [rbp-160]
+	call ___addList
+	mov rsi,qword [rbp-712]
+	mov rdi,qword [rbp-704]
+	mov r8,qword [rbp-696]
+	mov r10,qword [rbp-688]
+	mov r9,qword [rbp-680]
+	mov r8,rax
+	mov qword [rbp-528],r8
+	mov r8,qword [rbp-248]
+	mov r9,r8
+	mov qword [rbp-312],r9
+	mov r8,qword [rbp-248]
+	add r8,1
+	mov qword [rbp-248],r8
+	mov r8,qword [rbp-248]
+	mov r9,r8
+	mov qword [rbp-400],r9
+	mov r8,qword [rbp-312]
+	mov r9,r8
+	mov qword [rbp-248],r9
+	mov r8,qword [rbp-96]
+	mov r9,r8
+	mov qword [rbp-88],r9
+	mov r8,qword [rbp-96]
+	sub r8,2
+	mov qword [rbp-96],r8
+	mov r8,qword [rbp-96]
+	mov r9,r8
+	mov qword [rbp-376],r9
+	mov r8,qword [rbp-88]
+	mov r9,r8
+	mov qword [rbp-96],r9
+	mov r8,qword [rbp-8]
+	mov qword [___N],r8
+	mov qword [rbp-680],r9
+	mov qword [rbp-688],r10
+	mov qword [rbp-696],r8
+	mov qword [rbp-704],rdi
+	mov qword [rbp-712],rsi
+	mov rsi,qword [rbp-376]
+	mov rdi,qword [rbp-400]
+	call ___addList
+	mov rsi,qword [rbp-712]
+	mov rdi,qword [rbp-704]
+	mov r8,qword [rbp-696]
+	mov r10,qword [rbp-688]
+	mov r9,qword [rbp-680]
+	mov r8,rax
+	mov qword [rbp-536],r8
+	mov r8,qword [rbp-248]
+	mov r9,r8
+	mov qword [rbp-40],r9
+	mov r8,qword [rbp-248]
+	add r8,1
+	mov qword [rbp-248],r8
+	mov r8,qword [rbp-248]
+	mov r9,r8
+	mov qword [rbp-216],r9
+	mov r8,qword [rbp-40]
+	mov r9,r8
+	mov qword [rbp-248],r9
+	mov r8,qword [rbp-96]
+	mov r9,r8
+	mov qword [rbp-120],r9
+	mov r8,qword [rbp-96]
+	add r8,2
+	mov qword [rbp-96],r8
+	mov r8,qword [rbp-96]
+	mov r9,r8
+	mov qword [rbp-232],r9
+	mov r8,qword [rbp-120]
+	mov r9,r8
+	mov qword [rbp-96],r9
+	mov r8,qword [rbp-8]
+	mov qword [___N],r8
+	mov qword [rbp-680],r9
+	mov qword [rbp-688],r10
+	mov qword [rbp-696],r8
+	mov qword [rbp-704],rdi
+	mov qword [rbp-712],rsi
+	mov rsi,qword [rbp-232]
+	mov rdi,qword [rbp-216]
+	call ___addList
+	mov rsi,qword [rbp-712]
+	mov rdi,qword [rbp-704]
+	mov r8,qword [rbp-696]
+	mov r10,qword [rbp-688]
+	mov r9,qword [rbp-680]
+	mov r8,rax
+	mov qword [rbp-520],r8
+	mov r8,qword [rbp-248]
+	mov r9,r8
+	mov qword [rbp-136],r9
+	mov r8,qword [rbp-248]
+	sub r8,2
+	mov qword [rbp-248],r8
+	mov r8,qword [rbp-248]
+	mov r9,r8
+	mov qword [rbp-352],r9
+	mov r8,qword [rbp-136]
+	mov r9,r8
+	mov qword [rbp-248],r9
+	mov r8,qword [rbp-96]
+	mov r9,r8
+	mov qword [rbp-416],r9
+	mov r8,qword [rbp-96]
+	sub r8,1
+	mov qword [rbp-96],r8
+	mov r8,qword [rbp-96]
+	mov r9,r8
+	mov qword [rbp-360],r9
+	mov r8,qword [rbp-416]
+	mov r9,r8
+	mov qword [rbp-96],r9
+	mov r8,qword [rbp-8]
+	mov qword [___N],r8
+	mov qword [rbp-680],r9
+	mov qword [rbp-688],r10
+	mov qword [rbp-696],r8
+	mov qword [rbp-704],rdi
+	mov qword [rbp-712],rsi
+	mov rsi,qword [rbp-360]
+	mov rdi,qword [rbp-352]
+	call ___addList
+	mov rsi,qword [rbp-712]
+	mov rdi,qword [rbp-704]
+	mov r8,qword [rbp-696]
+	mov r10,qword [rbp-688]
+	mov r9,qword [rbp-680]
+	mov r8,rax
+	mov qword [rbp-336],r8
+	mov r8,qword [rbp-248]
+	mov r9,r8
+	mov qword [rbp-432],r9
+	mov r8,qword [rbp-248]
+	sub r8,2
+	mov qword [rbp-248],r8
+	mov r8,qword [rbp-248]
+	mov r9,r8
 	mov qword [rbp-16],r9
-	mov r8,qword [rbp-16]
-	mov rax,r8
+	mov r8,qword [rbp-432]
+	mov r9,r8
+	mov qword [rbp-248],r9
+	mov r8,qword [rbp-96]
+	mov r9,r8
+	mov qword [rbp-608],r9
+	mov r8,qword [rbp-96]
+	add r8,1
+	mov qword [rbp-96],r8
+	mov r8,qword [rbp-96]
+	mov r9,r8
+	mov qword [rbp-552],r9
+	mov r8,qword [rbp-608]
+	mov r9,r8
+	mov qword [rbp-96],r9
+	mov r8,qword [rbp-8]
+	mov qword [___N],r8
+	mov qword [rbp-680],r9
+	mov qword [rbp-688],r10
+	mov qword [rbp-696],r8
+	mov qword [rbp-704],rdi
+	mov qword [rbp-712],rsi
+	mov rsi,qword [rbp-552]
+	mov rdi,qword [rbp-16]
+	call ___addList
+	mov rsi,qword [rbp-712]
+	mov rdi,qword [rbp-704]
+	mov r8,qword [rbp-696]
+	mov r10,qword [rbp-688]
+	mov r9,qword [rbp-680]
+	mov r8,rax
+	mov qword [rbp-408],r8
+	mov r8,qword [rbp-248]
+	mov r9,r8
+	mov qword [rbp-592],r9
+	mov r8,qword [rbp-248]
+	add r8,2
+	mov qword [rbp-248],r8
+	mov r8,qword [rbp-248]
+	mov r9,r8
+	mov qword [rbp-656],r9
+	mov r8,qword [rbp-592]
+	mov r9,r8
+	mov qword [rbp-248],r9
+	mov r8,qword [rbp-96]
+	mov r9,r8
+	mov qword [rbp-368],r9
+	mov r8,qword [rbp-96]
+	sub r8,1
+	mov qword [rbp-96],r8
+	mov r8,qword [rbp-96]
+	mov r9,r8
+	mov qword [rbp-184],r9
+	mov r8,qword [rbp-368]
+	mov r9,r8
+	mov qword [rbp-96],r9
+	mov r8,qword [rbp-8]
+	mov qword [___N],r8
+	mov qword [rbp-680],r9
+	mov qword [rbp-688],r10
+	mov qword [rbp-696],r8
+	mov qword [rbp-704],rdi
+	mov qword [rbp-712],rsi
+	mov rsi,qword [rbp-184]
+	mov rdi,qword [rbp-656]
+	call ___addList
+	mov rsi,qword [rbp-712]
+	mov rdi,qword [rbp-704]
+	mov r8,qword [rbp-696]
+	mov r10,qword [rbp-688]
+	mov r9,qword [rbp-680]
+	mov r8,rax
+	mov qword [rbp-256],r8
+	mov r8,qword [rbp-248]
+	mov r9,r8
+	mov qword [rbp-512],r9
+	mov r8,qword [rbp-248]
+	add r8,2
+	mov qword [rbp-248],r8
+	mov r8,qword [rbp-248]
+	mov r9,r8
+	mov qword [rbp-344],r9
+	mov r8,qword [rbp-512]
+	mov r9,r8
+	mov qword [rbp-248],r9
+	mov r8,qword [rbp-96]
+	mov r9,r8
+	mov qword [rbp-320],r9
+	mov r8,qword [rbp-96]
+	add r8,1
+	mov qword [rbp-96],r8
+	mov r8,qword [rbp-96]
+	mov r9,r8
+	mov qword [rbp-328],r9
+	mov r8,qword [rbp-320]
+	mov r9,r8
+	mov qword [rbp-96],r9
+	mov r8,qword [rbp-8]
+	mov qword [___N],r8
+	mov qword [rbp-680],r9
+	mov qword [rbp-688],r10
+	mov qword [rbp-696],r8
+	mov qword [rbp-704],rdi
+	mov qword [rbp-712],rsi
+	mov rsi,qword [rbp-328]
+	mov rdi,qword [rbp-344]
+	call ___addList
+	mov rsi,qword [rbp-712]
+	mov rdi,qword [rbp-704]
+	mov r8,qword [rbp-696]
+	mov r10,qword [rbp-688]
+	mov r9,qword [rbp-680]
+	mov r8,rax
+	mov qword [rbp-192],r8
+	mov r8,qword [rbp-568]
+	cmp r8,1
+	mov r9,0
+	sete r9b
+	mov qword [rbp-384],r9
+	mov r8,qword [rbp-384]
+	cmp r8b,1
+	jz main..if_true
+	jnz main..if_after
+main..if_true:
+	jmp main..while_after
+main..while_after:
+	mov r8,qword [rbp-568]
+	cmp r8,1
+	mov r9,0
+	sete r9b
+	mov qword [rbp-32],r9
+	mov r8,qword [rbp-32]
+	cmp r8b,1
+	jz main..if_true_2
+	jnz main..if_false
+main..if_true_2:
+	mov r8,qword [rbp-576]
+	mov r9,r8
+	mov qword [rbp-208],r9
+	mov r8,qword [rbp-576]
+	imul r8,8
+	mov qword [rbp-576],r8
+	mov r8,qword [rbp-576]
+	mov r9,r8
+	mov qword [rbp-112],r9
+	mov r8,qword [rbp-208]
+	mov r9,r8
+	mov qword [rbp-576],r9
+	mov r8,qword [rbp-176]
+	mov r9,qword [rbp-112]
+	add r9,r8
+	mov qword [rbp-112],r9
+	mov r8,qword [rbp-112]
+	mov r8,qword [r8+8]
+	mov qword [rbp-112],r8
+	mov r8,qword [rbp-56]
+	mov r9,r8
+	mov qword [rbp-152],r9
+	mov r8,qword [rbp-56]
+	imul r8,8
+	mov qword [rbp-56],r8
+	mov r8,qword [rbp-56]
+	mov r9,r8
+	mov qword [rbp-168],r9
+	mov r8,qword [rbp-152]
+	mov r9,r8
+	mov qword [rbp-56],r9
+	mov r8,qword [rbp-112]
+	mov r9,qword [rbp-168]
+	add r9,r8
+	mov qword [rbp-168],r9
+	mov r8,qword [rbp-168]
+	mov r8,qword [r8+8]
+	mov qword [rbp-168],r8
+	mov qword [rbp-680],r9
+	mov qword [rbp-688],r10
+	mov qword [rbp-696],r8
+	mov rdi,qword [rbp-168]
+	call _Z10printlnInti
+	mov r8,qword [rbp-696]
+	mov r10,qword [rbp-688]
+	mov r9,qword [rbp-680]
+	jmp main..if_after_2
+main..if_false:
+	mov qword [rbp-680],r9
+	mov qword [rbp-688],r10
+	mov qword [rbp-696],r8
+	mov rdi,qword [rbp-48]
+	call _Z5printPc
+	mov r8,qword [rbp-696]
+	mov r10,qword [rbp-688]
+	mov r9,qword [rbp-680]
+	jmp main..if_after_2
+main..if_after_2:
+	mov r8,qword [rbp-624]
+	mov qword [___i],r8
+	mov r8,qword [rbp-248]
+	mov qword [___x],r8
+	mov r8,qword [rbp-440]
+	mov qword [___now],r8
+	mov r8,qword [rbp-272]
+	mov qword [___j],r8
+	mov r8,qword [rbp-8]
+	mov qword [___N],r8
+	mov r8,qword [rbp-56]
+	mov qword [___targety],r8
+	mov r8,qword [rbp-576]
+	mov qword [___targetx],r8
+	mov r8,qword [rbp-96]
+	mov qword [___y],r8
+	mov r8,qword [rbp-480]
+	mov qword [___head],r8
+	mov rax,0
 	leave
 	ret
+main..if_after:
+	mov r8,qword [rbp-480]
+	mov r9,r8
+	mov qword [rbp-472],r9
+	mov r8,qword [rbp-480]
+	add r8,1
+	mov qword [rbp-480],r8
+	mov r8,qword [rbp-480]
+	mov r9,r8
+	mov qword [rbp-144],r9
+	mov r8,qword [rbp-472]
+	mov r9,r8
+	mov qword [rbp-480],r9
+	mov r8,qword [rbp-144]
+	mov r9,r8
+	mov qword [rbp-480],r9
+	jmp main..while_cond
+main..for_loop:
+	mov r8,0
+	mov qword [rbp-272],r8
+	jmp main..for_cond_2
+main..for_cond_2:
+	mov r8,qword [rbp-272]
+	mov r9,qword [rbp-8]
+	cmp r8,r9
+	mov r10,0
+	setl r10b
+	mov qword [rbp-304],r10
+	mov r8,qword [rbp-304]
+	cmp r8b,1
+	jz main..for_loop_2
+	jnz main..for_after_2
+main..for_loop_2:
+	mov r8,-1
+	mov qword [rbp-264],r8
+	mov r8,qword [rbp-624]
+	mov r9,r8
+	mov qword [rbp-80],r9
+	mov r8,qword [rbp-624]
+	imul r8,8
+	mov qword [rbp-624],r8
+	mov r8,qword [rbp-624]
+	mov r9,r8
+	mov qword [rbp-560],r9
+	mov r8,qword [rbp-80]
+	mov r9,r8
+	mov qword [rbp-624],r9
+	mov r8,qword [rbp-176]
+	mov r9,qword [rbp-560]
+	add r9,r8
+	mov qword [rbp-560],r9
+	mov r8,qword [rbp-560]
+	mov r8,qword [r8+8]
+	mov qword [rbp-560],r8
+	mov r8,qword [rbp-272]
+	mov r9,r8
+	mov qword [rbp-672],r9
+	mov r8,qword [rbp-272]
+	imul r8,8
+	mov qword [rbp-272],r8
+	mov r8,qword [rbp-272]
+	mov r9,r8
+	mov qword [rbp-632],r9
+	mov r8,qword [rbp-672]
+	mov r9,r8
+	mov qword [rbp-272],r9
+	mov r8,qword [rbp-560]
+	mov r9,qword [rbp-632]
+	add r9,r8
+	mov qword [rbp-632],r9
+	mov r8,qword [rbp-632]
+	mov r9,qword [rbp-264]
+	mov qword [r8+8],r9
+	jmp main..for_step
+main..for_step:
+	mov r8,qword [rbp-272]
+	mov r9,r8
+	mov qword [rbp-288],r9
+	mov r8,qword [rbp-272]
+	add r8,1
+	mov qword [rbp-272],r8
+	jmp main..for_cond_2
+main..for_after_2:
+	jmp main..for_step_2
+main..for_step_2:
+	mov r8,qword [rbp-624]
+	mov r9,r8
+	mov qword [rbp-128],r9
+	mov r8,qword [rbp-624]
+	add r8,1
+	mov qword [rbp-624],r8
+	jmp main..for_cond
 
 ____init:
 ____init.._init.entry:
 	push rbp
 	mov rbp,rsp
-	sub rsp,48
+	sub rsp,208
+	mov r8,qword [___x]
+	mov qword [rbp-72],r8
+	mov r8,qword [___startx]
+	mov qword [rbp-112],r8
+	mov r8,qword [___tail]
+	mov qword [rbp-56],r8
+	mov r8,qword [___ok]
+	mov qword [rbp-136],r8
+	mov r8,qword [___N]
+	mov qword [rbp-88],r8
+	mov r8,qword [___y]
+	mov qword [rbp-64],r8
+	mov r8,qword [___head]
+	mov qword [rbp-8],r8
+	mov r8,qword [___step]
+	mov qword [rbp-104],r8
+	mov r8,qword [___i]
+	mov qword [rbp-48],r8
+	mov r8,qword [___xlist]
+	mov qword [rbp-120],r8
+	mov r8,qword [___now]
+	mov qword [rbp-128],r8
+	mov r8,qword [___j]
+	mov qword [rbp-16],r8
+	mov r8,qword [___targetx]
+	mov qword [rbp-144],r8
+	mov r8,qword [___targety]
+	mov qword [rbp-40],r8
+	mov r8,qword [___starty]
+	mov qword [rbp-96],r8
+	mov r8,qword [___ylist]
+	mov qword [rbp-32],r8
+	mov r8,0
+	mov qword [rbp-88],r8
+	mov r8,0
+	mov qword [rbp-8],r8
+	mov r8,0
+	mov qword [rbp-112],r8
+	mov r8,0
+	mov qword [rbp-96],r8
+	mov r8,0
+	mov qword [rbp-144],r8
+	mov r8,0
+	mov qword [rbp-40],r8
+	mov r8,0
+	mov qword [rbp-72],r8
+	mov r8,0
+	mov qword [rbp-64],r8
+	mov r8,96008
+	mov qword [rbp-80],r8
+	mov r8,qword [rbp-80]
+	mov rdi,r8
+	call malloc
+	mov r8,rax
+	mov qword [rbp-80],r8
+	mov r8,qword [rbp-80]
+	mov qword [r8],12000
+	mov r8,qword [rbp-80]
+	mov r9,r8
+	mov qword [rbp-120],r9
+	mov r8,96008
+	mov qword [rbp-24],r8
+	mov r8,qword [rbp-24]
+	mov rdi,r8
+	call malloc
+	mov r8,rax
+	mov qword [rbp-24],r8
+	mov r8,qword [rbp-24]
+	mov qword [r8],12000
+	mov r8,qword [rbp-24]
+	mov r9,r8
+	mov qword [rbp-32],r9
+	mov r8,0
+	mov qword [rbp-56],r8
+	mov r8,0
+	mov qword [rbp-136],r8
+	mov r8,0
+	mov qword [rbp-128],r8
+	mov r8,0
+	mov qword [rbp-104],r8
+	mov r8,0
+	mov qword [rbp-48],r8
+	mov r8,0
+	mov qword [rbp-16],r8
+	mov r8,qword [rbp-72]
+	mov qword [___x],r8
+	mov r8,qword [rbp-112]
+	mov qword [___startx],r8
+	mov r8,qword [rbp-56]
+	mov qword [___tail],r8
+	mov r8,qword [rbp-136]
+	mov qword [___ok],r8
+	mov r8,qword [rbp-88]
+	mov qword [___N],r8
+	mov r8,qword [rbp-64]
+	mov qword [___y],r8
+	mov r8,qword [rbp-8]
+	mov qword [___head],r8
+	mov r8,qword [rbp-104]
+	mov qword [___step],r8
+	mov r8,qword [rbp-48]
+	mov qword [___i],r8
+	mov r8,qword [rbp-120]
+	mov qword [___xlist],r8
+	mov r8,qword [rbp-128]
+	mov qword [___now],r8
+	mov r8,qword [rbp-16]
+	mov qword [___j],r8
+	mov r8,qword [rbp-144]
+	mov qword [___targetx],r8
+	mov r8,qword [rbp-40]
+	mov qword [___targety],r8
+	mov r8,qword [rbp-96]
+	mov qword [___starty],r8
+	mov r8,qword [rbp-32]
+	mov qword [___ylist],r8
 	leave
 	ret
 
 	section .data
 ___string:
-	db 3,0,0,0,0,0,0,0,97,97,97,0
+	db 13,0,0,0,0,0,0,0,110,111,32,115,111,108,117,116,105,111,110,33,10,0
 
 section .bss
+___N:
+	resb 64
+___head:
+	resb 64
+___startx:
+	resb 64
+___starty:
+	resb 64
+___targetx:
+	resb 64
+___targety:
+	resb 64
+___x:
+	resb 64
+___y:
+	resb 64
+___xlist:
+	resb 64
+___ylist:
+	resb 64
+___tail:
+	resb 64
+___ok:
+	resb 64
+___now:
+	resb 64
+___step:
+	resb 64
+___i:
+	resb 64
+___j:
+	resb 64
 
 
 

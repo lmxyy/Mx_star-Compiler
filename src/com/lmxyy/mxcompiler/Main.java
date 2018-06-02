@@ -31,7 +31,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
-//         String inFile = "/Users/limuyang/Desktop/Mx_star-Compiler/testcase/527.mx", outFile = null;
+//         String inFile = "/Users/limuyang/Desktop/Mx_star-Compiler/testcase/526.mx", outFile = null;
         String inFile = null,outFile = null;
         boolean isPrintHelp = false, isPrintVersion = false, isPrintConfig = false;
         for (int i = 0; i < args.length; ++i) {
