@@ -124,22 +124,23 @@ public class BasicBlock {
         head = tail = null;
         instructions.forEach(instruction -> {
             if (instruction instanceof BinaryOperationInstruction) {
+                IntValue lhs = ((BinaryOperationInstruction) instruction).getLhs(),
+                        rhs = ((BinaryOperationInstruction) instruction).getRhs();
                 switch (((BinaryOperationInstruction) instruction).getOperator()) {
                     case DIV:
                         append(new MoveInstruction(
-                            this,((BinaryOperationInstruction) instruction).getLhs(),
-                            NASMRegisterSet.RAX
+                                this, ((BinaryOperationInstruction) instruction).getLhs(),
+                                NASMRegisterSet.RAX
                         ));
                         append(new CqoInstruction(this));
                         if (((BinaryOperationInstruction) instruction).getRhs() instanceof IntImmediate) {
                             VirtualRegister reg = new VirtualRegister(null);
-                            append(new MoveInstruction(this,((BinaryOperationInstruction) instruction).getRhs(),reg));
+                            append(new MoveInstruction(this, ((BinaryOperationInstruction) instruction).getRhs(), reg));
                             append(new TwoAddressInstruction(
                                     this, ((BinaryOperationInstruction) instruction).getOperator(),
-                                    ((BinaryOperationInstruction) instruction).getDest(),reg
+                                    ((BinaryOperationInstruction) instruction).getDest(), reg
                             ));
-                        }
-                        else {
+                        } else {
                             append(new TwoAddressInstruction(
                                     this, ((BinaryOperationInstruction) instruction).getOperator(),
                                     ((BinaryOperationInstruction) instruction).getDest(),
@@ -153,19 +154,18 @@ public class BasicBlock {
                         break;
                     case MOD:
                         append(new MoveInstruction(
-                                this,((BinaryOperationInstruction) instruction).getLhs(),
+                                this, ((BinaryOperationInstruction) instruction).getLhs(),
                                 NASMRegisterSet.RAX
                         ));
                         append(new CqoInstruction(this));
                         if (((BinaryOperationInstruction) instruction).getRhs() instanceof IntImmediate) {
                             VirtualRegister reg = new VirtualRegister(null);
-                            append(new MoveInstruction(this,((BinaryOperationInstruction) instruction).getRhs(),reg));
+                            append(new MoveInstruction(this, ((BinaryOperationInstruction) instruction).getRhs(), reg));
                             append(new TwoAddressInstruction(
                                     this, ((BinaryOperationInstruction) instruction).getOperator(),
-                                    ((BinaryOperationInstruction) instruction).getDest(),reg
+                                    ((BinaryOperationInstruction) instruction).getDest(), reg
                             ));
-                        }
-                        else {
+                        } else {
                             append(new TwoAddressInstruction(
                                     this, ((BinaryOperationInstruction) instruction).getOperator(),
                                     ((BinaryOperationInstruction) instruction).getDest(),
@@ -180,13 +180,12 @@ public class BasicBlock {
                     case LEQ:
                         if (((BinaryOperationInstruction) instruction).getLhs() instanceof IntImmediate) {
                             append(new ComparisionInstruction(
-                                    this,((BinaryOperationInstruction) instruction).getDest(), GEQ,
+                                    this, ((BinaryOperationInstruction) instruction).getDest(), GEQ,
                                     ((BinaryOperationInstruction) instruction).getRhs(),
                                     ((BinaryOperationInstruction) instruction).getLhs())
                             );
-                        }
-                        else append(new ComparisionInstruction(
-                                this,((BinaryOperationInstruction) instruction).getDest(), LEQ,
+                        } else append(new ComparisionInstruction(
+                                this, ((BinaryOperationInstruction) instruction).getDest(), LEQ,
                                 ((BinaryOperationInstruction) instruction).getLhs(),
                                 ((BinaryOperationInstruction) instruction).getRhs())
                         );
@@ -195,13 +194,12 @@ public class BasicBlock {
                     case GEQ:
                         if (((BinaryOperationInstruction) instruction).getLhs() instanceof IntImmediate) {
                             append(new ComparisionInstruction(
-                                    this,((BinaryOperationInstruction) instruction).getDest(), LEQ,
+                                    this, ((BinaryOperationInstruction) instruction).getDest(), LEQ,
                                     ((BinaryOperationInstruction) instruction).getRhs(),
                                     ((BinaryOperationInstruction) instruction).getLhs())
                             );
-                        }
-                        else append(new ComparisionInstruction(
-                                this,((BinaryOperationInstruction) instruction).getDest(), GEQ,
+                        } else append(new ComparisionInstruction(
+                                this, ((BinaryOperationInstruction) instruction).getDest(), GEQ,
                                 ((BinaryOperationInstruction) instruction).getLhs(),
                                 ((BinaryOperationInstruction) instruction).getRhs())
                         );
@@ -209,37 +207,37 @@ public class BasicBlock {
                     case LESS:
                         if (((BinaryOperationInstruction) instruction).getLhs() instanceof IntImmediate) {
                             append(new ComparisionInstruction(
-                                    this,((BinaryOperationInstruction) instruction).getDest(), GRTR,
+                                    this, ((BinaryOperationInstruction) instruction).getDest(), GRTR,
                                     ((BinaryOperationInstruction) instruction).getRhs(),
                                     ((BinaryOperationInstruction) instruction).getLhs())
                             );
-                        }
-                        else append(instruction);
+                        } else append(instruction);
                         break;
                     case GRTR:
                         if (((BinaryOperationInstruction) instruction).getLhs() instanceof IntImmediate) {
                             append(new ComparisionInstruction(
-                                    this,((BinaryOperationInstruction) instruction).getDest(), LESS,
+                                    this, ((BinaryOperationInstruction) instruction).getDest(), LESS,
                                     ((BinaryOperationInstruction) instruction).getRhs(),
                                     ((BinaryOperationInstruction) instruction).getLhs())
                             );
-                        }
-                        else append(instruction);
+                        } else append(instruction);
                         break;
-                    case EQU: case NEQ:
+                    case EQU:
+                    case NEQ:
                         if (((BinaryOperationInstruction) instruction).getLhs() instanceof IntImmediate) {
                             append(new ComparisionInstruction(
-                                    this,((BinaryOperationInstruction) instruction).getDest(),
+                                    this, ((BinaryOperationInstruction) instruction).getDest(),
                                     ((BinaryOperationInstruction) instruction).getOperator(),
                                     ((BinaryOperationInstruction) instruction).getRhs(),
                                     ((BinaryOperationInstruction) instruction).getLhs())
                             );
-                        }
-                        else append(instruction);
+                        } else append(instruction);
                         break;
-                    default:
-                        IntValue lhs = ((BinaryOperationInstruction) instruction).getLhs(),
-                                rhs = ((BinaryOperationInstruction) instruction).getRhs();
+                    case ADD:
+                    case MUL:
+                    case XOR:
+                    case OR:
+                    case AND:
                         if (lhs instanceof IntImmediate) {
                             lhs = ((BinaryOperationInstruction) instruction).getRhs();
                             rhs = ((BinaryOperationInstruction) instruction).getLhs();
@@ -248,23 +246,31 @@ public class BasicBlock {
                             append(new TwoAddressInstruction(
                                     this, ((BinaryOperationInstruction) instruction).getOperator(),
                                     (Register) lhs, rhs));
-                        }
-                        else if (rhs == ((BinaryOperationInstruction) instruction).getDest()) {
+                        } else if (rhs == ((BinaryOperationInstruction) instruction).getDest()) {
                             append(new TwoAddressInstruction(
                                     this, ((BinaryOperationInstruction) instruction).getOperator(),
                                     (Register) rhs, lhs));
-                        }
-                        else {
+                        } else {
                             VirtualRegister reg = new VirtualRegister(null);
                             append(new MoveInstruction(this, lhs, reg));
                             append(new TwoAddressInstruction(
                                     this, ((BinaryOperationInstruction) instruction).getOperator(),
-                                    (Register) lhs, rhs));
-                            append(new MoveInstruction(this, lhs,
+                                    reg, rhs));
+                            append(new MoveInstruction(this, reg,
                                     ((BinaryOperationInstruction) instruction).getDest()));
-                            append(new MoveInstruction(this, reg, (Register) lhs));
                             break;
                         }
+                        break;
+                    default:
+                        lhs = ((BinaryOperationInstruction) instruction).getLhs();
+                        rhs = ((BinaryOperationInstruction) instruction).getRhs();
+                        VirtualRegister reg = new VirtualRegister(null);
+                        append(new MoveInstruction(this, lhs, reg));
+                        append(new TwoAddressInstruction(
+                                this, ((BinaryOperationInstruction) instruction).getOperator(),
+                                reg, rhs));
+                        append(new MoveInstruction(this, reg,
+                                ((BinaryOperationInstruction) instruction).getDest()));
                 }
             }
             else if (instruction instanceof UnaryOperationInstruction) {
