@@ -1,87 +1,121 @@
-space @A 8
-space @B 8
-space @C 8
-space @N 8
-asciiz @string Never Ever!
-asciiz @string_2 length error!
+space @hashsize 8
+space @table 8
+asciiz @string  
 
-func calc $A {
+func node $this {
 
-%calc.entry:
-    $size = load 8 $A 0
-    $len = move $size
-    $t = seq 1 $len
-    br $t %if_true %if_after
+%node.entry:
+    ret 0
 
-%if_after:
-    $t_2 = div $len 2
-    $mid = move $t_2
-    $t_3 = sub $mid 1
-    $substr = call string.substring $A 0 $t_3 
-    $t_4 = call calc $substr 
-    $L = move $t_4
-    $t_5 = sub $len 1
-    $substr_2 = call string.substring $A $mid $t_5 
-    $t_6 = call calc $substr_2 
-    $R = move $t_6
-    $t_7 = call string.less $L $R 
-    br $t_7 %if_true_2 %if_false
+}
 
-%if_false:
-    $t_8 = call string.equal $L $R 
-    br $t_8 %if_true_3 %if_false_2
+func getHash $n {
 
-%if_false_2:
-    $t_9 = call string.less $R $L 
-    br $t_9 %if_true_4 %if_after_2
+%getHash.entry:
+    $t = mul $n 237
+    $t_2 = rem $t @hashsize
+    ret $t_2
 
-%if_after_2:
-    jump %if_after_3
+}
 
-%if_after_3:
-    jump %if_after_4
+func put $key $data {
 
-%if_after_4:
-    call println @string 
-    $returnValue = move 0
-    jump %calc.exit
-
-%if_true_4:
-    $t_10 = call string.concat $R $L 
-    $returnValue = move $t_10
-    jump %calc.exit
-
-%if_true_3:
-    $ord = add $L 0
-    $ord = load 1 $ord 8
-    $l = move $ord
-    $ord_2 = add $R 0
-    $ord_2 = load 1 $ord_2 8
-    $r = move $ord_2
-    $t_11 = slt $l $r
-    br $t_11 %if_true_5 %if_after_5
-
-%if_true_5:
-    $t_12 = call string.concat $L $R 
-    $returnValue = move $t_12
-    jump %calc.exit
-
-%if_after_5:
-    $t_13 = call string.concat $R $L 
-    $returnValue = move $t_13
-    jump %calc.exit
-
-%if_true_2:
-    $t_14 = call string.concat $L $R 
-    $returnValue = move $t_14
-    jump %calc.exit
+%put.entry:
+    $p = move 0
+    $ptr = move 0
+    $t = call getHash $key 
+    $p = move $t
+    $t_2 = mul $p 8
+    $t_2 = add @table $t_2
+    $t_2 = load 8 $t_2 8
+    $t_3 = seq $t_2 0
+    br $t_3 %if_true %if_after
 
 %if_true:
-    $returnValue = move $A
-    jump %calc.exit
+    $newaddress = alloc 24
+    call node $newaddress 
+    $t_4 = mul $p 8
+    $t_4 = add @table $t_4
+    store 8 $t_4 $newaddress 8
+    $t_5 = mul $p 8
+    $t_5 = add @table $t_5
+    $t_5 = load 8 $t_5 8
+    store 8 $t_5 $key 0
+    $t_6 = mul $p 8
+    $t_6 = add @table $t_6
+    $t_6 = load 8 $t_6 8
+    store 8 $t_6 $data 8
+    $t_7 = mul $p 8
+    $t_7 = add @table $t_7
+    $t_7 = load 8 $t_7 8
+    store 8 $t_7 0 16
+    jump %put.exit
 
-%calc.exit:
-    ret $returnValue
+%if_after:
+    $t_8 = mul $p 8
+    $t_8 = add @table $t_8
+    $t_8 = load 8 $t_8 8
+    $ptr = move $t_8
+    jump %while_cond
+
+%while_cond:
+    $t_9 = load 8 $ptr 0
+    $t_10 = sne $t_9 $key
+    br $t_10 %while_loop %while_after
+
+%while_loop:
+    $t_11 = load 8 $ptr 16
+    $t_12 = seq $t_11 0
+    br $t_12 %if_true_2 %if_after_2
+
+%if_true_2:
+    $newaddress_2 = alloc 24
+    call node $newaddress_2 
+    store 8 $ptr $newaddress_2 16
+    $t_13 = load 8 $ptr 16
+    store 8 $t_13 $key 0
+    $t_14 = load 8 $ptr 16
+    store 8 $t_14 0 16
+    jump %if_after_2
+
+%if_after_2:
+    $t_15 = load 8 $ptr 16
+    $ptr = move $t_15
+    jump %while_cond
+
+%while_after:
+    store 8 $ptr $data 8
+    jump %put.exit
+
+%put.exit:
+    ret 0
+
+}
+
+func get $key {
+
+%get.entry:
+    $ptr = move 0
+    $t = call getHash $key 
+    $t_2 = mul $t 8
+    $t_2 = add @table $t_2
+    $t_2 = load 8 $t_2 8
+    $ptr = move $t_2
+    jump %while_cond_2
+
+%while_cond_2:
+    $t_3 = load 8 $ptr 0
+    $t_4 = sne $t_3 $key
+    br $t_4 %while_loop_2 %while_after_2
+
+%while_loop_2:
+    $t_5 = load 8 $ptr 16
+    $ptr = move $t_5
+    jump %while_cond_2
+
+%while_after_2:
+    $t_6 = load 8 $ptr 8
+    ret $t_6
 
 }
 
@@ -89,42 +123,76 @@ func main {
 
 %main.entry:
     call _init 
-    $gottenstring = call getString 
-    @A = move $gottenstring
-    $gottenstring_2 = call getString 
-    @B = move $gottenstring_2
-    $parsedint = call string.parseInt @B 
-    @N = move $parsedint
-    $size = load 8 @A 0
-    $t = slt $size @N
-    br $t %if_true_6 %if_after_6
+    $i = move 0
+    $newaddress = move 808
+    $newaddress = alloc $newaddress
+    store 8 $newaddress 100 0
+    @table = move $newaddress
+    $i = move 0
+    jump %for_cond
 
-%if_true_6:
-    call println @string_2 
-    $returnValue = move 0
-    jump %main.exit
+%for_cond:
+    $t = slt $i @hashsize
+    br $t %for_loop %for_after
 
-%if_after_6:
-    $t_2 = sub @N 1
-    $substr = call string.substring @A 0 $t_2 
-    $t_3 = call calc $substr 
-    @C = move $t_3
-    call println @C 
-    $returnValue = move 0
-    jump %main.exit
+%for_after:
+    $i = move 0
+    jump %for_cond_2
 
-%main.exit:
-    ret $returnValue
+%for_cond_2:
+    $t_2 = slt $i 1000
+    br $t_2 %for_loop_2 %for_after_2
+
+%for_loop_2:
+    $t_3 = call put $i $i 
+    jump %for_step
+
+%for_step:
+    $t_4 = move $i
+    $i = add $i 1
+    jump %for_cond_2
+
+%for_after_2:
+    $i = move 0
+    jump %for_cond_3
+
+%for_cond_3:
+    $t_5 = slt $i 1000
+    br $t_5 %for_loop_3 %for_after_3
+
+%for_loop_3:
+    call printint $i 
+    call print @string 
+    $t_6 = call get $i 
+    call printlnint $t_6 
+    jump %for_step_2
+
+%for_step_2:
+    $t_7 = move $i
+    $i = add $i 1
+    jump %for_cond_3
+
+%for_after_3:
+    ret 0
+
+%for_loop:
+    $t_8 = mul $i 8
+    $t_8 = add @table $t_8
+    store 8 $t_8 0 8
+    jump %for_step_3
+
+%for_step_3:
+    $t_9 = move $i
+    $i = add $i 1
+    jump %for_cond
 
 }
 
 func _init {
 
 %_init.entry:
-    @A = move 0
-    @B = move 0
-    @C = move 0
-    @N = move 0
+    @hashsize = move 100
+    @table = move 0
     ret 0
 
 }

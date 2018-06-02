@@ -44,13 +44,13 @@ public class RegisterInjector {
     private void modifyHeapAllocation(Function func,BasicBlock basicBlock,HeapAllocateInstruction inst) {
         if (func.argRegList.size() > 0)
             inst.append(new StoreInstruction(
-                    basicBlock, NASMRegisterSet.RDI, 0,wordSize,
-                    func.argStackSlopMap.get(func.argRegList.get(0)))
-            );
+                    basicBlock, func.argStackSlopMap.get(func.argRegList.get(0)),
+                    0,wordSize,NASMRegisterSet.RDI
+            ));
         inst.prepend(new MoveInstruction(basicBlock, inst.getAllocSize(), NASMRegisterSet.RDI));
         inst.append(new MoveInstruction(basicBlock, NASMRegisterSet.RAX, inst.getDest()));
         if (func.argRegList.size() > 0)
-            // TODO There may have some bugs here.
+            // TODO There may be some bugs here.
             inst.append(new LoadInstruction(basicBlock, NASMRegisterSet.RDI, wordSize,
                     func.argStackSlopMap.get(func.argRegList.get(0)), 0
             ));

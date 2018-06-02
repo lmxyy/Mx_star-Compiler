@@ -1607,7 +1607,7 @@ public class NASMPrinter implements IRVisitor {
     @Override
     public void visit(StackSlot node) {
         // nothing to do here, cannot be here.
-        System.err.println("Stack slots do not exist.");
+        System.err.println("Stack slots exist.");
         assert false;
     }
 }
