@@ -1,121 +1,231 @@
-space @hashsize 8
-space @table 8
+space @n 8
+space @a 8
 asciiz @string  
+asciiz @string_2 \n
 
-func node $this {
+func exchange $x $y {
 
-%node.entry:
+%exchange.entry:
+    $t = mul $x 8
+    $t = add @a $t
+    $t = load 8 $t 8
+    $t_2 = move $t
+    $t_3 = mul $y 8
+    $t_3 = add @a $t_3
+    $t_3 = load 8 $t_3 8
+    $t_4 = mul $x 8
+    $t_4 = add @a $t_4
+    store 8 $t_4 $t_3 8
+    $t_5 = mul $y 8
+    $t_5 = add @a $t_5
+    store 8 $t_5 $t_2 8
     ret 0
 
 }
 
-func getHash $n {
+func makeHeap {
 
-%getHash.entry:
-    $t = mul $n 237
-    $t_2 = rem $t @hashsize
-    ret $t_2
-
-}
-
-func put $key $data {
-
-%put.entry:
-    $p = move 0
-    $ptr = move 0
-    $t = call getHash $key 
-    $p = move $t
-    $t_2 = mul $p 8
-    $t_2 = add @table $t_2
-    $t_2 = load 8 $t_2 8
-    $t_3 = seq $t_2 0
-    br $t_3 %if_true %if_after
-
-%if_true:
-    $newaddress = alloc 24
-    call node $newaddress 
-    $t_4 = mul $p 8
-    $t_4 = add @table $t_4
-    store 8 $t_4 $newaddress 8
-    $t_5 = mul $p 8
-    $t_5 = add @table $t_5
-    $t_5 = load 8 $t_5 8
-    store 8 $t_5 $key 0
-    $t_6 = mul $p 8
-    $t_6 = add @table $t_6
-    $t_6 = load 8 $t_6 8
-    store 8 $t_6 $data 8
-    $t_7 = mul $p 8
-    $t_7 = add @table $t_7
-    $t_7 = load 8 $t_7 8
-    store 8 $t_7 0 16
-    jump %put.exit
-
-%if_after:
-    $t_8 = mul $p 8
-    $t_8 = add @table $t_8
-    $t_8 = load 8 $t_8 8
-    $ptr = move $t_8
+%makeHeap.entry:
+    $i = move 0
+    $t = move 0
+    $j = move 0
+    $t_2 = sub @n 1
+    $t_3 = div $t_2 2
+    $i = move $t_3
+    $t = move 0
+    $j = move 0
     jump %while_cond
 
 %while_cond:
-    $t_9 = load 8 $ptr 0
-    $t_10 = sne $t_9 $key
-    br $t_10 %while_loop %while_after
+    $t_4 = sge $i 0
+    br $t_4 %while_loop %while_after
+
+%while_after:
+    ret 0
 
 %while_loop:
-    $t_11 = load 8 $ptr 16
-    $t_12 = seq $t_11 0
-    br $t_12 %if_true_2 %if_after_2
+    $t_5 = mul $i 2
+    $j = move $t_5
+    $t_6 = mul $i 2
+    $t_7 = add $t_6 1
+    $t_8 = slt $t_7 @n
+    br $t_8 %lhs_true %lhs_false
+
+%lhs_false:
+    $t_9 = move 0
+    jump %lhs_merge
+
+%lhs_true:
+    $t_10 = mul $i 2
+    $t_11 = add $t_10 1
+    $t_12 = mul $t_11 8
+    $t_12 = add @a $t_12
+    $t_12 = load 8 $t_12 8
+    $t_13 = mul $i 2
+    $t_14 = mul $t_13 8
+    $t_14 = add @a $t_14
+    $t_14 = load 8 $t_14 8
+    $t_15 = slt $t_12 $t_14
+    $t_9 = move $t_15
+    jump %lhs_merge
+
+%lhs_merge:
+    br $t_9 %if_true %if_after
+
+%if_true:
+    $t_16 = mul $i 2
+    $t_17 = add $t_16 1
+    $j = move $t_17
+    jump %if_after
+
+%if_after:
+    $t_18 = mul $i 8
+    $t_18 = add @a $t_18
+    $t_18 = load 8 $t_18 8
+    $t_19 = mul $j 8
+    $t_19 = add @a $t_19
+    $t_19 = load 8 $t_19 8
+    $t_20 = sgt $t_18 $t_19
+    br $t_20 %if_true_2 %if_after_2
 
 %if_true_2:
-    $newaddress_2 = alloc 24
-    call node $newaddress_2 
-    store 8 $ptr $newaddress_2 16
-    $t_13 = load 8 $ptr 16
-    store 8 $t_13 $key 0
-    $t_14 = load 8 $ptr 16
-    store 8 $t_14 0 16
+    $t_21 = call exchange $i $j 
     jump %if_after_2
 
 %if_after_2:
-    $t_15 = load 8 $ptr 16
-    $ptr = move $t_15
+    $t_22 = sub $i 1
+    $i = move $t_22
     jump %while_cond
 
-%while_after:
-    store 8 $ptr $data 8
-    jump %put.exit
+}
 
-%put.exit:
+func adjustHeap $n {
+
+%adjustHeap.entry:
+    $i = move 0
+    $j = move 0
+    $t = move 0
+    jump %while_cond_2
+
+%while_cond_2:
+    $t_2 = mul $i 2
+    $t_3 = slt $t_2 $n
+    br $t_3 %while_loop_2 %while_after_2
+
+%while_loop_2:
+    $t_4 = mul $i 2
+    $j = move $t_4
+    $t_5 = mul $i 2
+    $t_6 = add $t_5 1
+    $t_7 = slt $t_6 $n
+    br $t_7 %lhs_true_2 %lhs_false_2
+
+%lhs_false_2:
+    $t_8 = move 0
+    jump %lhs_merge_2
+
+%lhs_true_2:
+    $t_9 = mul $i 2
+    $t_10 = add $t_9 1
+    $t_11 = mul $t_10 8
+    $t_11 = add @a $t_11
+    $t_11 = load 8 $t_11 8
+    $t_12 = mul $i 2
+    $t_13 = mul $t_12 8
+    $t_13 = add @a $t_13
+    $t_13 = load 8 $t_13 8
+    $t_14 = slt $t_11 $t_13
+    $t_8 = move $t_14
+    jump %lhs_merge_2
+
+%lhs_merge_2:
+    br $t_8 %if_true_3 %if_after_3
+
+%if_true_3:
+    $t_15 = mul $i 2
+    $t_16 = add $t_15 1
+    $j = move $t_16
+    jump %if_after_3
+
+%if_after_3:
+    $t_17 = mul $i 8
+    $t_17 = add @a $t_17
+    $t_17 = load 8 $t_17 8
+    $t_18 = mul $j 8
+    $t_18 = add @a $t_18
+    $t_18 = load 8 $t_18 8
+    $t_19 = sgt $t_17 $t_18
+    br $t_19 %if_true_4 %if_false
+
+%if_false:
+    jump %while_after_2
+
+%if_true_4:
+    $t_20 = mul $i 8
+    $t_20 = add @a $t_20
+    $t_20 = load 8 $t_20 8
+    $t_21 = move $t_20
+    $t_22 = mul $j 8
+    $t_22 = add @a $t_22
+    $t_22 = load 8 $t_22 8
+    $t_23 = mul $i 8
+    $t_23 = add @a $t_23
+    store 8 $t_23 $t_22 8
+    $t_24 = mul $j 8
+    $t_24 = add @a $t_24
+    store 8 $t_24 $t_21 8
+    $i = move $j
+    jump %if_after_4
+
+%if_after_4:
+    jump %while_cond_2
+
+%while_after_2:
     ret 0
 
 }
 
-func get $key {
+func heapSort {
 
-%get.entry:
-    $ptr = move 0
-    $t = call getHash $key 
-    $t_2 = mul $t 8
-    $t_2 = add @table $t_2
-    $t_2 = load 8 $t_2 8
-    $ptr = move $t_2
-    jump %while_cond_2
+%heapSort.entry:
+    $t = move 0
+    $k = move 0
+    $t = move 0
+    $k = move 0
+    jump %for_cond
 
-%while_cond_2:
-    $t_3 = load 8 $ptr 0
-    $t_4 = sne $t_3 $key
-    br $t_4 %while_loop_2 %while_after_2
+%for_cond:
+    $t_2 = slt $k @n
+    br $t_2 %for_loop %for_after
 
-%while_loop_2:
-    $t_5 = load 8 $ptr 16
-    $ptr = move $t_5
-    jump %while_cond_2
+%for_loop:
+    $t_3 = add @a 0
+    $t_3 = load 8 $t_3 8
+    $t = move $t_3
+    $t_4 = sub @n $k
+    $t_5 = sub $t_4 1
+    $t_6 = mul $t_5 8
+    $t_6 = add @a $t_6
+    $t_6 = load 8 $t_6 8
+    $t_7 = add @a 0
+    store 8 $t_7 $t_6 8
+    $t_8 = sub @n $k
+    $t_9 = sub $t_8 1
+    $t_10 = mul $t_9 8
+    $t_10 = add @a $t_10
+    store 8 $t_10 $t 8
+    $t_11 = sub @n $k
+    $t_12 = sub $t_11 1
+    $t_13 = call adjustHeap $t_12 
+    jump %for_step
 
-%while_after_2:
-    $t_6 = load 8 $ptr 8
-    ret $t_6
+%for_step:
+    $t_14 = add $k 1
+    $k = move $t_14
+    jump %for_cond
+
+%for_after:
+    ret 0
 
 }
 
@@ -124,75 +234,68 @@ func main {
 %main.entry:
     call _init 
     $i = move 0
-    $newaddress = move 808
+    $gottenstring = call getString 
+    $parsedint = call string.parseInt $gottenstring 
+    @n = move $parsedint
+    $newaddress = mul @n 8
+    $newaddress = add $newaddress 8
     $newaddress = alloc $newaddress
-    store 8 $newaddress 100 0
-    @table = move $newaddress
-    $i = move 0
-    jump %for_cond
-
-%for_cond:
-    $t = slt $i @hashsize
-    br $t %for_loop %for_after
-
-%for_after:
+    store 8 $newaddress @n 0
+    @a = move $newaddress
     $i = move 0
     jump %for_cond_2
 
 %for_cond_2:
-    $t_2 = slt $i 1000
-    br $t_2 %for_loop_2 %for_after_2
-
-%for_loop_2:
-    $t_3 = call put $i $i 
-    jump %for_step
-
-%for_step:
-    $t_4 = move $i
-    $i = add $i 1
-    jump %for_cond_2
+    $size = load 8 @a 0
+    $t = slt $i $size
+    br $t %for_loop_2 %for_after_2
 
 %for_after_2:
+    $t_2 = call makeHeap 
+    $t_3 = call heapSort 
     $i = move 0
     jump %for_cond_3
 
 %for_cond_3:
-    $t_5 = slt $i 1000
-    br $t_5 %for_loop_3 %for_after_3
+    $size_2 = load 8 @a 0
+    $t_4 = slt $i $size_2
+    br $t_4 %for_loop_3 %for_after_3
+
+%for_after_3:
+    call print @string_2 
+    ret 0
 
 %for_loop_3:
-    call printint $i 
+    $t_5 = mul $i 8
+    $t_5 = add @a $t_5
+    $t_5 = load 8 $t_5 8
+    call printint $t_5 
     call print @string 
-    $t_6 = call get $i 
-    call printlnint $t_6 
     jump %for_step_2
 
 %for_step_2:
-    $t_7 = move $i
-    $i = add $i 1
+    $t_6 = add $i 1
+    $i = move $t_6
     jump %for_cond_3
 
-%for_after_3:
-    ret 0
-
-%for_loop:
-    $t_8 = mul $i 8
-    $t_8 = add @table $t_8
-    store 8 $t_8 0 8
+%for_loop_2:
+    $t_7 = mul $i 8
+    $t_7 = add @a $t_7
+    store 8 $t_7 $i 8
     jump %for_step_3
 
 %for_step_3:
-    $t_9 = move $i
-    $i = add $i 1
-    jump %for_cond
+    $t_8 = add $i 1
+    $i = move $t_8
+    jump %for_cond_2
 
 }
 
 func _init {
 
 %_init.entry:
-    @hashsize = move 100
-    @table = move 0
+    @n = move 0
+    @a = move 0
     ret 0
 
 }
