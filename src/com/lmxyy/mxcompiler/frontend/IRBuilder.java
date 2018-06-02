@@ -442,11 +442,21 @@ public class IRBuilder implements ASTVisitor {
         if (node instanceof ExpressionNode) {
             if (((ExpressionNode) node).getOp().getOp() == SELF) {
                 processFuncPrint(((ExpressionNode) node).getExprs().get(0), lastNewLine);
-            } else if (((ExpressionNode) node).getOp().getOp() == ExprOperator.Operator.ADD) {
+            }
+            else if (((ExpressionNode) node).getOp().getOp() == ExprOperator.Operator.ADD) {
                 ExprNode lhs = ((ExpressionNode) node).getExprs().get(0);
                 ExprNode rhs = ((ExpressionNode) node).getExprs().get(1);
                 processFuncPrint(lhs, false);
                 processFuncPrint(rhs, lastNewLine);
+            }
+            else {
+                visit(node);
+                CallInstruction call = new CallInstruction(
+                        curBasicBlock, null,
+                        lastNewLine ? irRoot.funcPrintln : irRoot.funcPrint
+                );
+                call.appendArgReg(node.intValue);
+                curBasicBlock.append(call);
             }
         } else {
             boolean flag = false;
@@ -540,6 +550,7 @@ public class IRBuilder implements ASTVisitor {
                 member.getParams().forEach(param -> param.accept(this));
                 VirtualRegister reg = new VirtualRegister("substr");
                 CallInstruction call = new CallInstruction(curBasicBlock, reg, irRoot.stringSubString);
+                call.appendArgReg(record.intValue);
                 member.getParams().forEach(param -> call.appendArgReg(param.intValue));
                 curBasicBlock.append(call);
                 node.intValue = reg;

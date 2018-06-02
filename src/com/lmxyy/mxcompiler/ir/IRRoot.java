@@ -26,7 +26,7 @@ public class IRRoot {
         builtinFunctions.add(stringEqual);
         stringEqual.setCallName("_Z9stringEquPcS_");
         builtinFunctions.add(stringLess);
-        stringEqual.setCallName("_Z10stringLessPcS_");
+        stringLess.setCallName("_Z10stringLessPcS_");
         builtinFunctions.add(stringLeq);
         stringLeq.setCallName("_Z9stringLeqPcS_");
 
