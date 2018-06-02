@@ -398,6 +398,7 @@ public class SemanticChecker implements ASTVisitor {
         VartypeNode type = curScope.getTypeInfo(node.getName());
         if (type != null&&!(type instanceof FunctionType)) {
             node.setType(type);
+            node.setInfo(curScope.getInfo(node.getName()));
             return;
         }
         else {

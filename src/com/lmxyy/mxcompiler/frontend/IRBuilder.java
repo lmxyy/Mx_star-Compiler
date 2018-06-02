@@ -1029,7 +1029,7 @@ public class IRBuilder implements ASTVisitor {
     public void visit(IdentifierNode node) {
         if (node.getName() == null)
             return;
-        SymbolInfo info = node.scope.getInfo(node.getName());
+        SymbolInfo info = node.getInfo();
         info.used = true;
         if (info.isClassGlobal()) {
             VirtualRegister reg = new VirtualRegister(null);

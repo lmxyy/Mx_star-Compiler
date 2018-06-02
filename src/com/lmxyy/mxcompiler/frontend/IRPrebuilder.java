@@ -33,7 +33,7 @@ public class IRPrebuilder implements ASTVisitor {
 
     @Override
     public void visit(DefvarNode node) {
-        SymbolInfo info = node.scope.getInfo(node.getName());
+        SymbolInfo info = node.scope.getCurInfo(node.getName());
         if (node.scope == globalSymbolTable.globals) {
             StaticData data = new StaticSpace(node.getName(),info.getType().getRegisterSize());
             info.register = data; irRoot.dataList.add(data);

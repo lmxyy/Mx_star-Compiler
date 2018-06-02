@@ -1,0 +1,11 @@
+int main()
+{
+    int a = 3;
+    {
+	a = 4;
+	println(toString(a));
+	int a = 5;
+	println(toString(a));
+    }
+    return 0;
+}

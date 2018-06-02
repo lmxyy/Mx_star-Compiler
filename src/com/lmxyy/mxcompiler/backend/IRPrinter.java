@@ -74,7 +74,7 @@ public class IRPrinter implements IRVisitor {
 
     @Override
     public void visit(Function node) {
-        regMap = new HashMap<>(); counterReg = new IdentityHashMap<>();
+        regMap = new HashMap<>(); counterReg = new HashMap<>();
         out.printf("func %s ",node.getName());
         node.argRegList.forEach(reg->out.printf("$%s ",regId(reg)));
         out.println("{\n");
