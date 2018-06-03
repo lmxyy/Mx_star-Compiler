@@ -60,7 +60,7 @@ public class GraphColoringAllocator extends RegisterAllocator {
         for (BasicBlock basicBlock:curFunction.getReversePostOrder()) {
             for (IRInstruction inst = basicBlock.getHead();inst != null;inst = inst.getNxt()) {
                 Register defined = inst.getDefinedRegister();
-                if (defined == null||defined instanceof VirtualRegister) continue;
+                if (defined == null||!(defined instanceof VirtualRegister)) continue;
                 VirtualRegisterInfo info = getInfo((VirtualRegister) defined);
                 if (inst instanceof MoveInstruction) {
                     IntValue src = ((MoveInstruction) inst).getSource();

@@ -237,6 +237,7 @@ public class NASMIRTransformer {
                     modifyStackSlot(func, info, basicBlock, inst);
                     if (inst instanceof MoveInstruction)
                         removeSelfMove((MoveInstruction) inst);
+                    // add 0, sub 0, mul 1,
                 }
             }
         }

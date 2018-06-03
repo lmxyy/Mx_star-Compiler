@@ -57,7 +57,7 @@ public class LivenessAnalysis {
                     inst.getUsedRegister().stream().
                             filter(x->x instanceof VirtualRegister).
                             forEach(x->in.add((VirtualRegister) x));
-                    if (!(inst.liveIn.equals(in))&&!(inst.liveOut.equals(out))) {
+                    if (!(inst.liveIn.equals(in))||!(inst.liveOut.equals(out))) {
                         changed = true;
                         inst.liveIn.clear(); inst.liveIn.addAll(in);
                         inst.liveOut.clear(); inst.liveOut.addAll(out);

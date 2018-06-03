@@ -4,8 +4,19 @@ func main {
     call _init 
     $a = move 1
     $b = move 2
-    $t = add $a $b
-    $c = move $t
+    $c = move 0
+    $t = sne $a 1
+    br $t %if_true %if_false
+
+%if_false:
+    $c = move $b
+    jump %if_after
+
+%if_true:
+    $c = move $a
+    jump %if_after
+
+%if_after:
     ret $c
 
 }
