@@ -251,14 +251,25 @@ public class BasicBlock {
                                     this, ((BinaryOperationInstruction) instruction).getOperator(),
                                     (Register) rhs, lhs));
                         } else {
-                            VirtualRegister reg = new VirtualRegister(null);
-                            append(new MoveInstruction(this, lhs, reg));
+                            append(new MoveInstruction(this, lhs, ((BinaryOperationInstruction) instruction).getDest()));
                             append(new TwoAddressInstruction(
                                     this, ((BinaryOperationInstruction) instruction).getOperator(),
-                                    reg, rhs));
-                            append(new MoveInstruction(this, reg,
-                                    ((BinaryOperationInstruction) instruction).getDest()));
+                                    ((BinaryOperationInstruction) instruction).getDest(), rhs));
                             break;
+                        }
+                        break;
+                    case SHL:case SHR:
+                        append(new MoveInstruction(this, lhs, ((BinaryOperationInstruction) instruction).getDest()));
+                        if (rhs instanceof IntImmediate) {
+                            append(new TwoAddressInstruction(
+                                    this, ((BinaryOperationInstruction) instruction).getOperator(),
+                                    ((BinaryOperationInstruction) instruction).getDest(), rhs));
+                        }
+                        else {
+                            append(new MoveInstruction(this,rhs,NASMRegisterSet.RCX));
+                            append(new TwoAddressInstruction(
+                                    this, ((BinaryOperationInstruction) instruction).getOperator(),
+                                    ((BinaryOperationInstruction) instruction).getDest(), NASMRegisterSet.RCX));
                         }
                         break;
                     default:

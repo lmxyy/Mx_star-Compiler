@@ -1560,13 +1560,21 @@ public class NASMPrinter implements IRVisitor {
                 out.print("sal ");
                 node.getLhs().accept(this);
                 out.print(',');
+                if (node.getRhs() instanceof NASMRegister)
+                    ((NASMRegister) node.getRhs()).setFlag(true);
                 node.getRhs().accept(this);
+                if (node.getRhs() instanceof NASMRegister)
+                    ((NASMRegister) node.getRhs()).setFlag(false);
                 break;
             case SHR:
                 out.print("sar ");
                 node.getLhs().accept(this);
                 out.print(',');
+                if (node.getRhs() instanceof NASMRegister)
+                    ((NASMRegister) node.getRhs()).setFlag(true);
                 node.getRhs().accept(this);
+                if (node.getRhs() instanceof NASMRegister)
+                    ((NASMRegister) node.getRhs()).setFlag(false);
                 break;
             default: System.err.println("Unknown operator in two address operation."); break;
         }
