@@ -40,29 +40,47 @@ public class GlobalVariableResolver {
 
         for (BasicBlock basicBlock: function.getReversePostOrder()) {
             for (IRInstruction inst = basicBlock.getHead(); inst != null; inst = inst.getNxt()) {
-                if (inst instanceof CallInstruction) {
-                    if (!irRoot.isBuiltinFunction(((CallInstruction) inst).getFunction())) {
-                        calleeSet.add(((CallInstruction) inst).getFunction());
+
+                if (inst instanceof TwoAddressInstruction) {
+                    Collection<Register> used = inst.getUsedRegister();
+                    used.forEach(reg -> renameMap.put(reg, reg));
+                    if (((TwoAddressInstruction) inst).getRhs() instanceof StaticData) {
+                        StaticData data = (StaticData) ((TwoAddressInstruction) inst).getRhs();
+                        renameMap.replace(data,getReg(data,staticMap));
                     }
-                    ((CallInstruction) inst).callReloadUsedRegisterCollection();
-                }
-                Collection<Register> used = inst.getUsedRegister();
-                if (!used.isEmpty()) {
-                    renameMap.clear();
-                    used.forEach(reg->renameMap.put(reg,reg));
-                    for (Register reg:used) {
-                        if (reg instanceof StaticData) {
-                            StaticData data = (StaticData) reg;
-                            renameMap.replace(reg, getReg(data, staticMap));
-                        }
+
+                    if (((TwoAddressInstruction) inst).getLhs() instanceof StaticData) {
+                        StaticData data = (StaticData) ((TwoAddressInstruction) inst).getLhs();
+                        renameMap.replace(data,getReg(data,staticMap));
+                        writtenStatic.add(data);
                     }
                     inst.setUsedRegister(renameMap);
                 }
-                Register defined = inst.getDefinedRegister();
-                if (defined instanceof StaticData) {
-                    StaticData data = (StaticData) defined;
-                    inst.setDefinedRegister(getReg(data,staticMap));
-                    writtenStatic.add((StaticData) defined);
+                else{
+                    if (inst instanceof CallInstruction) {
+                        if (!irRoot.isBuiltinFunction(((CallInstruction) inst).getFunction())) {
+                            calleeSet.add(((CallInstruction) inst).getFunction());
+                        }
+                        ((CallInstruction) inst).callReloadUsedRegisterCollection();
+                    }
+                    Collection<Register> used = inst.getUsedRegister();
+                    if (!used.isEmpty()) {
+                        renameMap.clear();
+                        used.forEach(reg -> renameMap.put(reg, reg));
+                        for (Register reg : used) {
+                            if (reg instanceof StaticData) {
+                                StaticData data = (StaticData) reg;
+                                renameMap.replace(reg, getReg(data, staticMap));
+                            }
+                        }
+                        inst.setUsedRegister(renameMap);
+                    }
+                    Register defined = inst.getDefinedRegister();
+                    if (defined instanceof StaticData) {
+                        StaticData data = (StaticData) defined;
+                        inst.setDefinedRegister(getReg(data, staticMap));
+                        writtenStatic.add((StaticData) defined);
+                    }
                 }
             }
         }

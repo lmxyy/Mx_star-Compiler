@@ -358,7 +358,7 @@ public class IRBuilder implements ASTVisitor {
     }
 
     private void processSelfIncOrDec(ExpressionNode node) {
-        boolean oldNeedAddr = needAddr, isMemOp = needMemoryAccess(node);
+        boolean oldNeedAddr = needAddr, isMemOp = needMemoryAccess(node.getExprs().get(0));
         needAddr = isMemOp;
         ExprNode oprand = node.getExprs().get(0);
         visit(oprand);

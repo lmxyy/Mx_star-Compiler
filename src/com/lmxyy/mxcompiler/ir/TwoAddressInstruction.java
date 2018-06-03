@@ -39,6 +39,7 @@ public class TwoAddressInstruction extends IRInstruction {
         if (lhs instanceof Register) usedRegister.add((Register) lhs);
         if (rhs instanceof Register) usedRegister.add((Register) rhs);
         usedIntValue.clear();
+        usedIntValue.add(lhs);
         usedIntValue.add(rhs);
     }
 
