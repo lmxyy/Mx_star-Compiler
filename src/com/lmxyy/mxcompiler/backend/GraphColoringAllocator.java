@@ -24,17 +24,17 @@ public class GraphColoringAllocator extends RegisterAllocator {
     private Set<VirtualRegister> smallNodes = new HashSet<>();
     private Stack<VirtualRegister> stack = new Stack<>();
     private Set<PhysicalRegister> usedColor = new HashSet<>();
-    private Set<PhysicalRegister> physicalRegisters = new HashSet<>();
+    private Collection<PhysicalRegister> physicalRegisters = new HashSet<>();
     private PhysicalRegister tmpReg1,tmpReg2;
 
     private Map<Register,Register> renameMap = new HashMap<>();
 
     private final int wordSize = CompilerOption.getSizeInt();
 
-    public GraphColoringAllocator(IRRoot _irRoot,int _colors,Set<PhysicalRegister> _physicalRegisters
+    public GraphColoringAllocator(IRRoot _irRoot,Collection<PhysicalRegister> _physicalRegisters
             ,PhysicalRegister _tmpReg1,PhysicalRegister _tmpReg2) {
         irRoot = _irRoot;
-        colors = _colors;
+        colors = _physicalRegisters.size();
         tmpReg1 = _tmpReg1;
         tmpReg2 = _tmpReg2;
         physicalRegisters.addAll(_physicalRegisters);
@@ -156,6 +156,7 @@ public class GraphColoringAllocator extends RegisterAllocator {
             }
             info.deleted = false;
         }
+        curFunction.stackSlots.addAll(curFunction.argStackSlopMap.values());
     }
 
     private void rewrite() {
@@ -314,7 +315,6 @@ public class GraphColoringAllocator extends RegisterAllocator {
                 ));
             else firstInst.prepend(new MoveInstruction(entryBasicBlock, NASMRegisterSet.R9, color));
         }
-        /* TODO Other arguments */
         for (int i = 6;i < func.argRegList.size();++i) {
             Register color = infoMap.get(func.argRegList.get(5)).color;
             if (color instanceof PhysicalRegister) {

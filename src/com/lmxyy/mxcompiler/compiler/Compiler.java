@@ -1,15 +1,13 @@
 package com.lmxyy.mxcompiler.compiler;
 
 import com.lmxyy.mxcompiler.ast.ProgNode;
-import com.lmxyy.mxcompiler.backend.GlobalVariableResolver;
-import com.lmxyy.mxcompiler.backend.IRPrinter;
-import com.lmxyy.mxcompiler.backend.IRTransformer;
-import com.lmxyy.mxcompiler.backend.StupidAllocator;
+import com.lmxyy.mxcompiler.backend.*;
 import com.lmxyy.mxcompiler.frontend.ASTBuilder;
 import com.lmxyy.mxcompiler.frontend.IRBuilder;
 import com.lmxyy.mxcompiler.frontend.IRPrebuilder;
 import com.lmxyy.mxcompiler.frontend.SemanticChecker;
 import com.lmxyy.mxcompiler.ir.IRRoot;
+import com.lmxyy.mxcompiler.ir.PhysicalRegister;
 import com.lmxyy.mxcompiler.nasm.*;
 import com.lmxyy.mxcompiler.parser.Mx_starLexer;
 import com.lmxyy.mxcompiler.parser.Mx_starParser;
@@ -24,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Locale;
 
 public class Compiler {
@@ -72,7 +71,8 @@ public class Compiler {
         new IRTransformer(irRoot).run();
         new GlobalVariableResolver(irRoot).run();
         new RegisterInjector(irRoot).run();
-        new StupidAllocator(irRoot,NASMRegisterSet.general).run();
+//        new StupidAllocator(irRoot,NASMRegisterSet.general).run();
+        new GraphColoringAllocator(irRoot,NASMRegisterSet.general,NASMRegisterSet.R10,NASMRegisterSet.R11).run();
         new NASMIRTransformer(irRoot).run();
         String asmInfoPath = "/Users/limuyang/Desktop/Mx_star-Compiler/program.asm";
         NASMPrinter nasmPrinter = new NASMPrinter(new PrintStream(asmInfoPath));

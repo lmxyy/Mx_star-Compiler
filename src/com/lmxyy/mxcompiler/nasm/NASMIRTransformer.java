@@ -12,10 +12,12 @@ public class NASMIRTransformer {
         List<PhysicalRegister> usedCalleeSaveRegister = new ArrayList<>();
         Map<StackSlot, Integer> stackSlotOffset = new HashMap<>();
         Set<PhysicalRegister> recursiveUsedRegister = new HashSet<>();
+        int stackSlotNum = 0;
     }
 
     private Map<Function,FunctionInfo> infoMap = new HashMap<>();
     private int wordSize = CompilerOption.getSizeInt();
+    private int stackSlotNum = 0;
 
     private IRRoot irRoot;
     public NASMIRTransformer(IRRoot _irRoot) {
@@ -31,10 +33,15 @@ public class NASMIRTransformer {
             if (pr.isCalleeSave()) info.usedCalleeSaveRegister.add(pr);
         }
 
-        int cnt = 0;
-        for (StackSlot slot:func.stackSlots) {
-            info.stackSlotOffset.put(slot,(++cnt)*wordSize);
+        stackSlotNum = 0;
+        for (int i = 6;i < func.argRegList.size();++i) {
+            VirtualRegister reg = func.argRegList.get(i);
+            info.stackSlotOffset.put(func.argStackSlopMap.get(reg),(4-i)*wordSize);
         }
+        for (StackSlot slot:func.stackSlots) {
+            info.stackSlotOffset.put(slot,(++stackSlotNum)*wordSize);
+        }
+        info.stackSlotNum = stackSlotNum;
     }
 
     private void modifyEntry(Function func) {
@@ -43,7 +50,7 @@ public class NASMIRTransformer {
         IRInstruction firstInst = entryBasicBlock.getHead();
         firstInst.prepend(new PushInstruction(entryBasicBlock,NASMRegisterSet.RBP));
         firstInst.prepend(new MoveInstruction(entryBasicBlock,NASMRegisterSet.RSP,NASMRegisterSet.RBP));
-        int decNum = ((func.stackSlots.size()+6 +info.usedCallerSaveRegister.size())*wordSize+15)/16*16;
+        int decNum = ((func.stackSlots.size()+info.usedCallerSaveRegister.size())*wordSize+15)/16*16;
         firstInst.prepend(
                 new TwoAddressInstruction(
                         entryBasicBlock,BinaryOperationInstruction.Operator.SUB,
@@ -84,57 +91,12 @@ public class NASMIRTransformer {
         // save caller-save register
         for (int i = 0; i < info.usedCallerSaveRegister.size(); ++i) {
             PhysicalRegister pr = info.usedCallerSaveRegister.get(i);
-            if (calleeInfo.recursiveUsedRegister.contains(pr)) {
-                inst.prepend(new StoreInstruction(
-                        basicBlock, NASMRegisterSet.RBP,
-                        -(func.stackSlots.size() + i + 1) * wordSize, wordSize, pr)
-                );
-            }
-        }
 
-        if (callee.argRegList.size() > 0) {
             inst.prepend(new StoreInstruction(
                     basicBlock, NASMRegisterSet.RBP,
-                    -(func.stackSlots.size() + info.usedCallerSaveRegister.size() + 1) * wordSize,
-                    wordSize, NASMRegisterSet.RDI
+                    -(info.stackSlotNum + i + 1) * wordSize, wordSize, pr
             ));
         }
-        if (callee.argRegList.size() > 1) {
-            inst.prepend(new StoreInstruction(
-                    basicBlock, NASMRegisterSet.RBP,
-                    -(func.stackSlots.size() + info.usedCallerSaveRegister.size() + 2) * wordSize,
-                    wordSize, NASMRegisterSet.RSI
-            ));
-        }
-        if (callee.argRegList.size() > 2) {
-            inst.prepend(new StoreInstruction(
-                    basicBlock, NASMRegisterSet.RBP,
-                    -(func.stackSlots.size() + info.usedCallerSaveRegister.size() + 3) * wordSize,
-                    wordSize, NASMRegisterSet.RDX
-            ));
-        }
-        if (callee.argRegList.size() > 3) {
-            inst.prepend(new StoreInstruction(
-                    basicBlock, NASMRegisterSet.RBP,
-                    -(func.stackSlots.size() + info.usedCallerSaveRegister.size() + 4) * wordSize,
-                    wordSize, NASMRegisterSet.RCX
-            ));
-        }
-        if (callee.argRegList.size() > 4) {
-            inst.prepend(new StoreInstruction(
-                    basicBlock, NASMRegisterSet.RBP,
-                    -(func.stackSlots.size() + info.usedCallerSaveRegister.size() + 5) * wordSize,
-                    wordSize, NASMRegisterSet.R8
-            ));
-        }
-        if (callee.argRegList.size() > 5) {
-            inst.prepend(new StoreInstruction(
-                    basicBlock, NASMRegisterSet.RBP,
-                    -(func.stackSlots.size() + info.usedCallerSaveRegister.size() + 6) * wordSize,
-                    wordSize, NASMRegisterSet.R9
-            ));
-        }
-
 
         int pushNum = 0;
         for (int i = inst.getArgRegList().size() - 1; i >= 0; --i) {
@@ -150,7 +112,7 @@ public class NASMIRTransformer {
                 }
             } else {
                 if (i == 0) {
-                    if (val instanceof IntImmediate) {
+                    if (!(val instanceof StackSlot)) {
                         inst.prepend(new MoveInstruction(basicBlock,val,NASMRegisterSet.RDI));
                     }
                     else {
@@ -161,7 +123,7 @@ public class NASMIRTransformer {
                     }
                 }
                 else if (i == 1) {
-                    if (val instanceof IntImmediate) {
+                    if (!(val instanceof StackSlot)) {
                         inst.prepend(new MoveInstruction(basicBlock,val,NASMRegisterSet.RSI));
                     }
                     else {
@@ -172,7 +134,7 @@ public class NASMIRTransformer {
                     }
                 }
                 else if (i == 2) {
-                    if (val instanceof IntImmediate) {
+                    if (!(val instanceof StackSlot)) {
                         inst.prepend(new MoveInstruction(basicBlock,val,NASMRegisterSet.RDX));
                     }
                     else {
@@ -183,7 +145,7 @@ public class NASMIRTransformer {
                     }
                 }
                 else if (i == 3) {
-                    if (val instanceof IntImmediate) {
+                    if (!(val instanceof StackSlot)) {
                         inst.prepend(new MoveInstruction(basicBlock,val,NASMRegisterSet.RCX));
                     }
                     else {
@@ -194,7 +156,7 @@ public class NASMIRTransformer {
                     }
                 }
                 else if (i == 4) {
-                    if (val instanceof IntImmediate) {
+                    if (!(val instanceof StackSlot)) {
                         inst.prepend(new MoveInstruction(basicBlock,val,NASMRegisterSet.R8));
                     }
                     else {
@@ -205,7 +167,7 @@ public class NASMIRTransformer {
                     }
                 }
                 else if (i == 5) {
-                    if (val instanceof IntImmediate) {
+                    if (!(val instanceof StackSlot)) {
                         inst.prepend(new MoveInstruction(basicBlock,val,NASMRegisterSet.R9));
                     }
                     else {
@@ -225,49 +187,10 @@ public class NASMIRTransformer {
         // reload caller save registers
         for (int i = 0; i < info.usedCallerSaveRegister.size(); ++i) {
             PhysicalRegister pr = info.usedCallerSaveRegister.get(i);
-            if (calleeInfo.recursiveUsedRegister.contains(pr)) {
-                inst.append(new LoadInstruction(
-                        basicBlock, pr, wordSize, NASMRegisterSet.RBP,
-                        -(func.stackSlots.size() + i + 1) * wordSize)
-                );
-            }
-        }
-
-        if (callee.argRegList.size() > 0) {
             inst.append(new LoadInstruction(
-                    basicBlock, NASMRegisterSet.RDI,wordSize, NASMRegisterSet.RBP,
-                    -(func.stackSlots.size() + info.usedCallerSaveRegister.size() + 1) * wordSize
-            ));
-        }
-        if (callee.argRegList.size() > 1) {
-            inst.append(new LoadInstruction(
-                    basicBlock, NASMRegisterSet.RSI,wordSize, NASMRegisterSet.RBP,
-                    -(func.stackSlots.size() + info.usedCallerSaveRegister.size() + 2) * wordSize
-            ));
-        }
-        if (callee.argRegList.size() > 2) {
-            inst.append(new LoadInstruction(
-                    basicBlock, NASMRegisterSet.RDX,wordSize, NASMRegisterSet.RBP,
-                    -(func.stackSlots.size() + info.usedCallerSaveRegister.size() + 3) * wordSize
-            ));
-        }
-        if (callee.argRegList.size() > 3) {
-            inst.append(new LoadInstruction(
-                    basicBlock, NASMRegisterSet.RCX,wordSize, NASMRegisterSet.RBP,
-                    -(func.stackSlots.size() + info.usedCallerSaveRegister.size() + 4) * wordSize
-            ));
-        }
-        if (callee.argRegList.size() > 4) {
-            inst.append(new LoadInstruction(
-                    basicBlock, NASMRegisterSet.R8,wordSize, NASMRegisterSet.RBP,
-                    -(func.stackSlots.size() + info.usedCallerSaveRegister.size() + 5) * wordSize
-            ));
-        }
-        if (callee.argRegList.size() > 5) {
-            inst.append(new LoadInstruction(
-                    basicBlock, NASMRegisterSet.R9,wordSize, NASMRegisterSet.RBP,
-                    -(func.stackSlots.size() + info.usedCallerSaveRegister.size() + 6) * wordSize
-            ));
+                    basicBlock, pr, wordSize, NASMRegisterSet.RBP,
+                    -(func.stackSlots.size() + i + 1) * wordSize)
+            );
         }
     }
 
