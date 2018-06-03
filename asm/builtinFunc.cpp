@@ -92,7 +92,8 @@ int getInt()
 }
 
 char* toString(int a) {
-    int sign = 0; int len = 0;
+    // printf("#%d\n",a);
+    int sign = 0,len = 0;
     if (a < 0) sign = 1,a = -a;
     int num[12];
     if (a == 0) num[++len] = 0;
@@ -102,11 +103,14 @@ char* toString(int a) {
 	    num[++len] = a%10;
     }
     char * ret = (char*) malloc(len+sign+9);
-    (*(long *)ret) = len;
+    (*(long *)ret) = len+sign;
     ret += 8;
-    ret[len] = 0;
-    for (--len;len >= 0;--len) {
-	ret[len] = num[len]+'0';
+    ret[len+sign] = 0;
+    if (sign) ret[0] = '-';
+    for (int i = 0;i < len;++i)
+    {
+	ret[i+sign] = num[len-i]+'0';
     }
+    // printf("%s\n",ret);
     return ret-8;
 }

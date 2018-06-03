@@ -1,0 +1,25 @@
+int MAXN = 10005;
+int MAXM = 10005;
+
+int main(){
+    int M;
+    int N;
+    M = getInt();
+    N = getInt();
+    int[] w = new int[MAXN];
+    int[] t = new int[MAXN];
+    int[] DP = new int[MAXN];
+    int i;
+    int j;
+    for (i = 0; i < N; ++i) {
+    	w[i] = getInt();
+    	t[i] = getInt();
+    }
+    for (i = 0 ; i < N; ++i)
+        for (j = t[i]; j <= M; ++j)
+	    if (DP[j] <= DP[j - t[i]] + w[i])
+		DP[j] =  DP[j - t[i]] + w[i];
+    // DP[j] = (DP[j] > DP[j - t[i]] + w[i]) ? DP[j] : DP[j - t[i]] + w[i];
+    print(toString(DP[M]));
+    return 0;
+}

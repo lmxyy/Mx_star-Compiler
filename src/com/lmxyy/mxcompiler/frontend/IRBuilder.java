@@ -1052,15 +1052,15 @@ public class IRBuilder implements ASTVisitor {
                 node.offset = ((IntImmediate) offset).getVal();
             }
             else {
-                curBasicBlock.append(new ArithmeticInstruction(
-                        curBasicBlock, reg,
-                        BinaryOperationInstruction.Operator.ADD,
-                        address, offset)
-                );
+//                curBasicBlock.append(new ArithmeticInstruction(
+//                        curBasicBlock, reg,
+//                        BinaryOperationInstruction.Operator.ADD,
+//                        address, offset)
+//                );
                 curBasicBlock.append(new LoadInstruction(
                         curBasicBlock, reg,
                         node.getType().getRegisterSize(),
-                        address,0)
+                        address,((IntImmediate) offset).getVal())
                 );
             }
         }
@@ -1289,6 +1289,9 @@ public class IRBuilder implements ASTVisitor {
                     ((CallfunNode) member).getParams().forEach(param -> call.appendArgReg(param.intValue));
                     curBasicBlock.append(call);
                     node.intValue = reg;
+                }
+                if (node.basicBlockTrue != null) {
+                    curBasicBlock.end(new BranchInstruction(curBasicBlock,node.intValue,node.basicBlockTrue,node.basicBlockFalse));
                 }
             }
         }

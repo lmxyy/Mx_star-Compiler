@@ -226,7 +226,7 @@ ALIGN   8
 
 _Z5printPc:
         lea     rdx, [rdi+8H]
-        mov     esi, L_060
+        mov     esi, L_061
         mov     edi, 1
         xor     eax, eax
         jmp     __printf_chk
@@ -751,7 +751,7 @@ _Z9getStringv:
         call    malloc
         lea     rbx, [rax+8H]
         mov     rbp, rax
-        mov     edi, L_060
+        mov     edi, L_061
         xor     eax, eax
         mov     rsi, rbx
         call    scanf
@@ -848,42 +848,139 @@ L_044:  mov     rdi, qword [rel stdin]
 ALIGN   16
 
 _Z8toStringi:
+        push    r12
         push    rbp
         push    rbx
-        sub     rsp, 72
+        sub     rsp, 64
 
 
         mov     rax, qword [fs:abs 28H]
         mov     qword [rsp+38H], rax
         xor     eax, eax
         test    edi, edi
-        js      L_046
-        jne     L_049
+        js      L_047
+        jne     L_050
         mov     edi, 10
+        mov     dword [rsp+4H], 0
+        xor     ebp, ebp
         call    malloc
-        movzx   ebx, byte [rsp]
+        lea     rdx, [rax+8H]
         mov     qword [rax], 1
         mov     byte [rax+9H], 0
-        lea     edx, [rbx+30H]
-        mov     byte [rax+8H], dl
-L_045:  mov     rbx, qword [rsp+38H]
+        mov     ebx, 1
+L_045:  movsxd  rcx, ebx
+        movsxd  rsi, ebp
+        mov     ecx, dword [rsp+rcx*4]
+        add     ecx, 48
+        cmp     ebx, 1
+        mov     byte [rdx+rsi], cl
+        je      L_046
+        lea     esi, [rbx-1H]
+        lea     ecx, [rbp+1H]
+        movsxd  rsi, esi
+        movsxd  rcx, ecx
+        mov     esi, dword [rsp+rsi*4]
+        add     esi, 48
+        cmp     ebx, 2
+        mov     byte [rdx+rcx], sil
+        je      L_046
+        lea     esi, [rbx-2H]
+        lea     ecx, [rbp+2H]
+        movsxd  rsi, esi
+        movsxd  rcx, ecx
+        mov     esi, dword [rsp+rsi*4]
+        add     esi, 48
+        cmp     ebx, 3
+        mov     byte [rdx+rcx], sil
+        je      L_046
+        lea     esi, [rbx-3H]
+        lea     ecx, [rbp+3H]
+        movsxd  rsi, esi
+        movsxd  rcx, ecx
+        mov     esi, dword [rsp+rsi*4]
+        add     esi, 48
+        cmp     ebx, 4
+        mov     byte [rdx+rcx], sil
+        je      L_046
+        lea     esi, [rbx-4H]
+        lea     ecx, [rbp+4H]
+        movsxd  rsi, esi
+        movsxd  rcx, ecx
+        mov     esi, dword [rsp+rsi*4]
+        add     esi, 48
+        cmp     ebx, 5
+        mov     byte [rdx+rcx], sil
+        je      L_046
+        lea     esi, [rbx-5H]
+        lea     ecx, [rbp+5H]
+        movsxd  rsi, esi
+        movsxd  rcx, ecx
+        mov     esi, dword [rsp+rsi*4]
+        add     esi, 48
+        cmp     ebx, 6
+        mov     byte [rdx+rcx], sil
+        jz      L_046
+        lea     esi, [rbx-6H]
+        lea     ecx, [rbp+6H]
+        movsxd  rsi, esi
+        movsxd  rcx, ecx
+        mov     esi, dword [rsp+rsi*4]
+        add     esi, 48
+        cmp     ebx, 7
+        mov     byte [rdx+rcx], sil
+        jz      L_046
+        lea     esi, [rbx-7H]
+        lea     ecx, [rbp+7H]
+        movsxd  rsi, esi
+        movsxd  rcx, ecx
+        mov     esi, dword [rsp+rsi*4]
+        add     esi, 48
+        cmp     ebx, 8
+        mov     byte [rdx+rcx], sil
+        jz      L_046
+        lea     esi, [rbx-8H]
+        lea     ecx, [rbp+8H]
+        movsxd  rsi, esi
+        movsxd  rcx, ecx
+        mov     esi, dword [rsp+rsi*4]
+        add     esi, 48
+        cmp     ebx, 9
+        mov     byte [rdx+rcx], sil
+        jz      L_046
+        lea     esi, [rbx-9H]
+        lea     ecx, [rbp+9H]
+        movsxd  rsi, esi
+        movsxd  rcx, ecx
+        mov     esi, dword [rsp+rsi*4]
+        add     esi, 48
+        cmp     ebx, 10
+        mov     byte [rdx+rcx], sil
+        jz      L_046
+        movzx   edi, byte [rsp+4H]
+        add     ebp, 10
+        movsxd  rbp, ebp
+        lea     ecx, [rdi+30H]
+        mov     byte [rdx+rbp], cl
+L_046:  mov     rdi, qword [rsp+38H]
 
 
-        xor     rbx, qword [fs:abs 28H]
-        jne     L_059
-        add     rsp, 72
+        xor     rdi, qword [fs:abs 28H]
+        jne     L_060
+        add     rsp, 64
         pop     rbx
         pop     rbp
+        pop     r12
         ret
 
 
 
 
 
-ALIGN   8
-L_046:  neg     edi
-        mov     r9d, 1
-L_047:  mov     eax, edi
+
+ALIGN   16
+L_047:  neg     edi
+        mov     ebp, 1
+L_048:  mov     eax, edi
         mov     esi, 1717986919
         mov     ecx, edi
         imul    esi
@@ -897,7 +994,7 @@ L_047:  mov     eax, edi
         sub     ebx, eax
         test    edx, edx
         mov     dword [rsp+4H], ebx
-        je      L_050
+        je      L_051
         mov     eax, edx
         imul    esi
         mov     eax, r8d
@@ -914,7 +1011,7 @@ L_047:  mov     eax, edi
         sar     edx, 5
         mov     r8d, edx
         sub     r8d, ecx
-        je      L_051
+        je      L_052
         mov     eax, r8d
         imul    esi
         mov     eax, r8d
@@ -931,7 +1028,7 @@ L_047:  mov     eax, edi
         sar     edx, 6
         mov     r8d, edx
         sub     r8d, ecx
-        je      L_052
+        je      L_053
         mov     eax, r8d
         imul    esi
         mov     eax, r8d
@@ -948,7 +1045,7 @@ L_047:  mov     eax, edi
         sar     edx, 12
         mov     r8d, edx
         sub     r8d, ecx
-        je      L_053
+        je      L_054
         mov     eax, r8d
         imul    esi
         mov     eax, r8d
@@ -965,7 +1062,7 @@ L_047:  mov     eax, edi
         sar     edx, 13
         mov     r8d, edx
         sub     r8d, ecx
-        je      L_054
+        je      L_055
         mov     eax, r8d
         imul    esi
         mov     eax, r8d
@@ -982,7 +1079,7 @@ L_047:  mov     eax, edi
         sar     edx, 18
         mov     r8d, edx
         sub     r8d, ecx
-        je      L_055
+        je      L_056
         mov     eax, r8d
         imul    esi
         mov     eax, r8d
@@ -999,7 +1096,7 @@ L_047:  mov     eax, edi
         sar     edx, 22
         mov     r8d, edx
         sub     r8d, ecx
-        je      L_056
+        je      L_057
         mov     eax, r8d
         imul    esi
         mov     eax, r8d
@@ -1016,14 +1113,14 @@ L_047:  mov     eax, edi
         sar     edx, 25
         mov     r8d, edx
         sub     r8d, ecx
-        je      L_057
+        je      L_058
         mov     eax, r8d
         imul    esi
         mov     eax, r8d
         sar     eax, 31
+        sar     edx, 2
         mov     esi, edx
         mov     edx, 1152921505
-        sar     esi, 2
         sub     esi, eax
         lea     eax, [rsi+rsi*4]
         add     eax, eax
@@ -1033,80 +1130,21 @@ L_047:  mov     eax, edi
         mov     dword [rsp+24H], r8d
         sar     edx, 28
         sub     edx, ecx
-        je      L_058
+        je      L_059
         mov     dword [rsp+28H], edx
-        mov     ebx, 9
-        mov     ebp, 10
-L_048:  lea     edi, [r9+rbp+9H]
+        mov     ebx, 10
+L_049:  lea     r12d, [rbp+rbx]
+        lea     edi, [r12+9H]
+        movsxd  r12, r12d
         movsxd  rdi, edi
         call    malloc
-        movsxd  rsi, ebx
-        mov     qword [rax], rbp
-        mov     byte [rax+rbp+8H], 0
-        movzx   edi, byte [rsp+rsi*4]
-        lea     ecx, [rdi+30H]
-        mov     byte [rax+rsi+8H], cl
-        lea     ecx, [rbx-1H]
-        cmp     ecx, -1
+        test    ebp, ebp
+        mov     qword [rax], r12
+        lea     rdx, [rax+8H]
+        mov     byte [rax+r12+8H], 0
         je      L_045
-        movsxd  rcx, ecx
-        movzx   edi, byte [rsp+rcx*4]
-        lea     esi, [rdi+30H]
-        mov     byte [rax+rcx+8H], sil
-        lea     ecx, [rbx-2H]
-        cmp     ecx, -1
-        je      L_045
-        movsxd  rcx, ecx
-        movzx   edi, byte [rsp+rcx*4]
-        lea     esi, [rdi+30H]
-        mov     byte [rax+rcx+8H], sil
-        lea     ecx, [rbx-3H]
-        cmp     ecx, -1
-        je      L_045
-        movsxd  rcx, ecx
-        movzx   edi, byte [rsp+rcx*4]
-        lea     esi, [rdi+30H]
-        mov     byte [rax+rcx+8H], sil
-        lea     ecx, [rbx-4H]
-        cmp     ecx, -1
-        je      L_045
-        movsxd  rcx, ecx
-        movzx   edi, byte [rsp+rcx*4]
-        lea     esi, [rdi+30H]
-        mov     byte [rax+rcx+8H], sil
-        lea     ecx, [rbx-5H]
-        cmp     ecx, -1
-        je      L_045
-        movsxd  rcx, ecx
-        movzx   edi, byte [rsp+rcx*4]
-        lea     esi, [rdi+30H]
-        mov     byte [rax+rcx+8H], sil
-        lea     ecx, [rbx-6H]
-        cmp     ecx, -1
-        je      L_045
-        movsxd  rcx, ecx
-        movzx   edi, byte [rsp+rcx*4]
-        lea     esi, [rdi+30H]
-        mov     byte [rax+rcx+8H], sil
-        lea     ecx, [rbx-7H]
-        cmp     ecx, -1
-        je      L_045
-        movsxd  rcx, ecx
-        movzx   edi, byte [rsp+rcx*4]
-        lea     esi, [rdi+30H]
-        mov     byte [rax+rcx+8H], sil
-        lea     ecx, [rbx-8H]
-        cmp     ecx, -1
-        je      L_045
-        movsxd  rcx, ecx
-        movzx   esi, byte [rsp+rcx*4]
-        add     esi, 48
-        cmp     ebx, 8
-        mov     byte [rax+rcx+8H], sil
-        je      L_045
-        movzx   ebx, byte [rsp]
-        lea     edx, [rbx+30H]
-        mov     byte [rax+8H], dl
+        mov     byte [rax+8H], 45
+        mov     ebp, 1
         jmp     L_045
 
 
@@ -1115,53 +1153,44 @@ L_048:  lea     edi, [r9+rbp+9H]
 
 
 ALIGN   16
-L_049:  xor     r9d, r9d
-        jmp     L_047
+L_050:  xor     ebp, ebp
+        jmp     L_048
+
 
 
 
 
 
 ALIGN   16
-L_050:  xor     ebx, ebx
-        mov     ebp, 1
-        jmp     L_048
-
-
-
-
-
-ALIGN   8
 L_051:  mov     ebx, 1
-        mov     ebp, 2
-        jmp     L_048
+        jmp     L_049
 
 
 
 
 
-ALIGN   8
+
+ALIGN   16
 L_052:  mov     ebx, 2
-        mov     ebp, 3
-        jmp     L_048
+        jmp     L_049
 
 
 
 
 
-ALIGN   8
+
+ALIGN   16
 L_053:  mov     ebx, 3
-        mov     ebp, 4
-        jmp     L_048
+        jmp     L_049
 
 
 
 
 
-ALIGN   8
+
+ALIGN   16
 L_054:  mov     ebx, 4
-        mov     ebp, 5
-        jmp     L_048
+        jmp     L_049
 
 
 
@@ -1169,8 +1198,7 @@ L_054:  mov     ebx, 4
 
 ALIGN   8
 L_055:  mov     ebx, 5
-        mov     ebp, 6
-        jmp     L_048
+        jmp     L_049
 
 
 
@@ -1178,8 +1206,7 @@ L_055:  mov     ebx, 5
 
 ALIGN   8
 L_056:  mov     ebx, 6
-        mov     ebp, 7
-        jmp     L_048
+        jmp     L_049
 
 
 
@@ -1187,8 +1214,7 @@ L_056:  mov     ebx, 6
 
 ALIGN   8
 L_057:  mov     ebx, 7
-        mov     ebp, 8
-        jmp     L_048
+        jmp     L_049
 
 
 
@@ -1196,10 +1222,17 @@ L_057:  mov     ebx, 7
 
 ALIGN   8
 L_058:  mov     ebx, 8
-        mov     ebp, 9
-        jmp     L_048
+        jmp     L_049
 
-L_059:
+
+
+
+
+ALIGN   8
+L_059:  mov     ebx, 9
+        jmp     L_049
+
+L_060:
 
         call    __stack_chk_fail
 
@@ -1216,6 +1249,6 @@ SECTION .text.unlikely
 
 SECTION .rodata.str1.1 
 
-L_060:
+L_061:
         db 25H, 73H, 00H
 

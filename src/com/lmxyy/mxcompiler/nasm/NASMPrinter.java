@@ -271,7 +271,7 @@ public class NASMPrinter implements IRVisitor {
                 "\n" +
                 "_Z5printPc:\n" +
                 "        lea     rdx, [rdi+8H]\n" +
-                "        mov     esi, L_060\n" +
+                "        mov     esi, L_061\n" +
                 "        mov     edi, 1\n" +
                 "        xor     eax, eax\n" +
                 "        jmp     __printf_chk\n" +
@@ -796,7 +796,7 @@ public class NASMPrinter implements IRVisitor {
                 "        call    malloc\n" +
                 "        lea     rbx, [rax+8H]\n" +
                 "        mov     rbp, rax\n" +
-                "        mov     edi, L_060\n" +
+                "        mov     edi, L_061\n" +
                 "        xor     eax, eax\n" +
                 "        mov     rsi, rbx\n" +
                 "        call    scanf\n" +
@@ -893,42 +893,139 @@ public class NASMPrinter implements IRVisitor {
                 "ALIGN   16\n" +
                 "\n" +
                 "_Z8toStringi:\n" +
+                "        push    r12\n" +
                 "        push    rbp\n" +
                 "        push    rbx\n" +
-                "        sub     rsp, 72\n" +
+                "        sub     rsp, 64\n" +
                 "\n" +
                 "\n" +
                 "        mov     rax, qword [fs:abs 28H]\n" +
                 "        mov     qword [rsp+38H], rax\n" +
                 "        xor     eax, eax\n" +
                 "        test    edi, edi\n" +
-                "        js      L_046\n" +
-                "        jne     L_049\n" +
+                "        js      L_047\n" +
+                "        jne     L_050\n" +
                 "        mov     edi, 10\n" +
+                "        mov     dword [rsp+4H], 0\n" +
+                "        xor     ebp, ebp\n" +
                 "        call    malloc\n" +
-                "        movzx   ebx, byte [rsp]\n" +
+                "        lea     rdx, [rax+8H]\n" +
                 "        mov     qword [rax], 1\n" +
                 "        mov     byte [rax+9H], 0\n" +
-                "        lea     edx, [rbx+30H]\n" +
-                "        mov     byte [rax+8H], dl\n" +
-                "L_045:  mov     rbx, qword [rsp+38H]\n" +
+                "        mov     ebx, 1\n" +
+                "L_045:  movsxd  rcx, ebx\n" +
+                "        movsxd  rsi, ebp\n" +
+                "        mov     ecx, dword [rsp+rcx*4]\n" +
+                "        add     ecx, 48\n" +
+                "        cmp     ebx, 1\n" +
+                "        mov     byte [rdx+rsi], cl\n" +
+                "        je      L_046\n" +
+                "        lea     esi, [rbx-1H]\n" +
+                "        lea     ecx, [rbp+1H]\n" +
+                "        movsxd  rsi, esi\n" +
+                "        movsxd  rcx, ecx\n" +
+                "        mov     esi, dword [rsp+rsi*4]\n" +
+                "        add     esi, 48\n" +
+                "        cmp     ebx, 2\n" +
+                "        mov     byte [rdx+rcx], sil\n" +
+                "        je      L_046\n" +
+                "        lea     esi, [rbx-2H]\n" +
+                "        lea     ecx, [rbp+2H]\n" +
+                "        movsxd  rsi, esi\n" +
+                "        movsxd  rcx, ecx\n" +
+                "        mov     esi, dword [rsp+rsi*4]\n" +
+                "        add     esi, 48\n" +
+                "        cmp     ebx, 3\n" +
+                "        mov     byte [rdx+rcx], sil\n" +
+                "        je      L_046\n" +
+                "        lea     esi, [rbx-3H]\n" +
+                "        lea     ecx, [rbp+3H]\n" +
+                "        movsxd  rsi, esi\n" +
+                "        movsxd  rcx, ecx\n" +
+                "        mov     esi, dword [rsp+rsi*4]\n" +
+                "        add     esi, 48\n" +
+                "        cmp     ebx, 4\n" +
+                "        mov     byte [rdx+rcx], sil\n" +
+                "        je      L_046\n" +
+                "        lea     esi, [rbx-4H]\n" +
+                "        lea     ecx, [rbp+4H]\n" +
+                "        movsxd  rsi, esi\n" +
+                "        movsxd  rcx, ecx\n" +
+                "        mov     esi, dword [rsp+rsi*4]\n" +
+                "        add     esi, 48\n" +
+                "        cmp     ebx, 5\n" +
+                "        mov     byte [rdx+rcx], sil\n" +
+                "        je      L_046\n" +
+                "        lea     esi, [rbx-5H]\n" +
+                "        lea     ecx, [rbp+5H]\n" +
+                "        movsxd  rsi, esi\n" +
+                "        movsxd  rcx, ecx\n" +
+                "        mov     esi, dword [rsp+rsi*4]\n" +
+                "        add     esi, 48\n" +
+                "        cmp     ebx, 6\n" +
+                "        mov     byte [rdx+rcx], sil\n" +
+                "        jz      L_046\n" +
+                "        lea     esi, [rbx-6H]\n" +
+                "        lea     ecx, [rbp+6H]\n" +
+                "        movsxd  rsi, esi\n" +
+                "        movsxd  rcx, ecx\n" +
+                "        mov     esi, dword [rsp+rsi*4]\n" +
+                "        add     esi, 48\n" +
+                "        cmp     ebx, 7\n" +
+                "        mov     byte [rdx+rcx], sil\n" +
+                "        jz      L_046\n" +
+                "        lea     esi, [rbx-7H]\n" +
+                "        lea     ecx, [rbp+7H]\n" +
+                "        movsxd  rsi, esi\n" +
+                "        movsxd  rcx, ecx\n" +
+                "        mov     esi, dword [rsp+rsi*4]\n" +
+                "        add     esi, 48\n" +
+                "        cmp     ebx, 8\n" +
+                "        mov     byte [rdx+rcx], sil\n" +
+                "        jz      L_046\n" +
+                "        lea     esi, [rbx-8H]\n" +
+                "        lea     ecx, [rbp+8H]\n" +
+                "        movsxd  rsi, esi\n" +
+                "        movsxd  rcx, ecx\n" +
+                "        mov     esi, dword [rsp+rsi*4]\n" +
+                "        add     esi, 48\n" +
+                "        cmp     ebx, 9\n" +
+                "        mov     byte [rdx+rcx], sil\n" +
+                "        jz      L_046\n" +
+                "        lea     esi, [rbx-9H]\n" +
+                "        lea     ecx, [rbp+9H]\n" +
+                "        movsxd  rsi, esi\n" +
+                "        movsxd  rcx, ecx\n" +
+                "        mov     esi, dword [rsp+rsi*4]\n" +
+                "        add     esi, 48\n" +
+                "        cmp     ebx, 10\n" +
+                "        mov     byte [rdx+rcx], sil\n" +
+                "        jz      L_046\n" +
+                "        movzx   edi, byte [rsp+4H]\n" +
+                "        add     ebp, 10\n" +
+                "        movsxd  rbp, ebp\n" +
+                "        lea     ecx, [rdi+30H]\n" +
+                "        mov     byte [rdx+rbp], cl\n" +
+                "L_046:  mov     rdi, qword [rsp+38H]\n" +
                 "\n" +
                 "\n" +
-                "        xor     rbx, qword [fs:abs 28H]\n" +
-                "        jne     L_059\n" +
-                "        add     rsp, 72\n" +
+                "        xor     rdi, qword [fs:abs 28H]\n" +
+                "        jne     L_060\n" +
+                "        add     rsp, 64\n" +
                 "        pop     rbx\n" +
                 "        pop     rbp\n" +
+                "        pop     r12\n" +
                 "        ret\n" +
                 "\n" +
                 "\n" +
                 "\n" +
                 "\n" +
                 "\n" +
-                "ALIGN   8\n" +
-                "L_046:  neg     edi\n" +
-                "        mov     r9d, 1\n" +
-                "L_047:  mov     eax, edi\n" +
+                "\n" +
+                "ALIGN   16\n" +
+                "L_047:  neg     edi\n" +
+                "        mov     ebp, 1\n" +
+                "L_048:  mov     eax, edi\n" +
                 "        mov     esi, 1717986919\n" +
                 "        mov     ecx, edi\n" +
                 "        imul    esi\n" +
@@ -942,7 +1039,7 @@ public class NASMPrinter implements IRVisitor {
                 "        sub     ebx, eax\n" +
                 "        test    edx, edx\n" +
                 "        mov     dword [rsp+4H], ebx\n" +
-                "        je      L_050\n" +
+                "        je      L_051\n" +
                 "        mov     eax, edx\n" +
                 "        imul    esi\n" +
                 "        mov     eax, r8d\n" +
@@ -959,7 +1056,7 @@ public class NASMPrinter implements IRVisitor {
                 "        sar     edx, 5\n" +
                 "        mov     r8d, edx\n" +
                 "        sub     r8d, ecx\n" +
-                "        je      L_051\n" +
+                "        je      L_052\n" +
                 "        mov     eax, r8d\n" +
                 "        imul    esi\n" +
                 "        mov     eax, r8d\n" +
@@ -976,7 +1073,7 @@ public class NASMPrinter implements IRVisitor {
                 "        sar     edx, 6\n" +
                 "        mov     r8d, edx\n" +
                 "        sub     r8d, ecx\n" +
-                "        je      L_052\n" +
+                "        je      L_053\n" +
                 "        mov     eax, r8d\n" +
                 "        imul    esi\n" +
                 "        mov     eax, r8d\n" +
@@ -993,7 +1090,7 @@ public class NASMPrinter implements IRVisitor {
                 "        sar     edx, 12\n" +
                 "        mov     r8d, edx\n" +
                 "        sub     r8d, ecx\n" +
-                "        je      L_053\n" +
+                "        je      L_054\n" +
                 "        mov     eax, r8d\n" +
                 "        imul    esi\n" +
                 "        mov     eax, r8d\n" +
@@ -1010,7 +1107,7 @@ public class NASMPrinter implements IRVisitor {
                 "        sar     edx, 13\n" +
                 "        mov     r8d, edx\n" +
                 "        sub     r8d, ecx\n" +
-                "        je      L_054\n" +
+                "        je      L_055\n" +
                 "        mov     eax, r8d\n" +
                 "        imul    esi\n" +
                 "        mov     eax, r8d\n" +
@@ -1027,7 +1124,7 @@ public class NASMPrinter implements IRVisitor {
                 "        sar     edx, 18\n" +
                 "        mov     r8d, edx\n" +
                 "        sub     r8d, ecx\n" +
-                "        je      L_055\n" +
+                "        je      L_056\n" +
                 "        mov     eax, r8d\n" +
                 "        imul    esi\n" +
                 "        mov     eax, r8d\n" +
@@ -1044,7 +1141,7 @@ public class NASMPrinter implements IRVisitor {
                 "        sar     edx, 22\n" +
                 "        mov     r8d, edx\n" +
                 "        sub     r8d, ecx\n" +
-                "        je      L_056\n" +
+                "        je      L_057\n" +
                 "        mov     eax, r8d\n" +
                 "        imul    esi\n" +
                 "        mov     eax, r8d\n" +
@@ -1061,14 +1158,14 @@ public class NASMPrinter implements IRVisitor {
                 "        sar     edx, 25\n" +
                 "        mov     r8d, edx\n" +
                 "        sub     r8d, ecx\n" +
-                "        je      L_057\n" +
+                "        je      L_058\n" +
                 "        mov     eax, r8d\n" +
                 "        imul    esi\n" +
                 "        mov     eax, r8d\n" +
                 "        sar     eax, 31\n" +
+                "        sar     edx, 2\n" +
                 "        mov     esi, edx\n" +
                 "        mov     edx, 1152921505\n" +
-                "        sar     esi, 2\n" +
                 "        sub     esi, eax\n" +
                 "        lea     eax, [rsi+rsi*4]\n" +
                 "        add     eax, eax\n" +
@@ -1078,80 +1175,21 @@ public class NASMPrinter implements IRVisitor {
                 "        mov     dword [rsp+24H], r8d\n" +
                 "        sar     edx, 28\n" +
                 "        sub     edx, ecx\n" +
-                "        je      L_058\n" +
+                "        je      L_059\n" +
                 "        mov     dword [rsp+28H], edx\n" +
-                "        mov     ebx, 9\n" +
-                "        mov     ebp, 10\n" +
-                "L_048:  lea     edi, [r9+rbp+9H]\n" +
+                "        mov     ebx, 10\n" +
+                "L_049:  lea     r12d, [rbp+rbx]\n" +
+                "        lea     edi, [r12+9H]\n" +
+                "        movsxd  r12, r12d\n" +
                 "        movsxd  rdi, edi\n" +
                 "        call    malloc\n" +
-                "        movsxd  rsi, ebx\n" +
-                "        mov     qword [rax], rbp\n" +
-                "        mov     byte [rax+rbp+8H], 0\n" +
-                "        movzx   edi, byte [rsp+rsi*4]\n" +
-                "        lea     ecx, [rdi+30H]\n" +
-                "        mov     byte [rax+rsi+8H], cl\n" +
-                "        lea     ecx, [rbx-1H]\n" +
-                "        cmp     ecx, -1\n" +
+                "        test    ebp, ebp\n" +
+                "        mov     qword [rax], r12\n" +
+                "        lea     rdx, [rax+8H]\n" +
+                "        mov     byte [rax+r12+8H], 0\n" +
                 "        je      L_045\n" +
-                "        movsxd  rcx, ecx\n" +
-                "        movzx   edi, byte [rsp+rcx*4]\n" +
-                "        lea     esi, [rdi+30H]\n" +
-                "        mov     byte [rax+rcx+8H], sil\n" +
-                "        lea     ecx, [rbx-2H]\n" +
-                "        cmp     ecx, -1\n" +
-                "        je      L_045\n" +
-                "        movsxd  rcx, ecx\n" +
-                "        movzx   edi, byte [rsp+rcx*4]\n" +
-                "        lea     esi, [rdi+30H]\n" +
-                "        mov     byte [rax+rcx+8H], sil\n" +
-                "        lea     ecx, [rbx-3H]\n" +
-                "        cmp     ecx, -1\n" +
-                "        je      L_045\n" +
-                "        movsxd  rcx, ecx\n" +
-                "        movzx   edi, byte [rsp+rcx*4]\n" +
-                "        lea     esi, [rdi+30H]\n" +
-                "        mov     byte [rax+rcx+8H], sil\n" +
-                "        lea     ecx, [rbx-4H]\n" +
-                "        cmp     ecx, -1\n" +
-                "        je      L_045\n" +
-                "        movsxd  rcx, ecx\n" +
-                "        movzx   edi, byte [rsp+rcx*4]\n" +
-                "        lea     esi, [rdi+30H]\n" +
-                "        mov     byte [rax+rcx+8H], sil\n" +
-                "        lea     ecx, [rbx-5H]\n" +
-                "        cmp     ecx, -1\n" +
-                "        je      L_045\n" +
-                "        movsxd  rcx, ecx\n" +
-                "        movzx   edi, byte [rsp+rcx*4]\n" +
-                "        lea     esi, [rdi+30H]\n" +
-                "        mov     byte [rax+rcx+8H], sil\n" +
-                "        lea     ecx, [rbx-6H]\n" +
-                "        cmp     ecx, -1\n" +
-                "        je      L_045\n" +
-                "        movsxd  rcx, ecx\n" +
-                "        movzx   edi, byte [rsp+rcx*4]\n" +
-                "        lea     esi, [rdi+30H]\n" +
-                "        mov     byte [rax+rcx+8H], sil\n" +
-                "        lea     ecx, [rbx-7H]\n" +
-                "        cmp     ecx, -1\n" +
-                "        je      L_045\n" +
-                "        movsxd  rcx, ecx\n" +
-                "        movzx   edi, byte [rsp+rcx*4]\n" +
-                "        lea     esi, [rdi+30H]\n" +
-                "        mov     byte [rax+rcx+8H], sil\n" +
-                "        lea     ecx, [rbx-8H]\n" +
-                "        cmp     ecx, -1\n" +
-                "        je      L_045\n" +
-                "        movsxd  rcx, ecx\n" +
-                "        movzx   esi, byte [rsp+rcx*4]\n" +
-                "        add     esi, 48\n" +
-                "        cmp     ebx, 8\n" +
-                "        mov     byte [rax+rcx+8H], sil\n" +
-                "        je      L_045\n" +
-                "        movzx   ebx, byte [rsp]\n" +
-                "        lea     edx, [rbx+30H]\n" +
-                "        mov     byte [rax+8H], dl\n" +
+                "        mov     byte [rax+8H], 45\n" +
+                "        mov     ebp, 1\n" +
                 "        jmp     L_045\n" +
                 "\n" +
                 "\n" +
@@ -1160,53 +1198,44 @@ public class NASMPrinter implements IRVisitor {
                 "\n" +
                 "\n" +
                 "ALIGN   16\n" +
-                "L_049:  xor     r9d, r9d\n" +
-                "        jmp     L_047\n" +
+                "L_050:  xor     ebp, ebp\n" +
+                "        jmp     L_048\n" +
+                "\n" +
                 "\n" +
                 "\n" +
                 "\n" +
                 "\n" +
                 "\n" +
                 "ALIGN   16\n" +
-                "L_050:  xor     ebx, ebx\n" +
-                "        mov     ebp, 1\n" +
-                "        jmp     L_048\n" +
-                "\n" +
-                "\n" +
-                "\n" +
-                "\n" +
-                "\n" +
-                "ALIGN   8\n" +
                 "L_051:  mov     ebx, 1\n" +
-                "        mov     ebp, 2\n" +
-                "        jmp     L_048\n" +
+                "        jmp     L_049\n" +
                 "\n" +
                 "\n" +
                 "\n" +
                 "\n" +
                 "\n" +
-                "ALIGN   8\n" +
+                "\n" +
+                "ALIGN   16\n" +
                 "L_052:  mov     ebx, 2\n" +
-                "        mov     ebp, 3\n" +
-                "        jmp     L_048\n" +
+                "        jmp     L_049\n" +
                 "\n" +
                 "\n" +
                 "\n" +
                 "\n" +
                 "\n" +
-                "ALIGN   8\n" +
+                "\n" +
+                "ALIGN   16\n" +
                 "L_053:  mov     ebx, 3\n" +
-                "        mov     ebp, 4\n" +
-                "        jmp     L_048\n" +
+                "        jmp     L_049\n" +
                 "\n" +
                 "\n" +
                 "\n" +
                 "\n" +
                 "\n" +
-                "ALIGN   8\n" +
+                "\n" +
+                "ALIGN   16\n" +
                 "L_054:  mov     ebx, 4\n" +
-                "        mov     ebp, 5\n" +
-                "        jmp     L_048\n" +
+                "        jmp     L_049\n" +
                 "\n" +
                 "\n" +
                 "\n" +
@@ -1214,8 +1243,7 @@ public class NASMPrinter implements IRVisitor {
                 "\n" +
                 "ALIGN   8\n" +
                 "L_055:  mov     ebx, 5\n" +
-                "        mov     ebp, 6\n" +
-                "        jmp     L_048\n" +
+                "        jmp     L_049\n" +
                 "\n" +
                 "\n" +
                 "\n" +
@@ -1223,8 +1251,7 @@ public class NASMPrinter implements IRVisitor {
                 "\n" +
                 "ALIGN   8\n" +
                 "L_056:  mov     ebx, 6\n" +
-                "        mov     ebp, 7\n" +
-                "        jmp     L_048\n" +
+                "        jmp     L_049\n" +
                 "\n" +
                 "\n" +
                 "\n" +
@@ -1232,8 +1259,7 @@ public class NASMPrinter implements IRVisitor {
                 "\n" +
                 "ALIGN   8\n" +
                 "L_057:  mov     ebx, 7\n" +
-                "        mov     ebp, 8\n" +
-                "        jmp     L_048\n" +
+                "        jmp     L_049\n" +
                 "\n" +
                 "\n" +
                 "\n" +
@@ -1241,10 +1267,17 @@ public class NASMPrinter implements IRVisitor {
                 "\n" +
                 "ALIGN   8\n" +
                 "L_058:  mov     ebx, 8\n" +
-                "        mov     ebp, 9\n" +
-                "        jmp     L_048\n" +
+                "        jmp     L_049\n" +
                 "\n" +
-                "L_059:\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "ALIGN   8\n" +
+                "L_059:  mov     ebx, 9\n" +
+                "        jmp     L_049\n" +
+                "\n" +
+                "L_060:\n" +
                 "\n" +
                 "        call    __stack_chk_fail\n" +
                 "\n" +
@@ -1261,7 +1294,7 @@ public class NASMPrinter implements IRVisitor {
                 "\n" +
                 "SECTION .rodata.str1.1 \n" +
                 "\n" +
-                "L_060:\n" +
+                "L_061:\n" +
                 "        db 25H, 73H, 00H\n" +
                 "\n");
     }

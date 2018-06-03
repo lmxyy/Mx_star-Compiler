@@ -76,6 +76,7 @@ public class NASMIRTransformer {
     private void removeSelfMove(MoveInstruction inst) {
         if (inst.getSource() == inst.getDest()) inst.remove();
     }
+
     private void modifyCall(Function func,FunctionInfo info,BasicBlock basicBlock,CallInstruction inst) {
         Function callee = inst.getFunction();
         FunctionInfo calleeInfo = infoMap.get(callee);
