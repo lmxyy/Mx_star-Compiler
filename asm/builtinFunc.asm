@@ -12,6 +12,7 @@ global _Z12stringConcatPcS_
 global _Z9stringEquPcS_
 global _Z10stringLessPcS_
 global _Z9stringLeqPcS_
+global _Z9stringOrdPci
 global _Z5printPc
 global _Z7printlnPc
 global _Z8printInti
@@ -33,7 +34,7 @@ extern memcpy
 extern malloc
 
 
-SECTION .text 
+SECTION .text   6
 
 _Z15stringSubStringPcii:
         push    r15
@@ -215,6 +216,18 @@ _Z9stringLeqPcS_:
         setle   al
         add     rsp, 8
         movzx   eax, al
+        ret
+
+
+
+
+
+
+ALIGN   8
+
+_Z9stringOrdPci:
+        movsxd  rsi, esi
+        movsx   eax, byte [rdi+rsi+8H]
         ret
 
 

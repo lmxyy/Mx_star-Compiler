@@ -57,6 +57,7 @@ public class NASMPrinter implements IRVisitor {
                 "global _Z9stringEquPcS_\n" +
                 "global _Z10stringLessPcS_\n" +
                 "global _Z9stringLeqPcS_\n" +
+                "global _Z9stringOrdPci\n" +
                 "global _Z5printPc\n" +
                 "global _Z7printlnPc\n" +
                 "global _Z8printInti\n" +
@@ -78,7 +79,7 @@ public class NASMPrinter implements IRVisitor {
                 "extern malloc\n" +
                 "\n" +
                 "\n" +
-                "SECTION .text \n" +
+                "SECTION .text\n" +
                 "\n" +
                 "_Z15stringSubStringPcii:\n" +
                 "        push    r15\n" +
@@ -260,6 +261,18 @@ public class NASMPrinter implements IRVisitor {
                 "        setle   al\n" +
                 "        add     rsp, 8\n" +
                 "        movzx   eax, al\n" +
+                "        ret\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "ALIGN   8\n" +
+                "\n" +
+                "_Z9stringOrdPci:\n" +
+                "        movsxd  rsi, esi\n" +
+                "        movsx   eax, byte [rdi+rsi+8H]\n" +
                 "        ret\n" +
                 "\n" +
                 "\n" +

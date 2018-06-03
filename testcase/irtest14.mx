@@ -1,0 +1,4 @@
+int main()
+{
+    println(toString("max: xz;\n".ord(0)));
+}

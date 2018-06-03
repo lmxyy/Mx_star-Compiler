@@ -49,6 +49,10 @@ int stringLess(char *a,char *b) {
 int stringLeq(char *a,char *b) {
     return strcmp(a+8,b+8) <= 0;
 }
+int stringOrd(char *a,int b) {
+    a += 8;
+    return a[b];
+}
 
 void print(char* a) {
     printf("%s",a+8);

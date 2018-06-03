@@ -29,6 +29,9 @@ public class IRRoot {
         stringLess.setCallName("_Z10stringLessPcS_");
         builtinFunctions.add(stringLeq);
         stringLeq.setCallName("_Z9stringLeqPcS_");
+        builtinFunctions.add(stringOrd);
+        stringOrd.setCallName("_Z9stringOrdPci");
+
 
         builtinFunctions.add(funcPrintln);
         funcPrintln.setCallName("_Z7printlnPc");
@@ -97,6 +100,7 @@ public class IRRoot {
                 add("arg1");
             }})
     );
+    public static Function stringOrd = new Function(GlobalSymbolTable.stringOrd);
     /*public Function stringLength= new Function(new FunctionType(
             GlobalSymbolTable.stringType,
             "string.length",
@@ -129,7 +133,7 @@ public class IRRoot {
             new ArrayList<String>() {{
                 add("arg0");
             }})
-    );;
+    );
     public static Function funcGetString = new Function(GlobalSymbolTable.funcGetString);
     public static Function funcGetInt = new Function(GlobalSymbolTable.funcGetInt);
     public static Function funcToString = new Function(GlobalSymbolTable.funcToString);

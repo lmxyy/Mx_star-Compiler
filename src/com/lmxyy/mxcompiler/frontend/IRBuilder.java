@@ -563,16 +563,12 @@ public class IRBuilder implements ASTVisitor {
                 node.intValue = reg;
             } else if (functionType == GlobalSymbolTable.stringOrd) {
 //                visit(record);
-                visit(member.getParams().get(0));
+                member.getParams().forEach(param -> param.accept(this));
                 VirtualRegister reg = new VirtualRegister("ord");
-                curBasicBlock.append(
-                        new ArithmeticInstruction(
-                                curBasicBlock, reg, BinaryOperationInstruction.Operator.ADD,
-                                record.intValue, member.getParams().get(0).intValue));
-                curBasicBlock.append(
-                        new LoadInstruction(
-                                curBasicBlock, reg, 1,
-                                reg, CompilerOption.getSizeInt()));
+                CallInstruction call = new CallInstruction(curBasicBlock, reg, irRoot.stringOrd);
+                call.appendArgReg(record.intValue);
+                member.getParams().forEach(param -> call.appendArgReg(param.intValue));
+                curBasicBlock.append(call);
                 node.intValue = reg;
             }
 
