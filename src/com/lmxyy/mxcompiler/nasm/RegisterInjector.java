@@ -17,28 +17,40 @@ public class RegisterInjector {
             VirtualRegister vr = func.argRegList.get(i);
             StackSlot sl = new StackSlot(func,"arg"+i);
             func.argStackSlopMap.put(vr,sl);
-            if (i > 5) {
+            if (i == 0)
+                first.prepend(new MoveInstruction(func.startBasicBlock,NASMRegisterSet.RDI,vr));
+            if (i == 1)
+                first.prepend(new MoveInstruction(func.startBasicBlock,NASMRegisterSet.RSI,vr));
+            if (i == 2)
+                first.prepend(new MoveInstruction(func.startBasicBlock,NASMRegisterSet.RDX,vr));
+            if (i == 3)
+                first.prepend(new MoveInstruction(func.startBasicBlock,NASMRegisterSet.RCX,vr));
+            if (i == 4)
+                first.prepend(new MoveInstruction(func.startBasicBlock,NASMRegisterSet.R8,vr));
+            if (i == 5)
+                first.prepend(new MoveInstruction(func.startBasicBlock,NASMRegisterSet.R9,vr));
+            else if (i > 5) {
                 first.prepend(new LoadInstruction(func.startBasicBlock,vr,wordSize,sl,0));
             }
         }
-        if (func.argRegList.size() > 0) {
-            func.argRegList.get(0).forcedPhysicalRegister = NASMRegisterSet.RDI;
-        }
-        if (func.argRegList.size() > 1) {
-            func.argRegList.get(1).forcedPhysicalRegister = NASMRegisterSet.RSI;
-        }
-        if (func.argRegList.size() > 2) {
-            func.argRegList.get(2).forcedPhysicalRegister = NASMRegisterSet.RDX;
-        }
-        if (func.argRegList.size() > 3) {
-            func.argRegList.get(3).forcedPhysicalRegister = NASMRegisterSet.RCX;
-        }
-        if (func.argRegList.size() > 4) {
-            func.argRegList.get(4).forcedPhysicalRegister = NASMRegisterSet.R8;
-        }
-        if (func.argRegList.size() > 5) {
-            func.argRegList.get(5).forcedPhysicalRegister = NASMRegisterSet.R9;
-        }
+//        if (func.argRegList.size() > 0) {
+//            func.argRegList.get(0).forcedPhysicalRegister = NASMRegisterSet.RDI;
+//        }
+//        if (func.argRegList.size() > 1) {
+//            func.argRegList.get(1).forcedPhysicalRegister = NASMRegisterSet.RSI;
+//        }
+//        if (func.argRegList.size() > 2) {
+//            func.argRegList.get(2).forcedPhysicalRegister = NASMRegisterSet.RDX;
+//        }
+//        if (func.argRegList.size() > 3) {
+//            func.argRegList.get(3).forcedPhysicalRegister = NASMRegisterSet.RCX;
+//        }
+//        if (func.argRegList.size() > 4) {
+//            func.argRegList.get(4).forcedPhysicalRegister = NASMRegisterSet.R8;
+//        }
+//        if (func.argRegList.size() > 5) {
+//            func.argRegList.get(5).forcedPhysicalRegister = NASMRegisterSet.R9;
+//        }
     }
 
     private void modifyHeapAllocation(Function func,BasicBlock basicBlock,HeapAllocateInstruction inst) {
