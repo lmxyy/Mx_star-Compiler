@@ -39,7 +39,8 @@ public class NASMIRTransformer {
             info.stackSlotOffset.put(func.argStackSlopMap.get(reg),(4-i)*wordSize);
         }
         for (StackSlot slot:func.stackSlots) {
-            info.stackSlotOffset.put(slot,(++stackSlotNum)*wordSize);
+            if (info.stackSlotOffset.get(slot) == null)
+                info.stackSlotOffset.put(slot,(++stackSlotNum)*wordSize);
         }
         info.stackSlotNum = stackSlotNum;
     }

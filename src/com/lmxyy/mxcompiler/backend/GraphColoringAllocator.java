@@ -261,69 +261,69 @@ public class GraphColoringAllocator extends RegisterAllocator {
     private void modifyEntry(Function func) {
         BasicBlock entryBasicBlock = func.startBasicBlock;
         IRInstruction firstInst = entryBasicBlock.getHead();
-        if (func.argRegList.size() > 0) {
-            Register color = infoMap.get(func.argRegList.get(0)).color;
-            if (color instanceof StackSlot)
-                firstInst.prepend(new StoreInstruction(
-                        entryBasicBlock, color, 0,
-                        CompilerOption.getSizeInt(), NASMRegisterSet.RDI
-                ));
-            else firstInst.prepend(new MoveInstruction(entryBasicBlock, NASMRegisterSet.RDI, color));
-        }
-        if (func.argRegList.size() > 1) {
-            Register color = infoMap.get(func.argRegList.get(1)).color;
-            if (color instanceof StackSlot)
-                firstInst.prepend(new StoreInstruction(
-                        entryBasicBlock, color, 0,
-                        CompilerOption.getSizeInt(), NASMRegisterSet.RSI
-                ));
-            else firstInst.prepend(new MoveInstruction(entryBasicBlock, NASMRegisterSet.RSI, color));
-        }
-        if (func.argRegList.size() > 2) {
-            Register color = infoMap.get(func.argRegList.get(2)).color;
-            if (color instanceof StackSlot)
-                firstInst.prepend(new StoreInstruction(
-                        entryBasicBlock, color, 0,
-                        CompilerOption.getSizeInt(), NASMRegisterSet.RDX
-                ));
-            else firstInst.prepend(new MoveInstruction(entryBasicBlock, NASMRegisterSet.RDX, color));
-        }
-        if (func.argRegList.size() > 3) {
-            Register color = infoMap.get(func.argRegList.get(3)).color;
-            if (color instanceof StackSlot)
-                firstInst.prepend(new StoreInstruction(
-                        entryBasicBlock, color, 0,
-                        CompilerOption.getSizeInt(), NASMRegisterSet.RCX
-                ));
-            else firstInst.prepend(new MoveInstruction(entryBasicBlock, NASMRegisterSet.RCX, color));
-        }
-        if (func.argRegList.size() > 4) {
-            Register color = infoMap.get(func.argRegList.get(4)).color;
-            if (color instanceof StackSlot)
-                firstInst.prepend(new StoreInstruction(
-                        entryBasicBlock, color, 0,
-                        CompilerOption.getSizeInt(), NASMRegisterSet.R8
-                ));
-            else firstInst.prepend(new MoveInstruction(entryBasicBlock, NASMRegisterSet.R8, color));
-        }
-        if (func.argRegList.size() > 5) {
-            Register color = infoMap.get(func.argRegList.get(5)).color;
-            if (color instanceof StackSlot)
-                firstInst.prepend(new StoreInstruction(
-                        entryBasicBlock, color, 0,
-                        CompilerOption.getSizeInt(), NASMRegisterSet.R9
-                ));
-            else firstInst.prepend(new MoveInstruction(entryBasicBlock, NASMRegisterSet.R9, color));
-        }
-        for (int i = 6;i < func.argRegList.size();++i) {
-            Register color = infoMap.get(func.argRegList.get(5)).color;
-            if (color instanceof PhysicalRegister) {
-                firstInst.prepend(new LoadInstruction(
-                        entryBasicBlock, color, CompilerOption.getSizeInt(),
-                        NASMRegisterSet.RBP, (i - 4) * wordSize
-                ));
-            }
-        }
+//        if (func.argRegList.size() > 0) {
+//            Register color = infoMap.get(func.argRegList.get(0)).color;
+//            if (color instanceof StackSlot)
+//                firstInst.prepend(new StoreInstruction(
+//                        entryBasicBlock, color, 0,
+//                        CompilerOption.getSizeInt(), NASMRegisterSet.RDI
+//                ));
+//            else firstInst.prepend(new MoveInstruction(entryBasicBlock, NASMRegisterSet.RDI, color));
+//        }
+//        if (func.argRegList.size() > 1) {
+//            Register color = infoMap.get(func.argRegList.get(1)).color;
+//            if (color instanceof StackSlot)
+//                firstInst.prepend(new StoreInstruction(
+//                        entryBasicBlock, color, 0,
+//                        CompilerOption.getSizeInt(), NASMRegisterSet.RSI
+//                ));
+////            else firstInst.prepend(new MoveInstruction(entryBasicBlock, NASMRegisterSet.RSI, color));
+//        }
+//        if (func.argRegList.size() > 2) {
+//            Register color = infoMap.get(func.argRegList.get(2)).color;
+//            if (color instanceof StackSlot)
+//                firstInst.prepend(new StoreInstruction(
+//                        entryBasicBlock, color, 0,
+//                        CompilerOption.getSizeInt(), NASMRegisterSet.RDX
+//                ));
+//            else firstInst.prepend(new MoveInstruction(entryBasicBlock, NASMRegisterSet.RDX, color));
+//        }
+//        if (func.argRegList.size() > 3) {
+//            Register color = infoMap.get(func.argRegList.get(3)).color;
+//            if (color instanceof StackSlot)
+//                firstInst.prepend(new StoreInstruction(
+//                        entryBasicBlock, color, 0,
+//                        CompilerOption.getSizeInt(), NASMRegisterSet.RCX
+//                ));
+//            else firstInst.prepend(new MoveInstruction(entryBasicBlock, NASMRegisterSet.RCX, color));
+//        }
+//        if (func.argRegList.size() > 4) {
+//            Register color = infoMap.get(func.argRegList.get(4)).color;
+//            if (color instanceof StackSlot)
+//                firstInst.prepend(new StoreInstruction(
+//                        entryBasicBlock, color, 0,
+//                        CompilerOption.getSizeInt(), NASMRegisterSet.R8
+//                ));
+//            else firstInst.prepend(new MoveInstruction(entryBasicBlock, NASMRegisterSet.R8, color));
+//        }
+//        if (func.argRegList.size() > 5) {
+//            Register color = infoMap.get(func.argRegList.get(5)).color;
+//            if (color instanceof StackSlot)
+//                firstInst.prepend(new StoreInstruction(
+//                        entryBasicBlock, color, 0,
+//                        CompilerOption.getSizeInt(), NASMRegisterSet.R9
+//                ));
+//            else firstInst.prepend(new MoveInstruction(entryBasicBlock, NASMRegisterSet.R9, color));
+//        }
+//        for (int i = 6;i < func.argRegList.size();++i) {
+//            Register color = infoMap.get(func.argRegList.get(i)).color;
+//            if (color instanceof PhysicalRegister) {
+//                firstInst.prepend(new LoadInstruction(
+//                        entryBasicBlock, color, CompilerOption.getSizeInt(),
+//                        NASMRegisterSet.RBP, (i - 4) * wordSize
+//                ));
+//            }
+//        }
     }
 
     public void run() {
@@ -334,7 +334,7 @@ public class GraphColoringAllocator extends RegisterAllocator {
             buildGraph();
             colorize();
             rewrite();
-            modifyEntry(func);
+            //modifyEntry(func);
         }
     }
 }
