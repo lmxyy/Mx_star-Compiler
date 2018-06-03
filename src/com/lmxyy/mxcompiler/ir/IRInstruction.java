@@ -9,6 +9,10 @@ public abstract class IRInstruction {
     protected List<IntValue> usedIntValue = new ArrayList<>();
     private boolean removed;
 
+    // Liveness Analysis
+    public Set <VirtualRegister> liveIn = null;
+    public Set <VirtualRegister> liveOut = null;
+
     public IRInstruction(BasicBlock _basicBlock) {
         basicBlock = _basicBlock;
         pre = null; nxt = null;

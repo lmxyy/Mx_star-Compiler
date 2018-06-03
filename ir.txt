@@ -1,369 +1,983 @@
-space @sat 8
-space @assignment 8
-space @cond_ass 8
-space @k 8
-space @n 8
-space @m 8
-space @last 8
-space @myHash 8
-asciiz @string - 
-asciiz @string_2 *x
-asciiz @string_3 xz 
-asciiz @string_4  <= 0;\n
-asciiz @string_5 x
-asciiz @string_6  + 
-asciiz @string_7  = 1;\n
-asciiz @string_8 max: xz;\n
+space @asciiTable 8
+space @MAXCHUNK 8
+space @MAXLENGTH 8
+space @chunks 8
+space @inputBuffer 8
+space @outputBuffer 8
+asciiz @string  !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~
+asciiz @string_2 
+asciiz @string_3 nChunk > MAXCHUNK!
+asciiz @string_4 Invalid input
+asciiz @string_5 Not Found!
 
-func check {
+func hex2int $x {
 
-%check.entry:
+%hex2int.entry:
     $i = move 0
-    $j = move 0
+    $result = move 0
     $i = move 0
     jump %for_cond
 
 %for_cond:
-    $t = slt $i @m
+    $size = load 8 $x 0
+    $t = slt $i $size
     br $t %for_loop %for_after
 
+%for_after:
+    $returnValue = move $result
+    jump %hex2int.exit
+
 %for_loop:
-    $succ = move 0
-    $j = move 0
-    jump %for_cond_2
-
-%for_cond_2:
-    $t_2 = slt $j 3
-    br $t_2 %for_loop_2 %for_after_2
-
-%for_loop_2:
-    $t_3 = mul $i 8
-    $t_3 = add @sat $t_3
-    $t_3 = load 8 $t_3 8
-    $t_4 = mul $j 8
-    $t_4 = add $t_3 $t_4
-    $t_4 = load 8 $t_4 8
-    $var = move $t_4
-    $t_5 = sgt $var 0
-    br $t_5 %lhs_true %lhs_false
-
-%lhs_true:
-    $t_6 = mul $var 8
-    $t_6 = add @assignment $t_6
-    $t_6 = load 8 $t_6 8
-    $t_7 = seq $t_6 1
-    $t_8 = move $t_7
-    jump %lhs_merge
+    $ord = call string.ord $x $i 
+    $digit = move $ord
+    $t_2 = sge $digit 48
+    br $t_2 %lhs_true %lhs_false
 
 %lhs_false:
-    $t_8 = move 0
+    $t_3 = move 0
+    jump %lhs_merge
+
+%lhs_true:
+    $t_4 = sle $digit 57
+    $t_3 = move $t_4
     jump %lhs_merge
 
 %lhs_merge:
-    br $t_8 %if_true %if_after
+    br $t_3 %if_true %if_false
 
 %if_true:
-    $succ = move 1
+    $t_5 = mul $result 16
+    $t_6 = add $t_5 $digit
+    $t_7 = sub $t_6 48
+    $result = move $t_7
     jump %if_after
 
-%if_after:
-    $t_9 = slt $var 0
-    br $t_9 %lhs_true_2 %lhs_false_2
+%if_false:
+    $t_8 = sge $digit 65
+    br $t_8 %lhs_true_2 %lhs_false_2
 
 %lhs_true_2:
-    $t_10 = neg $var
-    $t_11 = mul $t_10 8
-    $t_11 = add @assignment $t_11
-    $t_11 = load 8 $t_11 8
-    $t_12 = seq $t_11 0
-    $t_13 = move $t_12
+    $t_9 = sle $digit 70
+    $t_10 = move $t_9
     jump %lhs_merge_2
 
 %lhs_false_2:
-    $t_13 = move 0
+    $t_10 = move 0
     jump %lhs_merge_2
 
 %lhs_merge_2:
-    br $t_13 %if_true_2 %if_after_2
+    br $t_10 %if_true_2 %if_false_2
 
 %if_true_2:
-    $succ = move 1
+    $t_11 = mul $result 16
+    $t_12 = add $t_11 $digit
+    $t_13 = sub $t_12 65
+    $t_14 = add $t_13 10
+    $result = move $t_14
+    jump %if_after_2
+
+%if_false_2:
+    $t_15 = sge $digit 97
+    br $t_15 %lhs_true_3 %lhs_false_3
+
+%lhs_true_3:
+    $t_16 = sle $digit 102
+    $t_17 = move $t_16
+    jump %lhs_merge_3
+
+%lhs_false_3:
+    $t_17 = move 0
+    jump %lhs_merge_3
+
+%lhs_merge_3:
+    br $t_17 %if_true_3 %if_false_3
+
+%if_false_3:
+    $returnValue = move 0
+    jump %hex2int.exit
+
+%hex2int.exit:
+    ret $returnValue
+
+%if_true_3:
+    $t_18 = mul $result 16
+    $t_19 = add $t_18 $digit
+    $t_20 = sub $t_19 97
+    $t_21 = add $t_20 10
+    $result = move $t_21
+    jump %if_after_3
+
+%if_after_3:
     jump %if_after_2
 
 %if_after_2:
+    jump %if_after
+
+%if_after:
     jump %for_step
 
 %for_step:
-    $j = add $j 1
-    jump %for_cond_2
-
-%for_after_2:
-    $t_14 = seq $succ 0
-    br $t_14 %if_true_3 %if_after_3
-
-%if_true_3:
-    $returnValue = move 0
-    jump %check.exit
-
-%if_after_3:
-    jump %for_step_2
-
-%for_step_2:
+    $t_22 = move $i
     $i = add $i 1
     jump %for_cond
 
-%for_after:
-    $returnValue = move 1
-    jump %check.exit
+}
 
-%check.exit:
+func int2chr $x {
+
+%int2chr.entry:
+    $t = sge $x 32
+    br $t %lhs_true_4 %lhs_false_4
+
+%lhs_true_4:
+    $t_2 = sle $x 126
+    $t_3 = move $t_2
+    jump %lhs_merge_4
+
+%lhs_false_4:
+    $t_3 = move 0
+    jump %lhs_merge_4
+
+%lhs_merge_4:
+    br $t_3 %if_true_4 %if_after_4
+
+%if_after_4:
+    $returnValue = move @string_2
+    jump %int2chr.exit
+
+%if_true_4:
+    $t_4 = sub $x 32
+    $t_5 = sub $x 32
+    $substr = call string.substring @asciiTable $t_4 $t_5 
+    $returnValue = move $substr
+    jump %int2chr.exit
+
+%int2chr.exit:
     ret $returnValue
 
 }
 
-func myprint $x {
+func toStringHex $x {
 
-%myprint.entry:
+%toStringHex.entry:
+    $ret = move @string_2
     $i = move 0
+    $i = move 28
+    jump %for_cond_2
+
+%for_cond_2:
+    $t = sge $i 0
+    br $t %for_loop_2 %for_after_2
+
+%for_loop_2:
+    $t_2 = ashr $x $i
+    $t_3 = and $t_2 15
+    $digit = move $t_3
+    $t_4 = slt $digit 10
+    br $t_4 %if_true_5 %if_false_4
+
+%if_true_5:
+    $t_5 = add 48 $digit
+    $t_6 = call int2chr $t_5 
+    $t_7 = call string.concat $ret $t_6 
+    $ret = move $t_7
+    jump %if_after_5
+
+%if_false_4:
+    $t_8 = add 65 $digit
+    $t_9 = sub $t_8 10
+    $t_10 = call int2chr $t_9 
+    $t_11 = call string.concat $ret $t_10 
+    $ret = move $t_11
+    jump %if_after_5
+
+%if_after_5:
+    jump %for_step_2
+
+%for_step_2:
+    $t_12 = sub $i 4
+    $i = move $t_12
+    jump %for_cond_2
+
+%for_after_2:
+    ret $ret
+
+}
+
+func rotate_left $x $shift {
+
+%rotate_left.entry:
+    $t = seq $shift 1
+    br $t %if_true_6 %if_after_6
+
+%if_after_6:
+    $t_2 = seq $shift 31
+    br $t_2 %if_true_7 %if_after_7
+
+%if_true_7:
+    $t_3 = and $x 1
+    $t_4 = shl $t_3 31
+    $t_5 = ashr $x 1
+    $t_6 = and $t_5 2147483647
+    $t_7 = or $t_4 $t_6
+    $returnValue = move $t_7
+    jump %rotate_left.exit
+
+%if_after_7:
+    $t_8 = sub 32 $shift
+    $t_9 = shl 1 $t_8
+    $t_10 = sub $t_9 1
+    $t_11 = and $x $t_10
+    $t_12 = shl $t_11 $shift
+    $t_13 = sub 32 $shift
+    $t_14 = ashr $x $t_13
+    $t_15 = shl 1 $shift
+    $t_16 = sub $t_15 1
+    $t_17 = and $t_14 $t_16
+    $t_18 = or $t_12 $t_17
+    $returnValue = move $t_18
+    jump %rotate_left.exit
+
+%if_true_6:
+    $t_19 = and $x 2147483647
+    $t_20 = shl $t_19 1
+    $t_21 = ashr $x 31
+    $t_22 = and $t_21 1
+    $t_23 = or $t_20 $t_22
+    $returnValue = move $t_23
+    jump %rotate_left.exit
+
+%rotate_left.exit:
+    ret $returnValue
+
+}
+
+func add $x $y {
+
+%add.entry:
+    $t = and $x 65535
+    $t_2 = and $y 65535
+    $t_3 = add $t $t_2
+    $low = move $t_3
+    $t_4 = ashr $x 16
+    $t_5 = and $t_4 65535
+    $t_6 = ashr $y 16
+    $t_7 = and $t_6 65535
+    $t_8 = add $t_5 $t_7
+    $t_9 = ashr $low 16
+    $t_10 = add $t_8 $t_9
+    $t_11 = and $t_10 65535
+    $high = move $t_11
+    $t_12 = shl $high 16
+    $t_13 = and $low 65535
+    $t_14 = or $t_12 $t_13
+    ret $t_14
+
+}
+
+func lohi $lo $hi {
+
+%lohi.entry:
+    $t = shl $hi 16
+    $t_2 = or $lo $t
+    ret $t_2
+
+}
+
+func sha1 $input $length {
+
+%sha1.entry:
+    $t = add $length 64
+    $t_2 = sub $t 56
+    $t_3 = div $t_2 64
+    $t_4 = add $t_3 1
+    $nChunk = move $t_4
+    $t_5 = sgt $nChunk @MAXCHUNK
+    br $t_5 %if_true_8 %if_after_8
+
+%if_true_8:
+    call println @string_3 
+    $returnValue = move 0
+    jump %sha1.exit
+
+%if_after_8:
+    $i = move 0
+    $j = move 0
     $i = move 0
     jump %for_cond_3
 
 %for_cond_3:
-    $size = load 8 $x 0
-    $t = slt $i $size
-    br $t %for_loop_3 %for_after_3
+    $t_6 = slt $i $nChunk
+    br $t_6 %for_loop_3 %for_after_3
 
 %for_loop_3:
-    $ord = call string.ord $x $i 
-    $t_2 = add @myHash $ord
-    @myHash = move $t_2
-    jump %for_step_3
-
-%for_step_3:
-    $i = add $i 1
-    jump %for_cond_3
-
-%for_after_3:
-    ret 0
-
-}
-
-func payoff $a $b {
-
-%payoff.entry:
-    $ret = move 0
-    $i = move 0
-    $i = move 0
+    $j = move 0
     jump %for_cond_4
 
 %for_cond_4:
-    $t = slt $i 3
-    br $t %for_loop_4 %for_after_4
+    $t_7 = slt $j 80
+    br $t_7 %for_loop_4 %for_after_4
 
 %for_after_4:
-    ret $ret
+    jump %for_step_3
+
+%for_step_3:
+    $t_8 = move $i
+    $i = add $i 1
+    jump %for_cond_3
 
 %for_loop_4:
-    $t_2 = mul $i 8
-    $t_2 = add $a $t_2
-    $t_2 = load 8 $t_2 8
-    $t_3 = mul $i 8
-    $t_3 = add $b $t_3
-    $t_3 = load 8 $t_3 8
-    $t_4 = sne $t_2 $t_3
-    br $t_4 %if_true_4 %if_after_4
-
-%if_true_4:
-    $t_5 = move $ret
-    $ret = add $ret 1
-    jump %if_after_4
-
-%if_after_4:
+    $t_9 = mul $i 8
+    $t_9 = add @chunks $t_9
+    $t_9 = load 8 $t_9 8
+    $t_10 = mul $j 8
+    $t_10 = add $t_9 $t_10
+    store 8 $t_10 0 8
     jump %for_step_4
 
 %for_step_4:
-    $i = add $i 1
+    $t_11 = move $j
+    $j = add $j 1
     jump %for_cond_4
 
-}
-
-func print_cond $dep {
-
-%print_cond.entry:
-    $t = seq $dep @n
-    br $t %if_true_5 %if_after_5
-
-%if_after_5:
-    $t_2 = add $dep 1
-    $t_3 = mul $t_2 8
-    $t_3 = add @cond_ass $t_3
-    store 8 $t_3 1 8
-    $t_4 = add $dep 1
-    $t_5 = call print_cond $t_4 
-    $t_6 = add $dep 1
-    $t_7 = mul $t_6 8
-    $t_7 = add @cond_ass $t_7
-    store 8 $t_7 0 8
-    $t_8 = add $dep 1
-    $t_9 = call print_cond $t_8 
-    jump %print_cond.exit
-
-%if_true_5:
-    $t_10 = call payoff @cond_ass @assignment 
-    $tostring = call toString $t_10 
-    $t_11 = call string.concat @string $tostring 
-    $t_12 = call string.concat $t_11 @string_2 
-    $t_13 = call myprint $t_12 
-    $i = move 0
+%for_after_3:
     $i = move 0
     jump %for_cond_5
 
 %for_cond_5:
-    $t_14 = slt $i @n
-    br $t_14 %for_loop_5 %for_after_5
-
-%for_after_5:
-    jump %print_cond.exit
-
-%print_cond.exit:
-    ret 0
+    $t_12 = slt $i $length
+    br $t_12 %for_loop_5 %for_after_5
 
 %for_loop_5:
-    $t_15 = rem $i 10
-    $t_16 = seq $t_15 0
-    br $t_16 %if_true_6 %if_after_6
-
-%if_true_6:
-    $t_17 = add $i 1
-    $t_18 = mul $t_17 8
-    $t_18 = add @cond_ass $t_18
+    $t_13 = div $i 64
+    $t_14 = mul $t_13 8
+    $t_14 = add @chunks $t_14
+    $t_14 = load 8 $t_14 8
+    $t_15 = rem $i 64
+    $t_16 = div $t_15 4
+    $t_17 = mul $t_16 8
+    $t_17 = add $t_14 $t_17
+    $t_17 = load 8 $t_17 8
+    $t_18 = mul $i 8
+    $t_18 = add $input $t_18
     $t_18 = load 8 $t_18 8
-    $tostring_2 = call toString $t_18 
-    $t_19 = call myprint $tostring_2 
-    jump %if_after_6
-
-%if_after_6:
+    $t_19 = rem $i 4
+    $t_20 = sub 3 $t_19
+    $t_21 = mul $t_20 8
+    $t_22 = shl $t_18 $t_21
+    $t_23 = or $t_17 $t_22
+    $t_24 = div $i 64
+    $t_25 = mul $t_24 8
+    $t_25 = add @chunks $t_25
+    $t_25 = load 8 $t_25 8
+    $t_26 = rem $i 64
+    $t_27 = div $t_26 4
+    $t_28 = mul $t_27 8
+    $t_28 = add $t_25 $t_28
+    store 8 $t_28 $t_23 8
     jump %for_step_5
 
 %for_step_5:
+    $t_29 = move $i
     $i = add $i 1
     jump %for_cond_5
 
-}
-
-func dfs $dep {
-
-%dfs.entry:
-    $t = seq $dep @n
-    br $t %if_true_7 %if_after_7
-
-%if_after_7:
-    $t_2 = add $dep 1
-    $t_3 = mul $t_2 8
-    $t_3 = add @assignment $t_3
-    store 8 $t_3 1 8
-    $t_4 = add $dep 1
-    $t_5 = call dfs $t_4 
-    $t_6 = add $dep 1
-    $t_7 = mul $t_6 8
-    $t_7 = add @assignment $t_7
-    store 8 $t_7 0 8
-    $t_8 = add $dep 1
-    $t_9 = call dfs $t_8 
-    jump %dfs.exit
-
-%if_true_7:
-    $t_10 = call check 
-    $t_11 = seq $t_10 1
-    br $t_11 %if_true_8 %if_after_8
-
-%if_true_8:
-    $t_12 = call myprint @string_3 
-    $t_13 = call print_cond 0 
-    $t_14 = call myprint @string_4 
-    jump %if_after_8
-
-%if_after_8:
-    jump %dfs.exit
-
-%dfs.exit:
-    ret 0
-
-}
-
-func print_last_cond $dep {
-
-%print_last_cond.entry:
-    $t = seq $dep @n
-    br $t %if_true_9 %if_after_9
-
-%if_true_9:
-    $t_2 = call myprint @string_5 
-    $islast = move 1
-    $i = move 0
+%for_after_5:
+    $t_30 = div $i 64
+    $t_31 = mul $t_30 8
+    $t_31 = add @chunks $t_31
+    $t_31 = load 8 $t_31 8
+    $t_32 = rem $i 64
+    $t_33 = div $t_32 4
+    $t_34 = mul $t_33 8
+    $t_34 = add $t_31 $t_34
+    $t_34 = load 8 $t_34 8
+    $t_35 = rem $i 4
+    $t_36 = sub 3 $t_35
+    $t_37 = mul $t_36 8
+    $t_38 = shl 128 $t_37
+    $t_39 = or $t_34 $t_38
+    $t_40 = div $i 64
+    $t_41 = mul $t_40 8
+    $t_41 = add @chunks $t_41
+    $t_41 = load 8 $t_41 8
+    $t_42 = rem $i 64
+    $t_43 = div $t_42 4
+    $t_44 = mul $t_43 8
+    $t_44 = add $t_41 $t_44
+    store 8 $t_44 $t_39 8
+    $t_45 = shl $length 3
+    $t_46 = sub $nChunk 1
+    $t_47 = mul $t_46 8
+    $t_47 = add @chunks $t_47
+    $t_47 = load 8 $t_47 8
+    $t_48 = add $t_47 120
+    store 8 $t_48 $t_45 8
+    $t_49 = ashr $length 29
+    $t_50 = and $t_49 7
+    $t_51 = sub $nChunk 1
+    $t_52 = mul $t_51 8
+    $t_52 = add @chunks $t_52
+    $t_52 = load 8 $t_52 8
+    $t_53 = add $t_52 112
+    store 8 $t_53 $t_50 8
+    $h0 = move 1732584193
+    $t_54 = call lohi 43913 61389 
+    $h1 = move $t_54
+    $t_55 = call lohi 56574 39098 
+    $h2 = move $t_55
+    $h3 = move 271733878
+    $t_56 = call lohi 57840 50130 
+    $h4 = move $t_56
     $i = move 0
     jump %for_cond_6
 
 %for_cond_6:
-    $t_3 = slt $i @n
-    br $t_3 %for_loop_6 %for_after_6
+    $t_57 = slt $i $nChunk
+    br $t_57 %for_loop_6 %for_after_6
 
 %for_after_6:
-    $t_4 = seq $islast 0
-    br $t_4 %if_true_10 %if_false
+    $t_58 = add @outputBuffer 0
+    store 8 $t_58 $h0 8
+    $t_59 = add @outputBuffer 8
+    store 8 $t_59 $h1 8
+    $t_60 = add @outputBuffer 16
+    store 8 $t_60 $h2 8
+    $t_61 = add @outputBuffer 24
+    store 8 $t_61 $h3 8
+    $t_62 = add @outputBuffer 32
+    store 8 $t_62 $h4 8
+    $returnValue = move @outputBuffer
+    jump %sha1.exit
 
-%if_true_10:
-    $t_5 = call myprint @string_6 
-    jump %if_after_10
-
-%if_false:
-    $t_6 = call myprint @string_7 
-    jump %if_after_10
-
-%if_after_10:
-    jump %print_last_cond.exit
+%sha1.exit:
+    ret $returnValue
 
 %for_loop_6:
-    $t_7 = add $i 1
-    $t_8 = mul $t_7 8
-    $t_8 = add @assignment $t_8
-    $t_8 = load 8 $t_8 8
-    $t_9 = seq $t_8 1
-    br $t_9 %if_true_11 %if_after_11
+    $j = move 16
+    jump %for_cond_7
 
-%if_true_11:
-    $islast = move 0
-    jump %if_after_11
+%for_cond_7:
+    $t_63 = slt $j 80
+    br $t_63 %for_loop_7 %for_after_7
 
-%if_after_11:
-    $t_10 = add $i 1
-    $t_11 = mul $t_10 8
-    $t_11 = add @assignment $t_11
-    $t_11 = load 8 $t_11 8
-    $tostring = call toString $t_11 
-    $t_12 = call myprint $tostring 
+%for_after_7:
+    $a = move $h0
+    $b = move $h1
+    $c = move $h2
+    $d = move $h3
+    $e = move $h4
+    $j = move 0
+    jump %for_cond_8
+
+%for_cond_8:
+    $t_64 = slt $j 80
+    br $t_64 %for_loop_8 %for_after_8
+
+%for_after_8:
+    $t_65 = call add $h0 $a 
+    $h0 = move $t_65
+    $t_66 = call add $h1 $b 
+    $h1 = move $t_66
+    $t_67 = call add $h2 $c 
+    $h2 = move $t_67
+    $t_68 = call add $h3 $d 
+    $h3 = move $t_68
+    $t_69 = call add $h4 $e 
+    $h4 = move $t_69
     jump %for_step_6
 
 %for_step_6:
+    $t_70 = move $i
     $i = add $i 1
     jump %for_cond_6
 
-%if_after_9:
-    $t_13 = add $dep 1
-    $t_14 = mul $t_13 8
-    $t_14 = add @assignment $t_14
-    store 8 $t_14 1 8
-    $t_15 = add $dep 1
-    $t_16 = call print_last_cond $t_15 
-    $t_17 = add $dep 1
-    $t_18 = mul $t_17 8
-    $t_18 = add @assignment $t_18
-    store 8 $t_18 0 8
-    $t_19 = add $dep 1
-    $t_20 = call print_last_cond $t_19 
-    jump %print_last_cond.exit
+%for_loop_8:
+    $f = move 0
+    $k = move 0
+    $t_71 = slt $j 20
+    br $t_71 %if_true_9 %if_false_5
 
-%print_last_cond.exit:
+%if_true_9:
+    $t_72 = and $b $c
+    $t_73 = not $b
+    $t_74 = and $t_73 $d
+    $t_75 = or $t_72 $t_74
+    $f = move $t_75
+    $k = move 1518500249
+    jump %if_after_9
+
+%if_false_5:
+    $t_76 = slt $j 40
+    br $t_76 %if_true_10 %if_false_6
+
+%if_true_10:
+    $t_77 = xor $b $c
+    $t_78 = xor $t_77 $d
+    $f = move $t_78
+    $k = move 1859775393
+    jump %if_after_10
+
+%if_false_6:
+    $t_79 = slt $j 60
+    br $t_79 %if_true_11 %if_false_7
+
+%if_false_7:
+    $t_80 = xor $b $c
+    $t_81 = xor $t_80 $d
+    $f = move $t_81
+    $t_82 = call lohi 49622 51810 
+    $k = move $t_82
+    jump %if_after_11
+
+%if_true_11:
+    $t_83 = and $b $c
+    $t_84 = and $b $d
+    $t_85 = or $t_83 $t_84
+    $t_86 = and $c $d
+    $t_87 = or $t_85 $t_86
+    $f = move $t_87
+    $t_88 = call lohi 48348 36635 
+    $k = move $t_88
+    jump %if_after_11
+
+%if_after_11:
+    jump %if_after_10
+
+%if_after_10:
+    jump %if_after_9
+
+%if_after_9:
+    $t_89 = call rotate_left $a 5 
+    $t_90 = call add $t_89 $e 
+    $t_91 = call add $f $k 
+    $t_92 = call add $t_90 $t_91 
+    $t_93 = mul $i 8
+    $t_93 = add @chunks $t_93
+    $t_93 = load 8 $t_93 8
+    $t_94 = mul $j 8
+    $t_94 = add $t_93 $t_94
+    $t_94 = load 8 $t_94 8
+    $t_95 = call add $t_92 $t_94 
+    $temp = move $t_95
+    $e = move $d
+    $d = move $c
+    $t_96 = call rotate_left $b 30 
+    $c = move $t_96
+    $b = move $a
+    $a = move $temp
+    jump %for_step_7
+
+%for_step_7:
+    $t_97 = move $j
+    $j = add $j 1
+    jump %for_cond_8
+
+%for_loop_7:
+    $t_98 = mul $i 8
+    $t_98 = add @chunks $t_98
+    $t_98 = load 8 $t_98 8
+    $t_99 = sub $j 3
+    $t_100 = mul $t_99 8
+    $t_100 = add $t_98 $t_100
+    $t_100 = load 8 $t_100 8
+    $t_101 = mul $i 8
+    $t_101 = add @chunks $t_101
+    $t_101 = load 8 $t_101 8
+    $t_102 = sub $j 8
+    $t_103 = mul $t_102 8
+    $t_103 = add $t_101 $t_103
+    $t_103 = load 8 $t_103 8
+    $t_104 = xor $t_100 $t_103
+    $t_105 = mul $i 8
+    $t_105 = add @chunks $t_105
+    $t_105 = load 8 $t_105 8
+    $t_106 = sub $j 14
+    $t_107 = mul $t_106 8
+    $t_107 = add $t_105 $t_107
+    $t_107 = load 8 $t_107 8
+    $t_108 = xor $t_104 $t_107
+    $t_109 = mul $i 8
+    $t_109 = add @chunks $t_109
+    $t_109 = load 8 $t_109 8
+    $t_110 = sub $j 16
+    $t_111 = mul $t_110 8
+    $t_111 = add $t_109 $t_111
+    $t_111 = load 8 $t_111 8
+    $t_112 = xor $t_108 $t_111
+    $t_113 = call rotate_left $t_112 1 
+    $t_114 = mul $i 8
+    $t_114 = add @chunks $t_114
+    $t_114 = load 8 $t_114 8
+    $t_115 = mul $j 8
+    $t_115 = add $t_114 $t_115
+    store 8 $t_115 $t_113 8
+    jump %for_step_8
+
+%for_step_8:
+    $t_116 = move $j
+    $j = add $j 1
+    jump %for_cond_7
+
+}
+
+func computeSHA1 $input {
+
+%computeSHA1.entry:
+    $i = move 0
+    $i = move 0
+    jump %for_cond_9
+
+%for_cond_9:
+    $size = load 8 $input 0
+    $t = slt $i $size
+    br $t %for_loop_9 %for_after_9
+
+%for_after_9:
+    $size_2 = load 8 $input 0
+    $t_2 = call sha1 @inputBuffer $size_2 
+    $result = move $t_2
+    $i = move 0
+    jump %for_cond_10
+
+%for_cond_10:
+    $size_3 = load 8 $result 0
+    $t_3 = slt $i $size_3
+    br $t_3 %for_loop_10 %for_after_10
+
+%for_after_10:
+    call println @string_2 
+    ret 0
+
+%for_loop_10:
+    $t_4 = mul $i 8
+    $t_4 = add $result $t_4
+    $t_4 = load 8 $t_4 8
+    $t_5 = call toStringHex $t_4 
+    call print $t_5 
+    jump %for_step_9
+
+%for_step_9:
+    $t_6 = move $i
+    $i = add $i 1
+    jump %for_cond_10
+
+%for_loop_9:
+    $ord = call string.ord $input $i 
+    $t_7 = mul $i 8
+    $t_7 = add @inputBuffer $t_7
+    store 8 $t_7 $ord 8
+    jump %for_step_10
+
+%for_step_10:
+    $t_8 = move $i
+    $i = add $i 1
+    jump %for_cond_9
+
+}
+
+func nextLetter $now {
+
+%nextLetter.entry:
+    $t = seq $now 122
+    br $t %if_true_12 %if_after_12
+
+%if_after_12:
+    $t_2 = seq $now 90
+    br $t_2 %if_true_13 %if_after_13
+
+%if_true_13:
+    $returnValue = move 97
+    jump %nextLetter.exit
+
+%if_after_13:
+    $t_3 = seq $now 57
+    br $t_3 %if_true_14 %if_after_14
+
+%if_true_14:
+    $returnValue = move 65
+    jump %nextLetter.exit
+
+%if_after_14:
+    $t_4 = add $now 1
+    $returnValue = move $t_4
+    jump %nextLetter.exit
+
+%if_true_12:
+    $t_5 = neg 1
+    $returnValue = move $t_5
+    jump %nextLetter.exit
+
+%nextLetter.exit:
+    ret $returnValue
+
+}
+
+func nextText $now $length {
+
+%nextText.entry:
+    $i = move 0
+    $t = sub $length 1
+    $i = move $t
+    jump %for_cond_11
+
+%for_cond_11:
+    $t_2 = sge $i 0
+    br $t_2 %for_loop_11 %for_after_11
+
+%for_loop_11:
+    $t_3 = mul $i 8
+    $t_3 = add $now $t_3
+    $t_3 = load 8 $t_3 8
+    $t_4 = call nextLetter $t_3 
+    $t_5 = mul $i 8
+    $t_5 = add $now $t_5
+    store 8 $t_5 $t_4 8
+    $t_6 = mul $i 8
+    $t_6 = add $now $t_6
+    $t_6 = load 8 $t_6 8
+    $t_7 = neg 1
+    $t_8 = seq $t_6 $t_7
+    br $t_8 %if_true_15 %if_false_8
+
+%if_true_15:
+    $t_9 = mul $i 8
+    $t_9 = add $now $t_9
+    store 8 $t_9 48 8
+    jump %if_after_15
+
+%if_after_15:
+    jump %for_step_11
+
+%for_step_11:
+    $t_10 = move $i
+    $i = sub $i 1
+    jump %for_cond_11
+
+%if_false_8:
+    $returnValue = move 1
+    jump %nextText.exit
+
+%for_after_11:
+    $returnValue = move 0
+    jump %nextText.exit
+
+%nextText.exit:
+    ret $returnValue
+
+}
+
+func array_equal $a $b {
+
+%array_equal.entry:
+    $size = load 8 $a 0
+    $size_2 = load 8 $b 0
+    $t = sne $size $size_2
+    br $t %if_true_16 %if_after_16
+
+%if_after_16:
+    $i = move 0
+    $i = move 0
+    jump %for_cond_12
+
+%for_cond_12:
+    $size_3 = load 8 $a 0
+    $t_2 = slt $i $size_3
+    br $t_2 %for_loop_12 %for_after_12
+
+%for_loop_12:
+    $t_3 = mul $i 8
+    $t_3 = add $a $t_3
+    $t_3 = load 8 $t_3 8
+    $t_4 = mul $i 8
+    $t_4 = add $b $t_4
+    $t_4 = load 8 $t_4 8
+    $t_5 = sne $t_3 $t_4
+    br $t_5 %if_true_17 %if_after_17
+
+%if_true_17:
+    $returnValue = move 0
+    jump %array_equal.exit
+
+%if_after_17:
+    jump %for_step_12
+
+%for_step_12:
+    $t_6 = move $i
+    $i = add $i 1
+    jump %for_cond_12
+
+%for_after_12:
+    $returnValue = move 1
+    jump %array_equal.exit
+
+%if_true_16:
+    $returnValue = move 0
+    jump %array_equal.exit
+
+%array_equal.exit:
+    ret $returnValue
+
+}
+
+func crackSHA1 $input {
+
+%crackSHA1.entry:
+    $newaddress = move 48
+    $newaddress = alloc $newaddress
+    store 8 $newaddress 5 0
+    $target = move $newaddress
+    $size = load 8 $input 0
+    $t = sne $size 40
+    br $t %if_true_18 %if_after_18
+
+%if_after_18:
+    $i = move 0
+    $i = move 0
+    jump %for_cond_13
+
+%for_cond_13:
+    $t_2 = slt $i 5
+    br $t_2 %for_loop_13 %for_after_13
+
+%for_after_13:
+    $i = move 0
+    jump %for_cond_14
+
+%for_cond_14:
+    $t_3 = slt $i 40
+    br $t_3 %for_loop_14 %for_after_14
+
+%for_loop_14:
+    $t_4 = div $i 8
+    $t_5 = mul $t_4 8
+    $t_5 = add $target $t_5
+    $t_5 = load 8 $t_5 8
+    $t_6 = add $i 3
+    $substr = call string.substring $input $i $t_6 
+    $t_7 = call hex2int $substr 
+    $t_8 = div $i 4
+    $t_9 = rem $t_8 2
+    $t_10 = sub 1 $t_9
+    $t_11 = mul $t_10 16
+    $t_12 = shl $t_7 $t_11
+    $t_13 = or $t_5 $t_12
+    $t_14 = div $i 8
+    $t_15 = mul $t_14 8
+    $t_15 = add $target $t_15
+    store 8 $t_15 $t_13 8
+    jump %for_step_13
+
+%for_step_13:
+    $t_16 = add $i 4
+    $i = move $t_16
+    jump %for_cond_14
+
+%for_after_14:
+    $MAXDIGIT = move 4
+    $digit = move 0
+    $digit = move 1
+    jump %for_cond_15
+
+%for_cond_15:
+    $t_17 = sle $digit $MAXDIGIT
+    br $t_17 %for_loop_15 %for_after_15
+
+%for_after_15:
+    call println @string_5 
+    jump %crackSHA1.exit
+
+%for_loop_15:
+    $i = move 0
+    jump %for_cond_16
+
+%for_cond_16:
+    $t_18 = slt $i $digit
+    br $t_18 %for_loop_16 %for_after_16
+
+%for_after_16:
+    jump %while_cond
+
+%while_cond:
+    jump %while_loop
+
+%while_loop:
+    $t_19 = call sha1 @inputBuffer $digit 
+    $out = move $t_19
+    $t_20 = call array_equal $out $target 
+    br $t_20 %if_true_19 %if_after_19
+
+%if_true_19:
+    $i = move 0
+    jump %for_cond_17
+
+%for_cond_17:
+    $t_21 = slt $i $digit
+    br $t_21 %for_loop_17 %for_after_17
+
+%for_loop_17:
+    $t_22 = mul $i 8
+    $t_22 = add @inputBuffer $t_22
+    $t_22 = load 8 $t_22 8
+    $t_23 = call int2chr $t_22 
+    call print $t_23 
+    jump %for_step_14
+
+%for_step_14:
+    $t_24 = move $i
+    $i = add $i 1
+    jump %for_cond_17
+
+%for_after_17:
+    call println @string_2 
+    jump %crackSHA1.exit
+
+%if_after_19:
+    $t_25 = call nextText @inputBuffer $digit 
+    $t_26 = xor $t_25 1
+    br $t_26 %if_true_20 %if_after_20
+
+%if_after_20:
+    jump %while_cond
+
+%if_true_20:
+    jump %while_after
+
+%while_after:
+    jump %for_step_15
+
+%for_step_15:
+    $t_27 = move $digit
+    $digit = add $digit 1
+    jump %for_cond_15
+
+%for_loop_16:
+    $t_28 = mul $i 8
+    $t_28 = add @inputBuffer $t_28
+    store 8 $t_28 48 8
+    jump %for_step_16
+
+%for_step_16:
+    $t_29 = move $i
+    $i = add $i 1
+    jump %for_cond_16
+
+%for_loop_13:
+    $t_30 = mul $i 8
+    $t_30 = add $target $t_30
+    store 8 $t_30 0 8
+    jump %for_step_17
+
+%for_step_17:
+    $t_31 = move $i
+    $i = add $i 1
+    jump %for_cond_13
+
+%if_true_18:
+    call println @string_4 
+    jump %crackSHA1.exit
+
+%crackSHA1.exit:
     ret 0
 
 }
@@ -372,84 +986,98 @@ func main {
 
 %main.entry:
     call _init 
+    $op = move 0
+    $input = move 0
+    jump %while_cond_2
+
+%while_cond_2:
+    jump %while_loop_2
+
+%while_loop_2:
     $gottenint = call getInt 
-    @k = move $gottenint
-    $t = mul 2 @k
-    $t_2 = add $t 1
-    @n = move $t_2
-    @m = move @k
-    @last = move 1
-    $t_3 = call myprint @string_8 
-    $newaddress = mul @m 8
-    $newaddress = add $newaddress 8
-    $newaddress = alloc $newaddress
-    store 8 $newaddress @m 0
-    @sat = move $newaddress
-    $i = move 0
-    $i = move 0
-    jump %for_cond_7
+    $op = move $gottenint
+    $t = seq $op 0
+    br $t %if_true_21 %if_after_21
 
-%for_cond_7:
-    $t_4 = slt $i @m
-    br $t_4 %for_loop_7 %for_after_7
+%if_after_21:
+    $t_2 = seq $op 1
+    br $t_2 %if_true_22 %if_false_9
 
-%for_after_7:
-    $t_5 = add @n 1
-    $newaddress_2 = mul $t_5 8
-    $newaddress_2 = add $newaddress_2 8
-    $newaddress_2 = alloc $newaddress_2
-    store 8 $newaddress_2 $t_5 0
-    @assignment = move $newaddress_2
-    $t_6 = add @n 1
-    $newaddress_3 = mul $t_6 8
-    $newaddress_3 = add $newaddress_3 8
-    $newaddress_3 = alloc $newaddress_3
-    store 8 $newaddress_3 $t_6 0
-    @cond_ass = move $newaddress_3
-    $t_7 = call dfs 0 
-    $t_8 = call print_last_cond 0 
-    call printlnint @myHash 
+%if_false_9:
+    $t_3 = seq $op 2
+    br $t_3 %if_true_23 %if_after_22
+
+%if_true_23:
+    $gottenstring = call getString 
+    $input = move $gottenstring
+    $t_4 = call crackSHA1 $input 
+    jump %if_after_22
+
+%if_after_22:
+    jump %if_after_23
+
+%if_true_22:
+    $gottenstring_2 = call getString 
+    $input = move $gottenstring_2
+    $t_5 = call computeSHA1 $input 
+    jump %if_after_23
+
+%if_after_23:
+    jump %while_cond_2
+
+%if_true_21:
+    jump %while_after_2
+
+%while_after_2:
     ret 0
-
-%for_loop_7:
-    $newaddress_4 = move 32
-    $newaddress_4 = alloc $newaddress_4
-    store 8 $newaddress_4 3 0
-    $clause = move $newaddress_4
-    $t_9 = add $clause 0
-    store 8 $t_9 @last 8
-    $t_10 = add @last 1
-    $t_11 = add $clause 8
-    store 8 $t_11 $t_10 8
-    $t_12 = add @last 2
-    $t_13 = neg $t_12
-    $t_14 = add $clause 16
-    store 8 $t_14 $t_13 8
-    $t_15 = add @last 2
-    @last = move $t_15
-    $t_16 = mul $i 8
-    $t_16 = add @sat $t_16
-    store 8 $t_16 $clause 8
-    jump %for_step_7
-
-%for_step_7:
-    $i = add $i 1
-    jump %for_cond_7
 
 }
 
 func _init {
 
 %_init.entry:
-    @sat = move 0
-    @assignment = move 0
-    @cond_ass = move 0
-    @k = move 0
-    @n = move 0
-    @m = move 0
-    @last = move 0
-    @myHash = move 0
+    @asciiTable = move @string
+    @MAXCHUNK = move 100
+    $t = sub @MAXCHUNK 1
+    $t_2 = mul $t 64
+    $t_3 = sub $t_2 16
+    @MAXLENGTH = move $t_3
+    $newaddress = mul @MAXCHUNK 8
+    $newaddress = add $newaddress 8
+    $newaddress = alloc $newaddress
+    store 8 $newaddress @MAXCHUNK 0
+    $myloopvariable = move 0
+    jump %for_cond_18
+
+%for_cond_18:
+    $t_4 = slt $myloopvariable @MAXCHUNK
+    br $t_4 %for_loop_18 %for_after_18
+
+%for_after_18:
+    @chunks = move $newaddress
+    $newaddress_2 = mul @MAXLENGTH 8
+    $newaddress_2 = add $newaddress_2 8
+    $newaddress_2 = alloc $newaddress_2
+    store 8 $newaddress_2 @MAXLENGTH 0
+    @inputBuffer = move $newaddress_2
+    $newaddress_3 = move 48
+    $newaddress_3 = alloc $newaddress_3
+    store 8 $newaddress_3 5 0
+    @outputBuffer = move $newaddress_3
     ret 0
+
+%for_loop_18:
+    $newaddress_4 = move 648
+    $newaddress_4 = alloc $newaddress_4
+    store 8 $newaddress_4 80 0
+    $t_5 = mul $myloopvariable 8
+    $t_5 = add $newaddress $t_5
+    store 8 $t_5 $newaddress_4 8
+    jump %for_step_18
+
+%for_step_18:
+    $myloopvariable = add $myloopvariable 1
+    jump %for_cond_18
 
 }
 

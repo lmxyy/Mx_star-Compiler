@@ -17,6 +17,7 @@ public class Function {
 
     private Set<BasicBlock> visited = null;
     private List<BasicBlock> reversePostOrder = null;
+    private List<BasicBlock> reversePreOrder = null;
 
     private String callName = null;
 
@@ -55,6 +56,23 @@ public class Function {
     public List<BasicBlock> getReversePostOrder() {
         if (reversePostOrder == null) calcReversePostOrder();
         return reversePostOrder;
+    }
+
+    private void dfsPreOrd(BasicBlock basicBlock) {
+        if (visited.contains(basicBlock)) return;
+        visited.add(basicBlock);
+        reversePreOrder.add(basicBlock);
+        basicBlock.getSucc().forEach(succ->dfsPreOrd(succ));
+    }
+    private void calcReversePreOrder() {
+        reversePreOrder = new ArrayList<>();
+        visited = new HashSet<>();
+        dfsPreOrd(startBasicBlock);
+        Collections.reverse(reversePreOrder);
+    }
+    public List<BasicBlock> getReversePreOrder() {
+        if (reversePreOrder == null) calcReversePreOrder();
+        return reversePreOrder;
     }
 
     public void setCallName(String _callName) {
