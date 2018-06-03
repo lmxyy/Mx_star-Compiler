@@ -66,17 +66,17 @@ public class Compiler {
         IRBuilder irBuilder = new IRBuilder(globalSymbolTable,irRoot);
 
         irBuilder.visit(ast);
-//        String irInfoPath = "/Users/limuyang/Desktop/Mx_star-Compiler/ir.txt";
-//        IRPrinter irPrinter = new IRPrinter(new PrintStream(irInfoPath));
-//        irPrinter.visit(irRoot);
+        String irInfoPath = "/Users/limuyang/Desktop/Mx_star-Compiler/ir.txt";
+        IRPrinter irPrinter = new IRPrinter(new PrintStream(irInfoPath));
+        irPrinter.visit(irRoot);
         new IRTransformer(irRoot).run();
         new GlobalVariableResolver(irRoot).run();
         new RegisterInjector(irRoot).run();
         new StupidAllocator(irRoot,NASMRegisterSet.general).run();
         new NASMIRTransformer(irRoot).run();
         String asmInfoPath = "/Users/limuyang/Desktop/Mx_star-Compiler/program.asm";
-//        NASMPrinter nasmPrinter = new NASMPrinter(new PrintStream(asmInfoPath));
-        NASMPrinter nasmPrinter = new NASMPrinter(new PrintStream(System.out));
+        NASMPrinter nasmPrinter = new NASMPrinter(new PrintStream(asmInfoPath));
+//        NASMPrinter nasmPrinter = new NASMPrinter(new PrintStream(System.out));
 
         nasmPrinter.visit(irRoot);
     }
