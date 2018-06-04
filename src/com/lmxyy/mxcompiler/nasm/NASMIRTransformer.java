@@ -97,6 +97,7 @@ public class NASMIRTransformer {
         // save caller-save register
         for (int i = 0; i < info.usedCallerSaveRegister.size(); ++i) {
             PhysicalRegister pr = info.usedCallerSaveRegister.get(i);
+            if (!pr.isCallerSave()&&IRRoot.isBuiltinFunction(callee)) continue;
             offsetMap.put(pr,(info.stackSlotNum + i) * wordSize);
             inst.prepend(new StoreInstruction(
                     basicBlock, NASMRegisterSet.RSP,
@@ -123,7 +124,7 @@ public class NASMIRTransformer {
                             inst.prepend(new MoveInstruction(basicBlock, val,NASMRegisterSet.RDI));
                         else inst.prepend(new LoadInstruction(
                                 basicBlock, NASMRegisterSet.RDI, wordSize,
-                                NASMRegisterSet.RSP, info.stackSlotOffset.get(val)
+                                NASMRegisterSet.RSP, offsetMap.get(val)
                         ));
                     }
                     else {
@@ -139,7 +140,7 @@ public class NASMIRTransformer {
                             inst.prepend(new MoveInstruction(basicBlock, val,NASMRegisterSet.RSI));
                         else inst.prepend(new LoadInstruction(
                                 basicBlock, NASMRegisterSet.RSI, wordSize,
-                                NASMRegisterSet.RSP, info.stackSlotOffset.get(val)
+                                NASMRegisterSet.RSP, offsetMap.get(val)
                         ));
                     }
                     else {
@@ -155,7 +156,7 @@ public class NASMIRTransformer {
                             inst.prepend(new MoveInstruction(basicBlock, val,NASMRegisterSet.RDX));
                         else inst.prepend(new LoadInstruction(
                                 basicBlock, NASMRegisterSet.RDX, wordSize,
-                                NASMRegisterSet.RSP, info.stackSlotOffset.get(val)
+                                NASMRegisterSet.RSP, offsetMap.get(val)
                         ));
                     }
                     else {
@@ -171,7 +172,7 @@ public class NASMIRTransformer {
                             inst.prepend(new MoveInstruction(basicBlock, val,NASMRegisterSet.RCX));
                         else inst.prepend(new LoadInstruction(
                                 basicBlock, NASMRegisterSet.RCX, wordSize,
-                                NASMRegisterSet.RSP, info.stackSlotOffset.get(val)
+                                NASMRegisterSet.RSP, offsetMap.get(val)
                         ));
                     }
                     else {
@@ -187,7 +188,7 @@ public class NASMIRTransformer {
                             inst.prepend(new MoveInstruction(basicBlock, val,NASMRegisterSet.R8));
                         else inst.prepend(new LoadInstruction(
                                 basicBlock, NASMRegisterSet.R8, wordSize,
-                                NASMRegisterSet.RSP, info.stackSlotOffset.get(val)
+                                NASMRegisterSet.RSP, offsetMap.get(val)
                         ));
                     }
                     else {
@@ -203,7 +204,7 @@ public class NASMIRTransformer {
                             inst.prepend(new MoveInstruction(basicBlock, val,NASMRegisterSet.R9));
                         else inst.prepend(new LoadInstruction(
                                 basicBlock, NASMRegisterSet.R9, wordSize,
-                                NASMRegisterSet.RSP, info.stackSlotOffset.get(val)
+                                NASMRegisterSet.RSP, offsetMap.get(val)
                         ));
                     }
                     else {
@@ -223,6 +224,7 @@ public class NASMIRTransformer {
         // reload caller save registers
         for (int i = 0; i < info.usedCallerSaveRegister.size(); ++i) {
             PhysicalRegister pr = info.usedCallerSaveRegister.get(i);
+            if (!pr.isCallerSave()&&IRRoot.isBuiltinFunction(callee)) continue;
             inst.append(new LoadInstruction(
                     basicBlock, pr, wordSize, NASMRegisterSet.RSP,
                     (info.stackSlotNum + i) * wordSize)
@@ -234,16 +236,49 @@ public class NASMIRTransformer {
         if (inst instanceof LoadInstruction) {
             if (((LoadInstruction) inst).getAddr() instanceof StackSlot) {
                 StackSlot slot = (StackSlot) ((LoadInstruction) inst).getAddr();
-                ((LoadInstruction) inst).setAddr(NASMRegisterSet.RBP);
-                ((LoadInstruction) inst).setOffset(-info.stackSlotOffset.get(slot));
+                ((LoadInstruction) inst).setAddr(NASMRegisterSet.RSP);
+                ((LoadInstruction) inst).setOffset(info.stackSlotOffset.get(slot));
             }
         }
         else if (inst instanceof StoreInstruction) {
             if (((StoreInstruction) inst).getAddr() instanceof StackSlot) {
                 StackSlot slot = (StackSlot) ((StoreInstruction) inst).getAddr();
-                ((StoreInstruction) inst).setAddr(NASMRegisterSet.RBP);
-                ((StoreInstruction) inst).setOffset(-info.stackSlotOffset.get(slot));
+                ((StoreInstruction) inst).setAddr(NASMRegisterSet.RSP);
+                ((StoreInstruction) inst).setOffset(info.stackSlotOffset.get(slot));
             }
+        }
+    }
+
+    private void modifyHeapAllocation(Function func,FunctionInfo info,BasicBlock basicBlock,HeapAllocateInstruction inst) {
+        Map<PhysicalRegister,Integer> offsetMap = new HashMap<>();
+        for (int i = 0; i < info.usedCallerSaveRegister.size(); ++i) {
+            PhysicalRegister pr = info.usedCallerSaveRegister.get(i);
+            if (!pr.isCallerSave()) continue;
+            offsetMap.put(pr,(info.stackSlotNum + i) * wordSize);
+            inst.prepend(new StoreInstruction(
+                    basicBlock, NASMRegisterSet.RSP,
+                    (info.stackSlotNum + i) * wordSize, wordSize, pr
+            ));
+        }
+
+        if (!(inst.getAllocSize() instanceof StackSlot)) {
+                inst.prepend(new MoveInstruction(basicBlock,inst.getAllocSize(),NASMRegisterSet.RDI));
+        }
+        else {
+            inst.prepend(new LoadInstruction(
+                    basicBlock, NASMRegisterSet.RDI, wordSize,
+                    NASMRegisterSet.RSP, info.stackSlotOffset.get(inst.getAllocSize())
+            ));
+        }
+        inst.append(new MoveInstruction(basicBlock,NASMRegisterSet.RAX,inst.getDest()));
+
+        for (int i = 0; i < info.usedCallerSaveRegister.size(); ++i) {
+            PhysicalRegister pr = info.usedCallerSaveRegister.get(i);
+            if (!pr.isCallerSave()) continue;
+            inst.append(new LoadInstruction(
+                    basicBlock, pr, wordSize, NASMRegisterSet.RSP,
+                    (info.stackSlotNum + i) * wordSize)
+            );
         }
     }
 
@@ -270,6 +305,8 @@ public class NASMIRTransformer {
                 for (IRInstruction inst = basicBlock.getHead(); inst != null; inst = inst.getNxt()) {
                     if (inst instanceof CallInstruction)
                         modifyCall(func, info, basicBlock, (CallInstruction) inst);
+                    if (inst instanceof HeapAllocateInstruction)
+                        modifyHeapAllocation(func,info,basicBlock,(HeapAllocateInstruction) inst);
                     modifyStackSlot(func, info, basicBlock, inst);
                     if (inst instanceof MoveInstruction)
                         removeSelfMove((MoveInstruction) inst);

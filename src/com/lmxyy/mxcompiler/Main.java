@@ -31,7 +31,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
-//         String inFile = "/Users/limuyang/Desktop/Mx_star-Compiler/testcase/559.mx", outFile = null;
+//         String inFile = "/Users/limuyang/Desktop/Mx_star-Compiler/testcase/558.mx", outFile = null;
         String inFile = null,outFile = null;
         boolean isPrintHelp = false, isPrintVersion = false, isPrintConfig = false;
         for (int i = 0; i < args.length; ++i) {
@@ -94,7 +94,7 @@ public class Main {
         }
 //        LLIRInterpreter llirInterpreter = new LLIRInterpreter(
 //                new FileInputStream("/Users/limuyang/Desktop/Mx_star-Compiler/ir.txt"),
-//                false
+//                falser
 //        );
 //        llirInterpreter.run();
 //        System.err.println("exitcode:  " + llirInterpreter.getExitcode());

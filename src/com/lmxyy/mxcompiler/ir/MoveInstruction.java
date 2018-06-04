@@ -3,13 +3,23 @@ package com.lmxyy.mxcompiler.ir;
 import java.util.Map;
 
 public class MoveInstruction extends IRInstruction {
-    IntValue source; Register dest;
+    private IntValue source;
+    private Register dest;
+    private boolean canRemove;
 
     public MoveInstruction(BasicBlock _curBasicBlock, IntValue _source, Register _dest) {
         super(_curBasicBlock);
         source = _source;
         dest = _dest;
         reloadUsedRegisterCollection();
+        canRemove = false;
+    }
+    public MoveInstruction(BasicBlock _curBasicBlock, IntValue _source, Register _dest,boolean _canRemove) {
+        super(_curBasicBlock);
+        source = _source;
+        dest = _dest;
+        reloadUsedRegisterCollection();
+        canRemove = _canRemove;
     }
 
     public IntValue getSource() {
@@ -17,6 +27,9 @@ public class MoveInstruction extends IRInstruction {
     }
     public Register getDest() {
         return dest;
+    }
+    public boolean isCanRemove() {
+        return canRemove;
     }
 
     @Override

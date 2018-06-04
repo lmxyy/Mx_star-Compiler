@@ -1,164 +1,621 @@
-space @a 8
-space @n 8
-asciiz @string  
-asciiz @string_2 \n
-
-func qsrt $l $r {
-
-%qsrt.entry:
-    $i = move $l
-    $j = move $r
-    $t = add $l $r
-    $t_2 = div $t 2
-    $t_3 = mul $t_2 8
-    $t_3 = add @a $t_3
-    $t_3 = load 8 $t_3 8
-    $x = move $t_3
-    jump %while_cond
-
-%while_cond:
-    $t_4 = sle $i $j
-    br $t_4 %while_loop %while_after
-
-%while_after:
-    $t_5 = slt $l $j
-    br $t_5 %if_true %if_after
-
-%if_true:
-    $t_6 = call qsrt $l $j 
-    jump %if_after
-
-%if_after:
-    $t_7 = slt $i $r
-    br $t_7 %if_true_2 %if_after_2
-
-%if_true_2:
-    $t_8 = call qsrt $i $r 
-    jump %if_after_2
-
-%if_after_2:
-    ret 0
-
-%while_loop:
-    jump %while_cond_2
-
-%while_cond_2:
-    $t_9 = mul $i 8
-    $t_9 = add @a $t_9
-    $t_9 = load 8 $t_9 8
-    $t_10 = slt $t_9 $x
-    br $t_10 %while_loop_2 %while_after_2
-
-%while_after_2:
-    jump %while_cond_3
-
-%while_cond_3:
-    $t_11 = mul $j 8
-    $t_11 = add @a $t_11
-    $t_11 = load 8 $t_11 8
-    $t_12 = sgt $t_11 $x
-    br $t_12 %while_loop_3 %while_after_3
-
-%while_after_3:
-    $t_13 = sle $i $j
-    br $t_13 %if_true_3 %if_after_3
-
-%if_true_3:
-    $t_14 = mul $i 8
-    $t_14 = add @a $t_14
-    $t_14 = load 8 $t_14 8
-    $temp = move $t_14
-    $t_15 = mul $j 8
-    $t_15 = add @a $t_15
-    $t_15 = load 8 $t_15 8
-    $t_16 = mul $i 8
-    $t_16 = add @a $t_16
-    store 8 $t_16 $t_15 8
-    $t_17 = mul $j 8
-    $t_17 = add @a $t_17
-    store 8 $t_17 $temp 8
-    $t_18 = move $i
-    $i = add $i 1
-    $t_19 = move $j
-    $j = sub $j 1
-    jump %if_after_3
-
-%if_after_3:
-    jump %while_cond
-
-%while_loop_3:
-    $t_20 = move $j
-    $j = sub $j 1
-    jump %while_cond_3
-
-%while_loop_2:
-    $t_21 = move $i
-    $i = add $i 1
-    jump %while_cond_2
-
-}
+space @N 8
+space @h 8
+space @i 8
+space @j 8
+space @k 8
+space @total 8
 
 func main {
 
 %main.entry:
     call _init 
-    $i = move 0
-    $i = move 1
+    $a = move 0
+    $b = move 0
+    $c = move 0
+    $d = move 0
+    $e = move 0
+    $f = move 0
+    $gottenint = call getInt 
+    @N = move $gottenint
+    $a = move 1
     jump %for_cond
 
 %for_cond:
-    $t = sle $i @n
+    $t = sle $a @N
     br $t %for_loop %for_after
 
 %for_after:
-    $t_2 = call qsrt 1 @n 
-    $i = move 1
-    jump %for_cond_2
-
-%for_cond_2:
-    $t_3 = sle $i @n
-    br $t_3 %for_loop_2 %for_after_2
-
-%for_loop_2:
-    $t_4 = mul $i 8
-    $t_4 = add @a $t_4
-    $t_4 = load 8 $t_4 8
-    call printint $t_4 
-    call print @string 
-    jump %for_step
-
-%for_step:
-    $t_5 = move $i
-    $i = add $i 1
-    jump %for_cond_2
-
-%for_after_2:
-    call print @string_2 
+    call printlnint @total 
     ret 0
 
 %for_loop:
-    $t_6 = add @n 1
-    $t_7 = sub $t_6 $i
-    $t_8 = mul $i 8
-    $t_8 = add @a $t_8
-    store 8 $t_8 $t_7 8
+    $b = move 1
+    jump %for_cond_2
+
+%for_cond_2:
+    $t_2 = sle $b @N
+    br $t_2 %for_loop_2 %for_after_2
+
+%for_after_2:
+    jump %for_step
+
+%for_step:
+    $t_3 = move $a
+    $a = add $a 1
+    jump %for_cond
+
+%for_loop_2:
+    $c = move 1
+    jump %for_cond_3
+
+%for_cond_3:
+    $t_4 = sle $c @N
+    br $t_4 %for_loop_3 %for_after_3
+
+%for_after_3:
     jump %for_step_2
 
 %for_step_2:
-    $t_9 = move $i
-    $i = add $i 1
-    jump %for_cond
+    $t_5 = move $b
+    $b = add $b 1
+    jump %for_cond_2
+
+%for_loop_3:
+    $d = move 1
+    jump %for_cond_4
+
+%for_cond_4:
+    $t_6 = sle $d @N
+    br $t_6 %for_loop_4 %for_after_4
+
+%for_after_4:
+    jump %for_step_3
+
+%for_step_3:
+    $t_7 = move $c
+    $c = add $c 1
+    jump %for_cond_3
+
+%for_loop_4:
+    $e = move 1
+    jump %for_cond_5
+
+%for_cond_5:
+    $t_8 = sle $e @N
+    br $t_8 %for_loop_5 %for_after_5
+
+%for_after_5:
+    jump %for_step_4
+
+%for_step_4:
+    $t_9 = move $d
+    $d = add $d 1
+    jump %for_cond_4
+
+%for_loop_5:
+    $f = move 1
+    jump %for_cond_6
+
+%for_cond_6:
+    $t_10 = sle $f @N
+    br $t_10 %for_loop_6 %for_after_6
+
+%for_loop_6:
+    $t_11 = sne $a $b
+    br $t_11 %lhs_true %lhs_false
+
+%lhs_true:
+    $t_12 = sne $a $c
+    $t_13 = move $t_12
+    jump %lhs_merge
+
+%lhs_false:
+    $t_13 = move 0
+    jump %lhs_merge
+
+%lhs_merge:
+    br $t_13 %lhs_true_2 %lhs_false_2
+
+%lhs_true_2:
+    $t_14 = sne $a $d
+    $t_15 = move $t_14
+    jump %lhs_merge_2
+
+%lhs_false_2:
+    $t_15 = move 0
+    jump %lhs_merge_2
+
+%lhs_merge_2:
+    br $t_15 %lhs_true_3 %lhs_false_3
+
+%lhs_false_3:
+    $t_16 = move 0
+    jump %lhs_merge_3
+
+%lhs_true_3:
+    $t_17 = sne $a $e
+    $t_16 = move $t_17
+    jump %lhs_merge_3
+
+%lhs_merge_3:
+    br $t_16 %lhs_true_4 %lhs_false_4
+
+%lhs_true_4:
+    $t_18 = sne $a $f
+    $t_19 = move $t_18
+    jump %lhs_merge_4
+
+%lhs_false_4:
+    $t_19 = move 0
+    jump %lhs_merge_4
+
+%lhs_merge_4:
+    br $t_19 %lhs_true_5 %lhs_false_5
+
+%lhs_true_5:
+    $t_20 = sne $a @h
+    $t_21 = move $t_20
+    jump %lhs_merge_5
+
+%lhs_false_5:
+    $t_21 = move 0
+    jump %lhs_merge_5
+
+%lhs_merge_5:
+    br $t_21 %lhs_true_6 %lhs_false_6
+
+%lhs_false_6:
+    $t_22 = move 0
+    jump %lhs_merge_6
+
+%lhs_true_6:
+    $t_23 = sne $a @i
+    $t_22 = move $t_23
+    jump %lhs_merge_6
+
+%lhs_merge_6:
+    br $t_22 %lhs_true_7 %lhs_false_7
+
+%lhs_true_7:
+    $t_24 = sne $a @j
+    $t_25 = move $t_24
+    jump %lhs_merge_7
+
+%lhs_false_7:
+    $t_25 = move 0
+    jump %lhs_merge_7
+
+%lhs_merge_7:
+    br $t_25 %lhs_true_8 %lhs_false_8
+
+%lhs_true_8:
+    $t_26 = sne $a @k
+    $t_27 = move $t_26
+    jump %lhs_merge_8
+
+%lhs_false_8:
+    $t_27 = move 0
+    jump %lhs_merge_8
+
+%lhs_merge_8:
+    br $t_27 %lhs_true_9 %lhs_false_9
+
+%lhs_true_9:
+    $t_28 = sne $b $c
+    $t_29 = move $t_28
+    jump %lhs_merge_9
+
+%lhs_false_9:
+    $t_29 = move 0
+    jump %lhs_merge_9
+
+%lhs_merge_9:
+    br $t_29 %lhs_true_10 %lhs_false_10
+
+%lhs_false_10:
+    $t_30 = move 0
+    jump %lhs_merge_10
+
+%lhs_true_10:
+    $t_31 = sne $b $d
+    $t_30 = move $t_31
+    jump %lhs_merge_10
+
+%lhs_merge_10:
+    br $t_30 %lhs_true_11 %lhs_false_11
+
+%lhs_true_11:
+    $t_32 = sne $b $e
+    $t_33 = move $t_32
+    jump %lhs_merge_11
+
+%lhs_false_11:
+    $t_33 = move 0
+    jump %lhs_merge_11
+
+%lhs_merge_11:
+    br $t_33 %lhs_true_12 %lhs_false_12
+
+%lhs_false_12:
+    $t_34 = move 0
+    jump %lhs_merge_12
+
+%lhs_true_12:
+    $t_35 = sne $b $f
+    $t_34 = move $t_35
+    jump %lhs_merge_12
+
+%lhs_merge_12:
+    br $t_34 %lhs_true_13 %lhs_false_13
+
+%lhs_true_13:
+    $t_36 = sne $b @h
+    $t_37 = move $t_36
+    jump %lhs_merge_13
+
+%lhs_false_13:
+    $t_37 = move 0
+    jump %lhs_merge_13
+
+%lhs_merge_13:
+    br $t_37 %lhs_true_14 %lhs_false_14
+
+%lhs_false_14:
+    $t_38 = move 0
+    jump %lhs_merge_14
+
+%lhs_true_14:
+    $t_39 = sne $b @i
+    $t_38 = move $t_39
+    jump %lhs_merge_14
+
+%lhs_merge_14:
+    br $t_38 %lhs_true_15 %lhs_false_15
+
+%lhs_false_15:
+    $t_40 = move 0
+    jump %lhs_merge_15
+
+%lhs_true_15:
+    $t_41 = sne $b @j
+    $t_40 = move $t_41
+    jump %lhs_merge_15
+
+%lhs_merge_15:
+    br $t_40 %lhs_true_16 %lhs_false_16
+
+%lhs_false_16:
+    $t_42 = move 0
+    jump %lhs_merge_16
+
+%lhs_true_16:
+    $t_43 = sne $b @k
+    $t_42 = move $t_43
+    jump %lhs_merge_16
+
+%lhs_merge_16:
+    br $t_42 %lhs_true_17 %lhs_false_17
+
+%lhs_true_17:
+    $t_44 = sne $c $d
+    $t_45 = move $t_44
+    jump %lhs_merge_17
+
+%lhs_false_17:
+    $t_45 = move 0
+    jump %lhs_merge_17
+
+%lhs_merge_17:
+    br $t_45 %lhs_true_18 %lhs_false_18
+
+%lhs_false_18:
+    $t_46 = move 0
+    jump %lhs_merge_18
+
+%lhs_true_18:
+    $t_47 = sne $c $e
+    $t_46 = move $t_47
+    jump %lhs_merge_18
+
+%lhs_merge_18:
+    br $t_46 %lhs_true_19 %lhs_false_19
+
+%lhs_false_19:
+    $t_48 = move 0
+    jump %lhs_merge_19
+
+%lhs_true_19:
+    $t_49 = sne $c $f
+    $t_48 = move $t_49
+    jump %lhs_merge_19
+
+%lhs_merge_19:
+    br $t_48 %lhs_true_20 %lhs_false_20
+
+%lhs_false_20:
+    $t_50 = move 0
+    jump %lhs_merge_20
+
+%lhs_true_20:
+    $t_51 = sne $c @h
+    $t_50 = move $t_51
+    jump %lhs_merge_20
+
+%lhs_merge_20:
+    br $t_50 %lhs_true_21 %lhs_false_21
+
+%lhs_false_21:
+    $t_52 = move 0
+    jump %lhs_merge_21
+
+%lhs_true_21:
+    $t_53 = sne $c @i
+    $t_52 = move $t_53
+    jump %lhs_merge_21
+
+%lhs_merge_21:
+    br $t_52 %lhs_true_22 %lhs_false_22
+
+%lhs_true_22:
+    $t_54 = sne $c @j
+    $t_55 = move $t_54
+    jump %lhs_merge_22
+
+%lhs_false_22:
+    $t_55 = move 0
+    jump %lhs_merge_22
+
+%lhs_merge_22:
+    br $t_55 %lhs_true_23 %lhs_false_23
+
+%lhs_false_23:
+    $t_56 = move 0
+    jump %lhs_merge_23
+
+%lhs_true_23:
+    $t_57 = sne $c @k
+    $t_56 = move $t_57
+    jump %lhs_merge_23
+
+%lhs_merge_23:
+    br $t_56 %lhs_true_24 %lhs_false_24
+
+%lhs_true_24:
+    $t_58 = sne $d $e
+    $t_59 = move $t_58
+    jump %lhs_merge_24
+
+%lhs_false_24:
+    $t_59 = move 0
+    jump %lhs_merge_24
+
+%lhs_merge_24:
+    br $t_59 %lhs_true_25 %lhs_false_25
+
+%lhs_true_25:
+    $t_60 = sne $d $f
+    $t_61 = move $t_60
+    jump %lhs_merge_25
+
+%lhs_false_25:
+    $t_61 = move 0
+    jump %lhs_merge_25
+
+%lhs_merge_25:
+    br $t_61 %lhs_true_26 %lhs_false_26
+
+%lhs_false_26:
+    $t_62 = move 0
+    jump %lhs_merge_26
+
+%lhs_true_26:
+    $t_63 = sne $d @h
+    $t_62 = move $t_63
+    jump %lhs_merge_26
+
+%lhs_merge_26:
+    br $t_62 %lhs_true_27 %lhs_false_27
+
+%lhs_false_27:
+    $t_64 = move 0
+    jump %lhs_merge_27
+
+%lhs_true_27:
+    $t_65 = sne $d @i
+    $t_64 = move $t_65
+    jump %lhs_merge_27
+
+%lhs_merge_27:
+    br $t_64 %lhs_true_28 %lhs_false_28
+
+%lhs_false_28:
+    $t_66 = move 0
+    jump %lhs_merge_28
+
+%lhs_true_28:
+    $t_67 = sne $d @j
+    $t_66 = move $t_67
+    jump %lhs_merge_28
+
+%lhs_merge_28:
+    br $t_66 %lhs_true_29 %lhs_false_29
+
+%lhs_false_29:
+    $t_68 = move 0
+    jump %lhs_merge_29
+
+%lhs_true_29:
+    $t_69 = sne $d @k
+    $t_68 = move $t_69
+    jump %lhs_merge_29
+
+%lhs_merge_29:
+    br $t_68 %lhs_true_30 %lhs_false_30
+
+%lhs_true_30:
+    $t_70 = sne $e $f
+    $t_71 = move $t_70
+    jump %lhs_merge_30
+
+%lhs_false_30:
+    $t_71 = move 0
+    jump %lhs_merge_30
+
+%lhs_merge_30:
+    br $t_71 %lhs_true_31 %lhs_false_31
+
+%lhs_true_31:
+    $t_72 = sne $e @h
+    $t_73 = move $t_72
+    jump %lhs_merge_31
+
+%lhs_false_31:
+    $t_73 = move 0
+    jump %lhs_merge_31
+
+%lhs_merge_31:
+    br $t_73 %lhs_true_32 %lhs_false_32
+
+%lhs_true_32:
+    $t_74 = sne $e @i
+    $t_75 = move $t_74
+    jump %lhs_merge_32
+
+%lhs_false_32:
+    $t_75 = move 0
+    jump %lhs_merge_32
+
+%lhs_merge_32:
+    br $t_75 %lhs_true_33 %lhs_false_33
+
+%lhs_false_33:
+    $t_76 = move 0
+    jump %lhs_merge_33
+
+%lhs_true_33:
+    $t_77 = sne $e @j
+    $t_76 = move $t_77
+    jump %lhs_merge_33
+
+%lhs_merge_33:
+    br $t_76 %lhs_true_34 %lhs_false_34
+
+%lhs_true_34:
+    $t_78 = sne $e @k
+    $t_79 = move $t_78
+    jump %lhs_merge_34
+
+%lhs_false_34:
+    $t_79 = move 0
+    jump %lhs_merge_34
+
+%lhs_merge_34:
+    br $t_79 %lhs_true_35 %lhs_false_35
+
+%lhs_true_35:
+    $t_80 = sne $f @h
+    $t_81 = move $t_80
+    jump %lhs_merge_35
+
+%lhs_false_35:
+    $t_81 = move 0
+    jump %lhs_merge_35
+
+%lhs_merge_35:
+    br $t_81 %lhs_true_36 %lhs_false_36
+
+%lhs_true_36:
+    $t_82 = sne $f @i
+    $t_83 = move $t_82
+    jump %lhs_merge_36
+
+%lhs_false_36:
+    $t_83 = move 0
+    jump %lhs_merge_36
+
+%lhs_merge_36:
+    br $t_83 %lhs_true_37 %lhs_false_37
+
+%lhs_false_37:
+    $t_84 = move 0
+    jump %lhs_merge_37
+
+%lhs_true_37:
+    $t_85 = sne $f @j
+    $t_84 = move $t_85
+    jump %lhs_merge_37
+
+%lhs_merge_37:
+    br $t_84 %lhs_true_38 %lhs_false_38
+
+%lhs_true_38:
+    $t_86 = sne $f @k
+    $t_87 = move $t_86
+    jump %lhs_merge_38
+
+%lhs_false_38:
+    $t_87 = move 0
+    jump %lhs_merge_38
+
+%lhs_merge_38:
+    br $t_87 %lhs_true_39 %lhs_false_39
+
+%lhs_false_39:
+    $t_88 = move 0
+    jump %lhs_merge_39
+
+%lhs_true_39:
+    $t_89 = sne @i @j
+    $t_88 = move $t_89
+    jump %lhs_merge_39
+
+%lhs_merge_39:
+    br $t_88 %lhs_true_40 %lhs_false_40
+
+%lhs_false_40:
+    $t_90 = move 0
+    jump %lhs_merge_40
+
+%lhs_true_40:
+    $t_91 = sne @h @k
+    $t_90 = move $t_91
+    jump %lhs_merge_40
+
+%lhs_merge_40:
+    br $t_90 %if_true %if_after
+
+%if_true:
+    $t_92 = move @total
+    @total = add @total 1
+    jump %if_after
+
+%if_after:
+    jump %for_step_5
+
+%for_step_5:
+    $t_93 = move $f
+    $f = add $f 1
+    jump %for_cond_6
+
+%for_after_6:
+    jump %for_step_6
+
+%for_step_6:
+    $t_94 = move $e
+    $e = add $e 1
+    jump %for_cond_5
 
 }
 
 func _init {
 
 %_init.entry:
-    $newaddress = move 80808
-    $newaddress = alloc $newaddress
-    store 8 $newaddress 10100 0
-    @a = move $newaddress
-    @n = move 10000
+    @N = move 0
+    @h = move 99
+    @i = move 100
+    @j = move 101
+    @k = move 102
+    @total = move 0
     ret 0
 
 }

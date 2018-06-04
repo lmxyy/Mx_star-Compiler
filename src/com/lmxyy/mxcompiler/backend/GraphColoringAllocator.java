@@ -123,7 +123,7 @@ public class GraphColoringAllocator extends RegisterAllocator {
                 if (!niInfo.deleted&&niInfo.color instanceof PhysicalRegister) {
                     usedColor.add((PhysicalRegister) niInfo.color);
                 }
-                if (!niInfo.deleted&&ni.forcedPhysicalRegister != null) {
+                if (ni.forcedPhysicalRegister != null) {
                     usedColor.add(ni.forcedPhysicalRegister);
                 }
             }
@@ -165,10 +165,7 @@ public class GraphColoringAllocator extends RegisterAllocator {
     private void rewrite() {
         for (BasicBlock basicBlock:curFunction.getReversePostOrder()) {
             for (IRInstruction inst = basicBlock.getHead();inst != null;inst = inst.getNxt()) {
-                if (inst instanceof HeapAllocateInstruction) {
-                    // do nothing here
-                }
-                else if (inst instanceof TwoAddressInstruction) {
+                if (inst instanceof TwoAddressInstruction) {
                     Collection<Register> used = inst.getUsedRegister();
                     used.forEach(reg -> renameMap.put(reg, reg));
                     boolean tmpPR1Used = false;
@@ -262,12 +259,16 @@ public class GraphColoringAllocator extends RegisterAllocator {
     }
 
     private void refresh() {
-        if (curFunction.usedPhysicalGeneralRegister.contains(NASMRegisterSet.RCX)) return;
+        boolean hasRCX = curFunction.usedPhysicalGeneralRegister.contains(NASMRegisterSet.RCX);
+        boolean hasRDX = curFunction.usedPhysicalGeneralRegister.contains(NASMRegisterSet.RDX);
         for (BasicBlock basicBlock:curFunction.getReversePostOrder()) {
             for (IRInstruction inst = basicBlock.getHead(); inst != null; inst = inst.getNxt()) {
                 if (inst instanceof MoveInstruction) {
-                    if (((MoveInstruction) inst).getDest() == NASMRegisterSet.RCX) inst.remove();
-                    else if (((MoveInstruction) inst).getSource() == NASMRegisterSet.RCX) inst.remove();
+                    if (((MoveInstruction) inst).isCanRemove() == false) continue;
+                    if (((MoveInstruction) inst).getDest() == NASMRegisterSet.RCX&&!hasRCX) inst.remove();
+                    else if (((MoveInstruction) inst).getSource() == NASMRegisterSet.RCX&&!hasRCX) inst.remove();
+                    else if (((MoveInstruction) inst).getDest() == NASMRegisterSet.RDX&&!hasRDX) inst.remove();
+                    else if (((MoveInstruction) inst).getSource() == NASMRegisterSet.RDX&&!hasRDX) inst.remove();
                 }
             }
         }

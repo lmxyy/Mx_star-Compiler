@@ -13,7 +13,7 @@ public class RegisterInjector {
 
     private void replaceFunctionArg(Function func) {
         IRInstruction first = func.startBasicBlock.getHead();
-        for (int i = 0;i < func.argRegList.size();++i) {
+        for (int i = 6;i < func.argRegList.size();++i) {
             VirtualRegister vr = func.argRegList.get(i);
             StackSlot sl = new StackSlot(func,"arg"+i);
 //            func.argStackSlopMap.put(vr,sl);
@@ -29,9 +29,9 @@ public class RegisterInjector {
 //                first.prepend(new MoveInstruction(func.startBasicBlock,NASMRegisterSet.R8,vr));
 //            if (i == 5)
 //                first.prepend(new MoveInstruction(func.startBasicBlock,NASMRegisterSet.R9,vr));
-            /*else */if (i > 5) {
+            /*else */
                 first.prepend(new LoadInstruction(func.startBasicBlock,vr,wordSize,sl,0));
-            }
+                func.argStackSlopMap.put(vr,sl);
         }
         if (func.argRegList.size() > 0) {
             func.argRegList.get(0).forcedPhysicalRegister = NASMRegisterSet.RDI;
@@ -53,30 +53,22 @@ public class RegisterInjector {
         }
     }
 
-    private void modifyHeapAllocation(Function func,BasicBlock basicBlock,HeapAllocateInstruction inst) {
-        if (func.argRegList.size() > 0)
-            inst.append(new StoreInstruction(
-                    basicBlock, func.argStackSlopMap.get(func.argRegList.get(0)),
-                    0,wordSize,NASMRegisterSet.RDI
-            ));
-        inst.prepend(new MoveInstruction(basicBlock, inst.getAllocSize(), NASMRegisterSet.RDI));
-        inst.append(new MoveInstruction(basicBlock, NASMRegisterSet.RAX, inst.getDest()));
-        if (func.argRegList.size() > 0)
-            // TODO There may be some bugs here.
-            inst.append(new LoadInstruction(basicBlock, NASMRegisterSet.RDI, wordSize,
-                    func.argStackSlopMap.get(func.argRegList.get(0)), 0
-            ));
-    }
+//    private void modifyHeapAllocation(Function func,BasicBlock basicBlock,HeapAllocateInstruction inst) {
+//        inst.prepend(new MoveInstruction(basicBlock,NASMRegisterSet.RDI,NASMRegisterSet.R11,true));
+//        inst.prepend(new MoveInstruction(basicBlock, inst.getAllocSize(), NASMRegisterSet.RDI));
+//        inst.append(new MoveInstruction(basicBlock, NASMRegisterSet.RAX,inst.getDest()));
+//        inst.append(new MoveInstruction(basicBlock,NASMRegisterSet.R11,NASMRegisterSet.RDI,true));
+//    }
 
     public void run() {
         irRoot.functions.values().forEach(func->replaceFunctionArg(func));
-        for (Function func:irRoot.functions.values()) {
-            for (BasicBlock basicBlock:func.getReversePostOrder()) {
-                for (IRInstruction inst = basicBlock.getHead();inst != null;inst = inst.getNxt()) {
-                    if (inst instanceof HeapAllocateInstruction)
-                        modifyHeapAllocation(func,basicBlock,(HeapAllocateInstruction) inst);
-                }
-            }
-        }
+//        for (Function func:irRoot.functions.values()) {
+//            for (BasicBlock basicBlock:func.getReversePostOrder()) {
+//                for (IRInstruction inst = basicBlock.getHead();inst != null;inst = inst.getNxt()) {
+//                    if (inst instanceof HeapAllocateInstruction)
+//                        modifyHeapAllocation(func,basicBlock,(HeapAllocateInstruction) inst);
+//                }
+//            }
+//        }
     }
 }
