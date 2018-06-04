@@ -1,35 +1,41 @@
-func qpow $a $p $mod {
+asciiz @string move 
+asciiz @string_2  --> 
+asciiz @string_3 A
+asciiz @string_4 B
+asciiz @string_5 C
 
-%qpow.entry:
-    $t = move 1
-    $y = move $a
-    jump %while_cond
+func cd $d $a $b $c $sum {
 
-%while_cond:
-    $t_2 = sgt $p 0
-    br $t_2 %while_loop %while_after
-
-%while_after:
-    ret $t
-
-%while_loop:
-    $t_3 = and $p 1
-    $t_4 = seq $t_3 1
-    br $t_4 %if_true %if_after
+%cd.entry:
+    $t = seq $d 1
+    br $t %if_true %if_false
 
 %if_true:
-    $t_5 = mul $t $y
-    $t_6 = rem $t_5 $mod
-    $t = move $t_6
+    call print @string 
+    call print $a 
+    call print @string_2 
+    call println $c 
+    $t_2 = move $sum
+    $sum = add $sum 1
+    jump %if_after
+
+%if_false:
+    $t_3 = sub $d 1
+    $t_4 = call cd $t_3 $a $c $b $sum 
+    $sum = move $t_4
+    call print @string 
+    call print $a 
+    call print @string_2 
+    call println $c 
+    $t_5 = sub $d 1
+    $t_6 = call cd $t_5 $b $a $c $sum 
+    $sum = move $t_6
+    $t_7 = move $sum
+    $sum = add $sum 1
     jump %if_after
 
 %if_after:
-    $t_7 = mul $y $y
-    $t_8 = rem $t_7 $mod
-    $y = move $t_8
-    $t_9 = div $p 2
-    $p = move $t_9
-    jump %while_cond
+    ret $sum
 
 }
 
@@ -37,8 +43,14 @@ func main {
 
 %main.entry:
     call _init 
-    $t = call qpow 2 10 10000 
-    call printlnint $t 
+    $a = move @string_3
+    $b = move @string_4
+    $c = move @string_5
+    $gottenint = call getInt 
+    $d = move $gottenint
+    $t = call cd $d $a $b $c 0 
+    $sum = move $t
+    call printlnint $sum 
     ret 0
 
 }

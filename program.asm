@@ -3,95 +3,271 @@ global main
 extern malloc
 section .text
 
-___qpow:
-___qpow..qpow.entry:
+___cd:
+___cd..cd.entry:
 	push rbp
 	mov rbp,rsp
 	sub rsp,64
-	mov r13,1
-	jmp ___qpow..while_cond
-___qpow..while_cond:
-	cmp rsi,0
-	mov r12,0
-	setg r12b
-	cmp r12b,1
-	jz ___qpow..while_loop
-	jnz ___qpow..while_after
-___qpow..while_after:
-	mov rax,r13
+	mov r13,___string
+	mov r12,___string_2
+	cmp rdi,1
+	mov r9,0
+	sete r9b
+	cmp r9b,1
+	jz ___cd..if_true
+	jnz ___cd..if_false
+___cd..if_true:
+	mov qword [rsp],rcx
+	mov qword [rsp+16],rdx
+	mov qword [rsp+24],r9
+	mov qword [rsp+32],r8
+	mov qword [rsp+48],rdi
+	mov qword [rsp+56],rsi
+	mov rdi,r12
+	call _Z5printPc
+	mov rsi,qword [rsp+56]
+	mov rdi,qword [rsp+48]
+	mov r8,qword [rsp+32]
+	mov r9,qword [rsp+24]
+	mov rdx,qword [rsp+16]
+	mov rcx,qword [rsp]
+	mov qword [rsp],rcx
+	mov qword [rsp+16],rdx
+	mov qword [rsp+24],r9
+	mov qword [rsp+32],r8
+	mov qword [rsp+48],rdi
+	mov qword [rsp+56],rsi
+	mov rdi,qword [rsp+56]
+	call _Z5printPc
+	mov rsi,qword [rsp+56]
+	mov rdi,qword [rsp+48]
+	mov r8,qword [rsp+32]
+	mov r9,qword [rsp+24]
+	mov rdx,qword [rsp+16]
+	mov rcx,qword [rsp]
+	mov qword [rsp],rcx
+	mov qword [rsp+16],rdx
+	mov qword [rsp+24],r9
+	mov qword [rsp+32],r8
+	mov qword [rsp+48],rdi
+	mov qword [rsp+56],rsi
+	mov rdi,r13
+	call _Z5printPc
+	mov rsi,qword [rsp+56]
+	mov rdi,qword [rsp+48]
+	mov r8,qword [rsp+32]
+	mov r9,qword [rsp+24]
+	mov rdx,qword [rsp+16]
+	mov rcx,qword [rsp]
+	mov qword [rsp],rcx
+	mov qword [rsp+16],rdx
+	mov qword [rsp+24],r9
+	mov qword [rsp+32],r8
+	mov qword [rsp+48],rdi
+	mov qword [rsp+56],rsi
+	mov rdi,qword [rsp]
+	call _Z7printlnPc
+	mov rsi,qword [rsp+56]
+	mov rdi,qword [rsp+48]
+	mov r8,qword [rsp+32]
+	mov r9,qword [rsp+24]
+	mov rdx,qword [rsp+16]
+	mov rcx,qword [rsp]
+	mov rcx,r8
+	add r8,1
+	jmp ___cd..if_after
+___cd..if_false:
+	mov r12,rdi
+	sub r12,1
+	mov qword [rsp],rcx
+	mov qword [rsp+8],r12
+	mov qword [rsp+16],rdx
+	mov qword [rsp+24],r9
+	mov qword [rsp+32],r8
+	mov qword [rsp+40],r13
+	mov qword [rsp+48],rdi
+	mov qword [rsp+56],rsi
+	mov r8,qword [rsp+32]
+	mov rcx,qword [rsp+16]
+	mov rdx,qword [rsp]
+	mov rsi,qword [rsp+56]
+	mov rdi,r12
+	call ___cd
+	mov rsi,qword [rsp+56]
+	mov rdi,qword [rsp+48]
+	mov r13,qword [rsp+40]
+	mov r8,qword [rsp+32]
+	mov r9,qword [rsp+24]
+	mov rdx,qword [rsp+16]
+	mov r12,qword [rsp+8]
+	mov rcx,qword [rsp]
+	mov r8,rax
+	mov r12,___string_2
+	mov r13,___string
+	mov qword [rsp],rcx
+	mov qword [rsp+16],rdx
+	mov qword [rsp+24],r9
+	mov qword [rsp+32],r8
+	mov qword [rsp+48],rdi
+	mov qword [rsp+56],rsi
+	mov rdi,r12
+	call _Z5printPc
+	mov rsi,qword [rsp+56]
+	mov rdi,qword [rsp+48]
+	mov r8,qword [rsp+32]
+	mov r9,qword [rsp+24]
+	mov rdx,qword [rsp+16]
+	mov rcx,qword [rsp]
+	mov qword [rsp],rcx
+	mov qword [rsp+16],rdx
+	mov qword [rsp+24],r9
+	mov qword [rsp+32],r8
+	mov qword [rsp+48],rdi
+	mov qword [rsp+56],rsi
+	mov rdi,qword [rsp+56]
+	call _Z5printPc
+	mov rsi,qword [rsp+56]
+	mov rdi,qword [rsp+48]
+	mov r8,qword [rsp+32]
+	mov r9,qword [rsp+24]
+	mov rdx,qword [rsp+16]
+	mov rcx,qword [rsp]
+	mov qword [rsp],rcx
+	mov qword [rsp+16],rdx
+	mov qword [rsp+24],r9
+	mov qword [rsp+32],r8
+	mov qword [rsp+48],rdi
+	mov qword [rsp+56],rsi
+	mov rdi,r13
+	call _Z5printPc
+	mov rsi,qword [rsp+56]
+	mov rdi,qword [rsp+48]
+	mov r8,qword [rsp+32]
+	mov r9,qword [rsp+24]
+	mov rdx,qword [rsp+16]
+	mov rcx,qword [rsp]
+	mov qword [rsp],rcx
+	mov qword [rsp+16],rdx
+	mov qword [rsp+24],r9
+	mov qword [rsp+32],r8
+	mov qword [rsp+48],rdi
+	mov qword [rsp+56],rsi
+	mov rdi,qword [rsp]
+	call _Z7printlnPc
+	mov rsi,qword [rsp+56]
+	mov rdi,qword [rsp+48]
+	mov r8,qword [rsp+32]
+	mov r9,qword [rsp+24]
+	mov rdx,qword [rsp+16]
+	mov rcx,qword [rsp]
+	sub rdi,1
+	mov qword [rsp],rcx
+	mov qword [rsp+8],r12
+	mov qword [rsp+16],rdx
+	mov qword [rsp+24],r9
+	mov qword [rsp+32],r8
+	mov qword [rsp+40],r13
+	mov qword [rsp+48],rdi
+	mov qword [rsp+56],rsi
+	mov r8,qword [rsp+32]
+	mov rcx,qword [rsp]
+	mov rdx,qword [rsp+56]
+	mov rsi,qword [rsp+16]
+	mov rdi,qword [rsp+48]
+	call ___cd
+	mov rsi,qword [rsp+56]
+	mov rdi,qword [rsp+48]
+	mov r13,qword [rsp+40]
+	mov r8,qword [rsp+32]
+	mov r9,qword [rsp+24]
+	mov rdx,qword [rsp+16]
+	mov r12,qword [rsp+8]
+	mov rcx,qword [rsp]
+	mov rcx,rax
+	mov r12,___string_2
+	mov r13,___string
+	mov r8,rcx
+	mov rcx,r8
+	add r8,1
+	jmp ___cd..if_after
+___cd..if_after:
+	mov rax,r8
 	leave
 	ret
-___qpow..while_loop:
-	mov r12,rsi
-	and r12,1
-	cmp r12,1
-	mov r12,0
-	sete r12b
-	cmp r12b,1
-	jz ___qpow..if_true
-	jnz ___qpow..if_after
-___qpow..if_true:
-	mov r13,r13
-	imul r13,rdi
-	mov rax,r13
-	mov r11,rdx
-	cqo
-	idiv r11
-	mov r9,rdx
-	mov rdx,r11
-	mov r13,r9
-	jmp ___qpow..if_after
-___qpow..if_after:
-	mov r12,rdi
-	imul r12,rdi
-	mov rax,r12
-	mov r11,rdx
-	cqo
-	idiv r11
-	mov rcx,rdx
-	mov rdx,r11
-	mov rdi,rcx
-	mov rax,rsi
-	mov r11,rdx
-	cqo
-	mov rsi,2
-	idiv rsi
-	mov r14,rax
-	mov rdx,r11
-	mov rsi,r14
-	jmp ___qpow..while_cond
 
 main:
 main..main.entry:
 	push rbp
 	mov rbp,rsp
-	sub rsp,32
-	mov qword [rsp],rsi
-	mov qword [rsp+8],rdx
-	mov qword [rsp+16],rdi
+	sub rsp,64
+	mov rcx,___string_3
+	mov r9,___string_4
+	mov rdx,___string_5
+	mov qword [rsp],rcx
+	mov qword [rsp+8],r12
+	mov qword [rsp+16],rdx
+	mov qword [rsp+24],r9
+	mov qword [rsp+32],r8
+	mov qword [rsp+40],rdi
+	mov qword [rsp+48],rsi
 	call ____init
-	mov rdi,qword [rsp+16]
-	mov rdx,qword [rsp+8]
-	mov rsi,qword [rsp]
-	mov qword [rsp],rsi
-	mov qword [rsp+8],rdx
-	mov qword [rsp+16],rdi
-	mov rdx,10000
-	mov rsi,10
-	mov rdi,2
-	call ___qpow
-	mov rdi,qword [rsp+16]
-	mov rdx,qword [rsp+8]
-	mov rsi,qword [rsp]
-	mov rsi,rax
-	mov qword [rsp],rsi
-	mov qword [rsp+8],rdx
-	mov qword [rsp+16],rdi
+	mov rsi,qword [rsp+48]
+	mov rdi,qword [rsp+40]
+	mov r8,qword [rsp+32]
+	mov r9,qword [rsp+24]
+	mov rdx,qword [rsp+16]
+	mov r12,qword [rsp+8]
+	mov rcx,qword [rsp]
+	mov r12,rcx
+	mov qword [rsp],rcx
+	mov qword [rsp+16],rdx
+	mov qword [rsp+24],r9
+	mov qword [rsp+32],r8
+	mov qword [rsp+40],rdi
+	mov qword [rsp+48],rsi
+	call _Z6getIntv
+	mov rsi,qword [rsp+48]
+	mov rdi,qword [rsp+40]
+	mov r8,qword [rsp+32]
+	mov r9,qword [rsp+24]
+	mov rdx,qword [rsp+16]
+	mov rcx,qword [rsp]
+	mov rcx,rax
+	mov qword [rsp],rcx
+	mov qword [rsp+8],r12
+	mov qword [rsp+16],rdx
+	mov qword [rsp+24],r9
+	mov qword [rsp+32],r8
+	mov qword [rsp+40],rdi
+	mov qword [rsp+48],rsi
+	mov r8,0
+	mov rcx,qword [rsp+24]
+	mov rdx,r12
+	mov rsi,qword [rsp+16]
+	mov rdi,qword [rsp]
+	call ___cd
+	mov rsi,qword [rsp+48]
+	mov rdi,qword [rsp+40]
+	mov r8,qword [rsp+32]
+	mov r9,qword [rsp+24]
+	mov rdx,qword [rsp+16]
+	mov r12,qword [rsp+8]
+	mov rcx,qword [rsp]
+	mov rcx,rax
+	mov qword [rsp],rcx
+	mov qword [rsp+16],rdx
+	mov qword [rsp+24],r9
+	mov qword [rsp+32],r8
+	mov qword [rsp+40],rdi
+	mov qword [rsp+48],rsi
 	mov rdi,qword [rsp]
 	call _Z10printlnInti
-	mov rdi,qword [rsp+16]
-	mov rdx,qword [rsp+8]
-	mov rsi,qword [rsp]
+	mov rsi,qword [rsp+48]
+	mov rdi,qword [rsp+40]
+	mov r8,qword [rsp+32]
+	mov r9,qword [rsp+24]
+	mov rdx,qword [rsp+16]
+	mov rcx,qword [rsp]
 	mov rax,0
 	leave
 	ret
@@ -100,11 +276,21 @@ ____init:
 ____init.._init.entry:
 	push rbp
 	mov rbp,rsp
-	sub rsp,32
+	sub rsp,48
 	leave
 	ret
 
 	section .data
+___string_2:
+	db 5,0,0,0,0,0,0,0,109,111,118,101,32,0
+___string:
+	db 5,0,0,0,0,0,0,0,32,45,45,62,32,0
+___string_5:
+	db 1,0,0,0,0,0,0,0,65,0
+___string_3:
+	db 1,0,0,0,0,0,0,0,66,0
+___string_4:
+	db 1,0,0,0,0,0,0,0,67,0
 
 section .bss
 
