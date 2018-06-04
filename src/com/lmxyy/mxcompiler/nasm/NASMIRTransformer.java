@@ -29,7 +29,7 @@ public class NASMIRTransformer {
         infoMap.put(func, info);
 
         for (PhysicalRegister pr:func.usedPhysicalGeneralRegister) {
-            if (pr.isCallerSave()) info.usedCallerSaveRegister.add(pr);
+            /*if (pr.isCallerSave()) */info.usedCallerSaveRegister.add(pr);
             if (pr.isCalleeSave()) info.usedCalleeSaveRegister.add(pr);
         }
 

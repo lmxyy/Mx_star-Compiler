@@ -7,7 +7,7 @@ ___qsrt:
 ___qsrt..qsrt.entry:
 	push rbp
 	mov rbp,rsp
-	sub rsp,64
+	sub rsp,96
 	mov r10,rdi
 	mov qword [rbp-8],r10
 	mov r10,rsi
@@ -47,13 +47,21 @@ ___qsrt..while_after:
 	jz ___qsrt..if_true
 	jnz ___qsrt..if_after
 ___qsrt..if_true:
-	mov qword [rbp-48],r10
-	mov qword [rbp-56],r11
+	mov qword [rbp-48],r14
+	mov qword [rbp-56],r10
+	mov qword [rbp-64],r13
+	mov qword [rbp-72],r12
+	mov qword [rbp-80],r11
+	mov qword [rbp-88],r15
 	mov rsi,r12
 	mov rdi,qword [rbp-8]
 	call ___qsrt
-	mov r11,qword [rbp-56]
-	mov r10,qword [rbp-48]
+	mov r15,qword [rbp-88]
+	mov r11,qword [rbp-80]
+	mov r12,qword [rbp-72]
+	mov r13,qword [rbp-64]
+	mov r10,qword [rbp-56]
+	mov r14,qword [rbp-48]
 	mov r14,rax
 	mov r13,qword [___a]
 	jmp ___qsrt..if_after
@@ -67,13 +75,21 @@ ___qsrt..if_after:
 	jz ___qsrt..if_true_2
 	jnz ___qsrt..if_after_2
 ___qsrt..if_true_2:
-	mov qword [rbp-48],r10
-	mov qword [rbp-56],r11
+	mov qword [rbp-48],r14
+	mov qword [rbp-56],r10
+	mov qword [rbp-64],r13
+	mov qword [rbp-72],r12
+	mov qword [rbp-80],r11
+	mov qword [rbp-88],r15
 	mov rsi,qword [rbp-32]
 	mov rdi,qword [rbp-24]
 	call ___qsrt
-	mov r11,qword [rbp-56]
-	mov r10,qword [rbp-48]
+	mov r15,qword [rbp-88]
+	mov r11,qword [rbp-80]
+	mov r12,qword [rbp-72]
+	mov r13,qword [rbp-64]
+	mov r10,qword [rbp-56]
+	mov r14,qword [rbp-48]
 	mov r14,rax
 	mov r13,qword [___a]
 	jmp ___qsrt..if_after_2
@@ -169,17 +185,25 @@ main:
 main..main.entry:
 	push rbp
 	mov rbp,rsp
-	sub rsp,48
+	sub rsp,80
 	mov r13,qword [___n]
 	mov r15,qword [___a]
 	mov r14,___string
 	mov r10,___string_2
 	mov qword [rbp-16],r10
-	mov qword [rbp-32],r10
-	mov qword [rbp-40],r11
+	mov qword [rbp-32],r14
+	mov qword [rbp-40],r10
+	mov qword [rbp-48],r13
+	mov qword [rbp-56],r12
+	mov qword [rbp-64],r11
+	mov qword [rbp-72],r15
 	call ____init
-	mov r11,qword [rbp-40]
-	mov r10,qword [rbp-32]
+	mov r15,qword [rbp-72]
+	mov r11,qword [rbp-64]
+	mov r12,qword [rbp-56]
+	mov r13,qword [rbp-48]
+	mov r10,qword [rbp-40]
+	mov r14,qword [rbp-32]
 	mov r15,qword [___a]
 	mov r13,qword [___n]
 	mov r10,0
@@ -196,13 +220,21 @@ main..for_cond:
 	jz main..for_loop
 	jnz main..for_after
 main..for_after:
-	mov qword [rbp-32],r10
-	mov qword [rbp-40],r11
+	mov qword [rbp-32],r14
+	mov qword [rbp-40],r10
+	mov qword [rbp-48],r13
+	mov qword [rbp-56],r12
+	mov qword [rbp-64],r11
+	mov qword [rbp-72],r15
 	mov rsi,r13
 	mov rdi,1
 	call ___qsrt
-	mov r11,qword [rbp-40]
-	mov r10,qword [rbp-32]
+	mov r15,qword [rbp-72]
+	mov r11,qword [rbp-64]
+	mov r12,qword [rbp-56]
+	mov r13,qword [rbp-48]
+	mov r10,qword [rbp-40]
+	mov r14,qword [rbp-32]
 	mov r12,rax
 	mov r15,qword [___a]
 	mov r10,1
@@ -222,18 +254,34 @@ main..for_loop_2:
 	imul r12,8
 	add r12,r15
 	mov r12,qword [r12+8]
-	mov qword [rbp-32],r10
-	mov qword [rbp-40],r11
+	mov qword [rbp-32],r14
+	mov qword [rbp-40],r10
+	mov qword [rbp-48],r13
+	mov qword [rbp-56],r12
+	mov qword [rbp-64],r11
+	mov qword [rbp-72],r15
 	mov rdi,r12
 	call _Z8printInti
-	mov r11,qword [rbp-40]
-	mov r10,qword [rbp-32]
-	mov qword [rbp-32],r10
-	mov qword [rbp-40],r11
+	mov r15,qword [rbp-72]
+	mov r11,qword [rbp-64]
+	mov r12,qword [rbp-56]
+	mov r13,qword [rbp-48]
+	mov r10,qword [rbp-40]
+	mov r14,qword [rbp-32]
+	mov qword [rbp-32],r14
+	mov qword [rbp-40],r10
+	mov qword [rbp-48],r13
+	mov qword [rbp-56],r12
+	mov qword [rbp-64],r11
+	mov qword [rbp-72],r15
 	mov rdi,r14
 	call _Z5printPc
-	mov r11,qword [rbp-40]
-	mov r10,qword [rbp-32]
+	mov r15,qword [rbp-72]
+	mov r11,qword [rbp-64]
+	mov r12,qword [rbp-56]
+	mov r13,qword [rbp-48]
+	mov r10,qword [rbp-40]
+	mov r14,qword [rbp-32]
 	jmp main..for_step
 main..for_step:
 	mov r10,qword [rbp-24]
@@ -243,12 +291,20 @@ main..for_step:
 	mov qword [rbp-24],r11
 	jmp main..for_cond_2
 main..for_after_2:
-	mov qword [rbp-32],r10
-	mov qword [rbp-40],r11
+	mov qword [rbp-32],r14
+	mov qword [rbp-40],r10
+	mov qword [rbp-48],r13
+	mov qword [rbp-56],r12
+	mov qword [rbp-64],r11
+	mov qword [rbp-72],r15
 	mov rdi,qword [rbp-16]
 	call _Z5printPc
-	mov r11,qword [rbp-40]
-	mov r10,qword [rbp-32]
+	mov r15,qword [rbp-72]
+	mov r11,qword [rbp-64]
+	mov r12,qword [rbp-56]
+	mov r13,qword [rbp-48]
+	mov r10,qword [rbp-40]
+	mov r14,qword [rbp-32]
 	mov rax,0
 	leave
 	ret
@@ -280,7 +336,7 @@ ____init:
 ____init.._init.entry:
 	push rbp
 	mov rbp,rsp
-	sub rsp,0
+	sub rsp,16
 	mov r14,qword [___n]
 	mov r12,qword [___a]
 	mov r14,80808
@@ -289,7 +345,7 @@ ____init.._init.entry:
 	mov r14,rax
 	mov qword [r14],10100
 	mov r12,r14
-	mov r14,1
+	mov r14,10000
 	mov qword [___n],r14
 	mov qword [___a],r12
 	leave
