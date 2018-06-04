@@ -6,6 +6,7 @@ public class MoveInstruction extends IRInstruction {
     private IntValue source;
     private Register dest;
     private boolean canRemove;
+    private MoveInstruction parentInst = null;
 
     public MoveInstruction(BasicBlock _curBasicBlock, IntValue _source, Register _dest) {
         super(_curBasicBlock);
@@ -21,6 +22,14 @@ public class MoveInstruction extends IRInstruction {
         reloadUsedRegisterCollection();
         canRemove = _canRemove;
     }
+    public MoveInstruction(BasicBlock _curBasicBlock, IntValue _source, Register _dest,boolean _canRemove,MoveInstruction _parentInst) {
+        super(_curBasicBlock);
+        source = _source;
+        dest = _dest;
+        reloadUsedRegisterCollection();
+        canRemove = _canRemove;
+        parentInst = _parentInst;
+    }
 
     public IntValue getSource() {
         return source;
@@ -30,6 +39,10 @@ public class MoveInstruction extends IRInstruction {
     }
     public boolean isCanRemove() {
         return canRemove;
+    }
+
+    public MoveInstruction getParentInst() {
+        return parentInst;
     }
 
     @Override

@@ -126,6 +126,7 @@ public class BasicBlock {
             if (instruction instanceof BinaryOperationInstruction) {
                 IntValue lhs = ((BinaryOperationInstruction) instruction).getLhs(),
                         rhs = ((BinaryOperationInstruction) instruction).getRhs();
+                MoveInstruction parent = null;
                 switch (((BinaryOperationInstruction) instruction).getOperator()) {
                     case DIV:
                         append(new MoveInstruction(
@@ -151,11 +152,11 @@ public class BasicBlock {
                             );
                         }
                         append(new MoveInstruction(
-                                this, NASMRegisterSet.RAX,
-                                ((BinaryOperationInstruction) instruction).getDest()
+                                this, NASMRegisterSet.R11,NASMRegisterSet.RDX,true
                         ));
                         append(new MoveInstruction(
-                                this, NASMRegisterSet.R11,NASMRegisterSet.RDX,true
+                                this, NASMRegisterSet.RAX,
+                                ((BinaryOperationInstruction) instruction).getDest()
                         ));
                         break;
                     case MOD:
@@ -181,12 +182,13 @@ public class BasicBlock {
                                     ((BinaryOperationInstruction) instruction).getRhs())
                             );
                         }
-                        append(new MoveInstruction(
+                        append(parent = new MoveInstruction(
                                 this, NASMRegisterSet.RDX,
                                 ((BinaryOperationInstruction) instruction).getDest()
                         ));
+
                         append(new MoveInstruction(
-                                this, NASMRegisterSet.R11,NASMRegisterSet.RDX,true
+                                this, NASMRegisterSet.R11,NASMRegisterSet.RDX,true,parent
                         ));
                         break;
                     case LEQ:
@@ -280,10 +282,16 @@ public class BasicBlock {
                         else {
                             append(new MoveInstruction(this,NASMRegisterSet.RCX,NASMRegisterSet.R11,true));
                             append(new MoveInstruction(this,rhs,NASMRegisterSet.RCX));
+                            append(new MoveInstruction(this,lhs,NASMRegisterSet.RAX));
+
                             append(new TwoAddressInstruction(
                                     this, ((BinaryOperationInstruction) instruction).getOperator(),
-                                    ((BinaryOperationInstruction) instruction).getDest(), NASMRegisterSet.RCX));
-                            append(new MoveInstruction(this,NASMRegisterSet.R11,NASMRegisterSet.RCX,true));
+                                    NASMRegisterSet.RAX, NASMRegisterSet.RCX
+                            ));
+                            append(parent = new MoveInstruction(this,NASMRegisterSet.RAX,
+                                    ((BinaryOperationInstruction) instruction).getDest(),true
+                            ));
+                            append(new MoveInstruction(this,NASMRegisterSet.R11,NASMRegisterSet.RCX,true,parent));
                         }
                         break;
                     default:

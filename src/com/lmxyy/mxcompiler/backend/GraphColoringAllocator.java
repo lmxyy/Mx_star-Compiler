@@ -272,11 +272,16 @@ public class GraphColoringAllocator extends RegisterAllocator {
         for (BasicBlock basicBlock:curFunction.getReversePostOrder()) {
             for (IRInstruction inst = basicBlock.getHead(); inst != null; inst = inst.getNxt()) {
                 if (inst instanceof MoveInstruction) {
-                    if (((MoveInstruction) inst).isCanRemove() == false) continue;
-                    if (((MoveInstruction) inst).getDest() == NASMRegisterSet.RCX&&!hasRCX) inst.remove();
-                    else if (((MoveInstruction) inst).getSource() == NASMRegisterSet.RCX&&!hasRCX) inst.remove();
-                    else if (((MoveInstruction) inst).getDest() == NASMRegisterSet.RDX&&!hasRDX) inst.remove();
-                    else if (((MoveInstruction) inst).getSource() == NASMRegisterSet.RDX&&!hasRDX) inst.remove();
+                    MoveInstruction move = (MoveInstruction) inst;
+                    if (move.isCanRemove() == false) continue;
+                    if ((move.getDest() == NASMRegisterSet.RCX&&!hasRCX)) inst.remove();
+                    else if (move.getSource() == NASMRegisterSet.RCX&&!hasRCX) inst.remove();
+                    else if (move.getDest() == NASMRegisterSet.RDX&&!hasRDX) inst.remove();
+                    else if (move.getSource() == NASMRegisterSet.RDX&&!hasRDX) inst.remove();
+                    else if (move.getParentInst() != null) {
+                        if (move.getParentInst().getDest() == move.getDest())
+                            inst.remove();
+                    }
                 }
             }
         }
