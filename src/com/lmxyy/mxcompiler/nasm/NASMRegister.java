@@ -10,6 +10,7 @@ public class NASMRegister extends PhysicalRegister {
     private final boolean isGeneral;
     private final boolean isCallerSave;
     private final boolean isCalleeSave;
+    private final boolean isFunArg;
     private boolean flag = false;
 
     public NASMRegister(int _id,String _name,String _name_8,boolean _isGeneral,boolean _isCallerSave,boolean _isCalleeSave) {
@@ -19,6 +20,16 @@ public class NASMRegister extends PhysicalRegister {
         isGeneral = _isGeneral;
         isCallerSave = _isCallerSave;
         isCalleeSave = _isCalleeSave;
+        isFunArg = false;
+    }
+    public NASMRegister(int _id,String _name,String _name_8,boolean _isGeneral,boolean _isCallerSave,boolean _isCalleeSave,boolean _isFunArg) {
+        id = _id;
+        name = _name;
+        name_8 = _name_8;
+        isGeneral = _isGeneral;
+        isCallerSave = _isCallerSave;
+        isCalleeSave = _isCalleeSave;
+        isFunArg = _isFunArg;
     }
 
     public int getId() {
@@ -38,6 +49,9 @@ public class NASMRegister extends PhysicalRegister {
         return isGeneral;
     }
 
+    public boolean isFunArg() {
+        return isFunArg;
+    }
     @Override
     public boolean isCallerSave() {
         return isCallerSave;

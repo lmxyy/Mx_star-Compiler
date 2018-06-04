@@ -266,10 +266,13 @@ public class BasicBlock {
                                     ((BinaryOperationInstruction) instruction).getDest(), rhs));
                         }
                         else {
+                            append(new MoveInstruction(this,NASMRegisterSet.RCX,NASMRegisterSet.R11));
                             append(new MoveInstruction(this,rhs,NASMRegisterSet.RCX));
                             append(new TwoAddressInstruction(
                                     this, ((BinaryOperationInstruction) instruction).getOperator(),
                                     ((BinaryOperationInstruction) instruction).getDest(), NASMRegisterSet.RCX));
+                            append(new MoveInstruction(this,NASMRegisterSet.R11,NASMRegisterSet.RCX));
+
                         }
                         break;
                     default:

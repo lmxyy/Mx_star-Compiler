@@ -36,11 +36,11 @@ public class NASMIRTransformer {
         stackSlotNum = 0;
         for (int i = 6;i < func.argRegList.size();++i) {
             VirtualRegister reg = func.argRegList.get(i);
-            info.stackSlotOffset.put(func.argStackSlopMap.get(reg),(4-i)*wordSize);
+            info.stackSlotOffset.put(func.argStackSlopMap.get(reg),0);
         }
         for (StackSlot slot:func.stackSlots) {
             if (info.stackSlotOffset.get(slot) == null)
-                info.stackSlotOffset.put(slot,(++stackSlotNum)*wordSize);
+                info.stackSlotOffset.put(slot,(stackSlotNum++)*wordSize);
         }
         info.stackSlotNum = stackSlotNum;
     }
@@ -58,6 +58,10 @@ public class NASMIRTransformer {
                         NASMRegisterSet.RSP,new IntImmediate(decNum)
                 )
         );
+        for (int i = 6;i < func.argRegList.size();++i) {
+            VirtualRegister reg = func.argRegList.get(i);
+            info.stackSlotOffset.put(func.argStackSlopMap.get(reg),decNum+(i-4)*wordSize);
+        }
     }
     private void modifyReturn(Function func) {
         if (!func.getType().getReturnType().isVoid()) {
@@ -89,13 +93,14 @@ public class NASMIRTransformer {
         Function callee = inst.getFunction();
         FunctionInfo calleeInfo = infoMap.get(callee);
 
+        Map <PhysicalRegister,Integer> offsetMap = new HashMap<>();
         // save caller-save register
         for (int i = 0; i < info.usedCallerSaveRegister.size(); ++i) {
             PhysicalRegister pr = info.usedCallerSaveRegister.get(i);
-
+            offsetMap.put(pr,(info.stackSlotNum + i) * wordSize);
             inst.prepend(new StoreInstruction(
-                    basicBlock, NASMRegisterSet.RBP,
-                    -(info.stackSlotNum + i + 1) * wordSize, wordSize, pr
+                    basicBlock, NASMRegisterSet.RSP,
+                    (info.stackSlotNum + i) * wordSize, wordSize, pr
             ));
         }
 
@@ -104,77 +109,107 @@ public class NASMIRTransformer {
             IntValue val = inst.getArgRegList().get(i);
             if (i >= 6) {
                 ++pushNum;
-                if (val instanceof IntImmediate) {
+                if (!(val instanceof StackSlot)) {
                     inst.prepend(new PushInstruction(basicBlock, val));
                 } else {
                     inst.prepend(new PushInstruction(
-                            basicBlock, NASMRegisterSet.RBP, -info.stackSlotOffset.get(val)
+                            basicBlock, NASMRegisterSet.RSP, info.stackSlotOffset.get(val)
                     ));
                 }
             } else {
                 if (i == 0) {
                     if (!(val instanceof StackSlot)) {
-                        inst.prepend(new MoveInstruction(basicBlock,val,NASMRegisterSet.RDI));
+                        if (val instanceof IntImmediate||!((NASMRegister) val).isFunArg())
+                            inst.prepend(new MoveInstruction(basicBlock, val,NASMRegisterSet.RDI));
+                        else inst.prepend(new LoadInstruction(
+                                basicBlock, NASMRegisterSet.RDI, wordSize,
+                                NASMRegisterSet.RSP, info.stackSlotOffset.get(val)
+                        ));
                     }
                     else {
                         inst.prepend(new LoadInstruction(
                                 basicBlock, NASMRegisterSet.RDI, wordSize,
-                                NASMRegisterSet.RBP, -info.stackSlotOffset.get(val)
+                                NASMRegisterSet.RSP, info.stackSlotOffset.get(val)
                         ));
                     }
                 }
                 else if (i == 1) {
                     if (!(val instanceof StackSlot)) {
-                        inst.prepend(new MoveInstruction(basicBlock,val,NASMRegisterSet.RSI));
+                        if (val instanceof IntImmediate||!((NASMRegister) val).isFunArg())
+                            inst.prepend(new MoveInstruction(basicBlock, val,NASMRegisterSet.RSI));
+                        else inst.prepend(new LoadInstruction(
+                                basicBlock, NASMRegisterSet.RSI, wordSize,
+                                NASMRegisterSet.RSP, info.stackSlotOffset.get(val)
+                        ));
                     }
                     else {
                         inst.prepend(new LoadInstruction(
                                 basicBlock, NASMRegisterSet.RSI, wordSize,
-                                NASMRegisterSet.RBP, -info.stackSlotOffset.get(val)
+                                NASMRegisterSet.RSP, info.stackSlotOffset.get(val)
                         ));
                     }
                 }
                 else if (i == 2) {
                     if (!(val instanceof StackSlot)) {
-                        inst.prepend(new MoveInstruction(basicBlock,val,NASMRegisterSet.RDX));
+                        if (val instanceof IntImmediate||!((NASMRegister) val).isFunArg())
+                            inst.prepend(new MoveInstruction(basicBlock, val,NASMRegisterSet.RDX));
+                        else inst.prepend(new LoadInstruction(
+                                basicBlock, NASMRegisterSet.RDX, wordSize,
+                                NASMRegisterSet.RSP, info.stackSlotOffset.get(val)
+                        ));
                     }
                     else {
                         inst.prepend(new LoadInstruction(
                                 basicBlock, NASMRegisterSet.RDX, wordSize,
-                                NASMRegisterSet.RBP, -info.stackSlotOffset.get(val)
+                                NASMRegisterSet.RSP, info.stackSlotOffset.get(val)
                         ));
                     }
                 }
                 else if (i == 3) {
                     if (!(val instanceof StackSlot)) {
-                        inst.prepend(new MoveInstruction(basicBlock,val,NASMRegisterSet.RCX));
+                        if (val instanceof IntImmediate||!((NASMRegister) val).isFunArg())
+                            inst.prepend(new MoveInstruction(basicBlock, val,NASMRegisterSet.RCX));
+                        else inst.prepend(new LoadInstruction(
+                                basicBlock, NASMRegisterSet.RCX, wordSize,
+                                NASMRegisterSet.RSP, info.stackSlotOffset.get(val)
+                        ));
                     }
                     else {
                         inst.prepend(new LoadInstruction(
                                 basicBlock, NASMRegisterSet.RCX, wordSize,
-                                NASMRegisterSet.RBP, -info.stackSlotOffset.get(val)
+                                NASMRegisterSet.RSP, info.stackSlotOffset.get(val)
                         ));
                     }
                 }
                 else if (i == 4) {
                     if (!(val instanceof StackSlot)) {
-                        inst.prepend(new MoveInstruction(basicBlock,val,NASMRegisterSet.R8));
+                        if (val instanceof IntImmediate||!((NASMRegister) val).isFunArg())
+                            inst.prepend(new MoveInstruction(basicBlock, val,NASMRegisterSet.R8));
+                        else inst.prepend(new LoadInstruction(
+                                basicBlock, NASMRegisterSet.R8, wordSize,
+                                NASMRegisterSet.RSP, info.stackSlotOffset.get(val)
+                        ));
                     }
                     else {
                         inst.prepend(new LoadInstruction(
                                 basicBlock, NASMRegisterSet.R8, wordSize,
-                                NASMRegisterSet.RBP, -info.stackSlotOffset.get(val)
+                                NASMRegisterSet.RSP, info.stackSlotOffset.get(val)
                         ));
                     }
                 }
                 else if (i == 5) {
                     if (!(val instanceof StackSlot)) {
-                        inst.prepend(new MoveInstruction(basicBlock,val,NASMRegisterSet.R9));
+                        if (val instanceof IntImmediate||!((NASMRegister) val).isFunArg())
+                            inst.prepend(new MoveInstruction(basicBlock, val,NASMRegisterSet.R9));
+                        else inst.prepend(new LoadInstruction(
+                                basicBlock, NASMRegisterSet.R9, wordSize,
+                                NASMRegisterSet.RSP, info.stackSlotOffset.get(val)
+                        ));
                     }
                     else {
                         inst.prepend(new LoadInstruction(
                                 basicBlock, NASMRegisterSet.R9, wordSize,
-                                NASMRegisterSet.RBP, -info.stackSlotOffset.get(val)
+                                NASMRegisterSet.RSP, info.stackSlotOffset.get(val)
                         ));
                     }
                 }
@@ -189,8 +224,8 @@ public class NASMIRTransformer {
         for (int i = 0; i < info.usedCallerSaveRegister.size(); ++i) {
             PhysicalRegister pr = info.usedCallerSaveRegister.get(i);
             inst.append(new LoadInstruction(
-                    basicBlock, pr, wordSize, NASMRegisterSet.RBP,
-                    -(func.stackSlots.size() + i + 1) * wordSize)
+                    basicBlock, pr, wordSize, NASMRegisterSet.RSP,
+                    (info.stackSlotNum + i) * wordSize)
             );
         }
     }
