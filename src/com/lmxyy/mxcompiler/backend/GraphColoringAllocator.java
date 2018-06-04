@@ -132,6 +132,7 @@ public class GraphColoringAllocator extends RegisterAllocator {
             if (forced != null) {
                 assert !usedColor.contains(forced);
                 info.color = forced;
+                curFunction.usedPhysicalGeneralRegister.add(forced);
             }
             else {
                 for (VirtualRegister vr:info.suggestSame) {
@@ -179,8 +180,15 @@ public class GraphColoringAllocator extends RegisterAllocator {
                             renameMap.put(reg, pr);
                             // curFunction.usedPhysicalGeneralRegister.add(pr);
                         } else {
-                            renameMap.put(reg, color);
-                            curFunction.usedPhysicalGeneralRegister.add((PhysicalRegister) color);
+                            if (color == NASMRegisterSet.RDX&&
+                                    (((TwoAddressInstruction) inst).getOperator() == BinaryOperationInstruction.Operator.DIV ||
+                                    ((TwoAddressInstruction) inst).getOperator() == BinaryOperationInstruction.Operator.MOD)) {
+                                renameMap.put(reg, NASMRegisterSet.R11);
+                            }
+                            else {
+                                renameMap.put(reg, color);
+                                curFunction.usedPhysicalGeneralRegister.add((PhysicalRegister) color);
+                            }
                         }
                     }
                     if (((TwoAddressInstruction) inst).getLhs() instanceof VirtualRegister&&
