@@ -5,7 +5,6 @@ import java.util.Map;
 public class MoveInstruction extends IRInstruction {
     private IntValue source;
     private Register dest;
-    private boolean canRemove;
     private MoveInstruction parentInst = null;
 
     public MoveInstruction(BasicBlock _curBasicBlock, IntValue _source, Register _dest) {
@@ -13,21 +12,12 @@ public class MoveInstruction extends IRInstruction {
         source = _source;
         dest = _dest;
         reloadUsedRegisterCollection();
-        canRemove = false;
     }
-    public MoveInstruction(BasicBlock _curBasicBlock, IntValue _source, Register _dest,boolean _canRemove) {
+    public MoveInstruction(BasicBlock _curBasicBlock, IntValue _source, Register _dest,MoveInstruction _parentInst) {
         super(_curBasicBlock);
         source = _source;
         dest = _dest;
         reloadUsedRegisterCollection();
-        canRemove = _canRemove;
-    }
-    public MoveInstruction(BasicBlock _curBasicBlock, IntValue _source, Register _dest,boolean _canRemove,MoveInstruction _parentInst) {
-        super(_curBasicBlock);
-        source = _source;
-        dest = _dest;
-        reloadUsedRegisterCollection();
-        canRemove = _canRemove;
         parentInst = _parentInst;
     }
 
@@ -36,9 +26,6 @@ public class MoveInstruction extends IRInstruction {
     }
     public Register getDest() {
         return dest;
-    }
-    public boolean isCanRemove() {
-        return canRemove;
     }
 
     public MoveInstruction getParentInst() {

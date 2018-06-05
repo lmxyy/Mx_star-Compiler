@@ -134,7 +134,7 @@ public class BasicBlock {
                                 NASMRegisterSet.RAX
                         ));
                         append(new MoveInstruction(
-                                this, NASMRegisterSet.RDX,NASMRegisterSet.R11,true
+                                this, NASMRegisterSet.RDX,NASMRegisterSet.R11
                         ));
                         append(new CqoInstruction(this));
                         if (((BinaryOperationInstruction) instruction).getRhs() instanceof IntImmediate) {
@@ -154,7 +154,7 @@ public class BasicBlock {
                             );
                         }
                         append(new MoveInstruction(
-                                this, NASMRegisterSet.R11,NASMRegisterSet.RDX,true
+                                this, NASMRegisterSet.R11,NASMRegisterSet.RDX
                         ));
                         append(new MoveInstruction(
                                 this, NASMRegisterSet.RAX,
@@ -167,7 +167,7 @@ public class BasicBlock {
                                 NASMRegisterSet.RAX
                         ));
                         append(new MoveInstruction(
-                                this, NASMRegisterSet.RDX,NASMRegisterSet.R11,true
+                                this, NASMRegisterSet.RDX,NASMRegisterSet.R11
                         ));
                         append(new CqoInstruction(this));
                         if (((BinaryOperationInstruction) instruction).getRhs() instanceof IntImmediate) {
@@ -192,7 +192,7 @@ public class BasicBlock {
                         ));
 
                         append(new MoveInstruction(
-                                this, NASMRegisterSet.R11,NASMRegisterSet.RDX,true,parent
+                                this, NASMRegisterSet.R11,NASMRegisterSet.RDX,parent
                         ));
                         break;
                     case LEQ:
@@ -293,9 +293,9 @@ public class BasicBlock {
                                     NASMRegisterSet.RAX, NASMRegisterSet.RCX
                             ));
                             append(parent = new MoveInstruction(this,NASMRegisterSet.RAX,
-                                    ((BinaryOperationInstruction) instruction).getDest(),true
+                                    ((BinaryOperationInstruction) instruction).getDest()
                             ));
-                            append(new MoveInstruction(this,NASMRegisterSet.R11,NASMRegisterSet.RCX,false,parent));
+                            append(new MoveInstruction(this,NASMRegisterSet.R11,NASMRegisterSet.RCX,parent));
                         }
                         break;
                     default:

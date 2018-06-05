@@ -1323,7 +1323,7 @@ public class NASMPrinter implements IRVisitor {
         out.println("section .text");
         node.functions.values().forEach(func->func.accept(this));
         /* Static String */
-        out.println("\n\tsection .data");
+        out.println("\nsection .data");
         node.stringPool.forEach((a,b)->{
             out.println("___"+dataId(b)+":");
             String s = "";

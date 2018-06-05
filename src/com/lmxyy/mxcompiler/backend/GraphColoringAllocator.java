@@ -269,7 +269,6 @@ public class GraphColoringAllocator extends RegisterAllocator {
     }
 
     private void refresh() {
-        boolean hasRDX = curFunction.usedPhysicalGeneralRegister.contains(NASMRegisterSet.RDX);
         for (BasicBlock basicBlock:curFunction.getReversePostOrder()) {
             for (IRInstruction inst = basicBlock.getHead(); inst != null; inst = inst.getNxt()) {
                 if (inst instanceof MoveInstruction) {
@@ -278,12 +277,6 @@ public class GraphColoringAllocator extends RegisterAllocator {
                         if (move.getParentInst().getDest() == move.getDest())
                             inst.remove();
                     }
-                    if (move.isCanRemove() == false) continue;
-                    else if (move.getDest() == NASMRegisterSet.RDX&&!hasRDX)
-                        inst.remove();
-                    else if (move.getSource() == NASMRegisterSet.RDX&&!hasRDX)
-                        inst.remove();
-
                 }
             }
         }
