@@ -60,6 +60,8 @@ public class FunctionInliner {
         renameMap.put(callee.startBasicBlock,call.getBasicBlock());
         if (func.exitBasicBlock == call.basicBlock)
             func.exitBasicBlock = newExitBlock;
+
+        Map <Object,Object> moveMap = Collections.singletonMap(call.getBasicBlock(),newExitBlock);
         return null;
     }
 
