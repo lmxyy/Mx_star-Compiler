@@ -66,4 +66,13 @@ public class MoveInstruction extends IRInstruction {
         if (source == oldValue) source = newValue;
         reloadUsedRegisterCollection();
     }
+
+    @Override
+    public IRInstruction copyAndRename(Map<Object, Object> renameMap) {
+        return new MoveInstruction(
+                (BasicBlock) renameMap.getOrDefault(basicBlock,basicBlock),
+                (IntValue) renameMap.getOrDefault(source,source),
+                (Register) renameMap.getOrDefault(dest,dest)
+        );
+    }
 }

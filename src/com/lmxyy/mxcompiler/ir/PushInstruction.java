@@ -56,4 +56,10 @@ public class PushInstruction extends IRInstruction {
     @Override
     public void replaceIntValueUse(IntValue oldValue,IntValue newValue) {
     }
+
+    @Override
+    public IRInstruction copyAndRename(Map<Object, Object> renameMap) {
+        System.err.println("Cannot be here.");
+        return null;
+    }
 }

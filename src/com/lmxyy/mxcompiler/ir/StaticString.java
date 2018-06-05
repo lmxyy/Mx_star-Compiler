@@ -22,4 +22,10 @@ public class StaticString extends StaticData {
     public String getString() {
         return string;
     }
+
+    @Override
+    public IntValue copy() {
+        System.err.println("Cannot be here.");
+        return this;
+    }
 }

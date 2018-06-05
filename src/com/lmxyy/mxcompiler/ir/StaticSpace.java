@@ -16,4 +16,10 @@ public class StaticSpace extends StaticData {
     public void accept(IRVisitor visitor) {
         visitor.visit(this);
     }
+
+    @Override
+    public IntValue copy() {
+        System.err.println("Cannot be here.");
+        return this;
+    }
 }

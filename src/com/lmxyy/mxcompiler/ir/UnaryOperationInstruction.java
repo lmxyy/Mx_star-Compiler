@@ -63,4 +63,14 @@ public class UnaryOperationInstruction extends IRInstruction {
         if (oprand == oldValue) oprand = newValue;
         reloadUsedRegisterCollection();
     }
+
+    @Override
+    public IRInstruction copyAndRename(Map<Object, Object> renameMap) {
+        return new UnaryOperationInstruction(
+                (BasicBlock) renameMap.getOrDefault(basicBlock,basicBlock),
+                (Register) renameMap.getOrDefault(dest,dest),
+                operator,
+                (IntValue) renameMap.getOrDefault(oprand,oprand)
+        );
+    }
 }

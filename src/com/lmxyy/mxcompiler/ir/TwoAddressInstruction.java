@@ -65,4 +65,10 @@ public class TwoAddressInstruction extends IRInstruction {
         if (rhs == oldValue) rhs = newValue;
         reloadUsedRegisterCollection();
     }
+
+    @Override
+    public IRInstruction copyAndRename(Map<Object, Object> renameMap) {
+        System.err.println("Cannot be here.");
+        return null;
+    }
 }

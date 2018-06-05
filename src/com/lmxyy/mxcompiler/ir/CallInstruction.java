@@ -9,7 +9,7 @@ public class CallInstruction extends IRInstruction {
     private Function function;
     private List<IntValue> argRegList = new ArrayList<>();
 
-    public CallInstruction(BasicBlock _basicBlock, VirtualRegister _register, Function _function) {
+    public CallInstruction(BasicBlock _basicBlock, Register _register, Function _function) {
         super(_basicBlock);
         register = _register;
         function = _function;
@@ -76,5 +76,18 @@ public class CallInstruction extends IRInstruction {
     @Override
     public Register getDefinedRegister() {
         return register;
+    }
+
+    @Override
+    public IRInstruction copyAndRename(Map<Object, Object> renameMap) {
+        CallInstruction ret =  new CallInstruction(
+                (BasicBlock) renameMap.getOrDefault(basicBlock,basicBlock),
+                (Register) renameMap.getOrDefault(register,register),
+                function
+        );
+        for (IntValue val:argRegList) {
+            ret.appendArgReg((IntValue) renameMap.getOrDefault(val,val));
+        }
+        return ret;
     }
 }

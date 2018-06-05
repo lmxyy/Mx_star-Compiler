@@ -81,4 +81,15 @@ public class LoadInstruction extends IRInstruction {
         if (addr == oldValue) addr = newValue;
         reloadUsedRegisterCollection();
     }
+
+    @Override
+    public IRInstruction copyAndRename(Map<Object, Object> renameMap) {
+        return new LoadInstruction(
+                (BasicBlock) renameMap.getOrDefault(basicBlock,basicBlock),
+                (Register) renameMap.getOrDefault(dest,dest),
+                size,
+                (IntValue) renameMap.getOrDefault(addr,addr),
+                offset
+        );
+    }
 }

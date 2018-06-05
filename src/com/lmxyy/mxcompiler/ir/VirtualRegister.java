@@ -16,4 +16,9 @@ public class VirtualRegister extends Register {
     public void accept(IRVisitor visitor) {
         visitor.visit(this);
     }
+
+    @Override
+    public IntValue copy() {
+        return new VirtualRegister(hintName);
+    }
 }

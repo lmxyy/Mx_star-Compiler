@@ -79,4 +79,15 @@ public class StoreInstruction extends IRInstruction {
         if (value == oldValue) addr = newValue;
         reloadUsedRegisterCollection();
     }
+
+    @Override
+    public IRInstruction copyAndRename(Map<Object, Object> renameMap) {
+        return new StoreInstruction(
+                (BasicBlock) renameMap.getOrDefault(basicBlock,basicBlock),
+                (IntValue) renameMap.getOrDefault(addr,addr),
+                offset,
+                size,
+                (IntValue) renameMap.getOrDefault(value,value)
+        );
+    }
 }

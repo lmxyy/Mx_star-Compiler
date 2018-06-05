@@ -14,4 +14,9 @@ public class IntImmediate extends IntValue {
     public void accept(IRVisitor visitor) {
         visitor.visit(this);
     }
+
+    @Override
+    public IntValue copy() {
+        return new IntImmediate(val);
+    }
 }

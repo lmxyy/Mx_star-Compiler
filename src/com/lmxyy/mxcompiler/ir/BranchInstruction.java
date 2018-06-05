@@ -56,4 +56,15 @@ public class BranchInstruction extends EndInstruction {
         if (indicator == oldValue) indicator = newValue;
         reloadUsedRegisterCollection();
     }
+
+    @Override
+    public IRInstruction copyAndRename(Map<Object, Object> renameMap) {
+        return new BranchInstruction(
+                (BasicBlock) renameMap.getOrDefault(basicBlock,basicBlock),
+                (IntValue) renameMap.getOrDefault(indicator,indicator),
+                (BasicBlock) renameMap.getOrDefault(ifTrue,ifTrue),
+                (BasicBlock) renameMap.getOrDefault(ifFalse,ifFalse)
+        );
+
+    }
 }

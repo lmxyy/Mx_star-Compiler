@@ -48,4 +48,12 @@ public class ReturnInstruction extends EndInstruction {
         if (retVal == oldValue) retVal = newValue;
         reloadUsedRegisterCollection();
     }
+
+    @Override
+    public IRInstruction copyAndRename(Map<Object, Object> renameMap) {
+        return new ReturnInstruction(
+                (BasicBlock) renameMap.getOrDefault(basicBlock,basicBlock),
+                (IntValue) renameMap.getOrDefault(retVal,retVal)
+        );
+    }
 }

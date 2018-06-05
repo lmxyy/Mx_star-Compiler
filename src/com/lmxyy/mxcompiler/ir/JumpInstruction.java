@@ -40,4 +40,12 @@ public class JumpInstruction extends EndInstruction {
     @Override
     public void replaceIntValueUse(IntValue oldValue,IntValue newValue) {
     }
+
+    @Override
+    public IRInstruction copyAndRename(Map<Object, Object> renameMap) {
+        return new JumpInstruction(
+                (BasicBlock) renameMap.getOrDefault(basicBlock,basicBlock),
+                (BasicBlock) renameMap.getOrDefault(target,target)
+        );
+    }
 }

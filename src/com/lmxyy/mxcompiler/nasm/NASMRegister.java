@@ -1,6 +1,7 @@
 package com.lmxyy.mxcompiler.nasm;
 
 import com.lmxyy.mxcompiler.ir.IRVisitor;
+import com.lmxyy.mxcompiler.ir.IntValue;
 import com.lmxyy.mxcompiler.ir.PhysicalRegister;
 
 public class NASMRegister extends PhysicalRegister {
@@ -64,4 +65,10 @@ public class NASMRegister extends PhysicalRegister {
 
     @Override
     public void accept(IRVisitor visitor) { visitor.visit(this); }
+
+    @Override
+    public IntValue copy() {
+        System.err.println("Cannot be here.");
+        return this;
+    }
 }

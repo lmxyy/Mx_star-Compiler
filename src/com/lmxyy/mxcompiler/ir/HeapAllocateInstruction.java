@@ -54,4 +54,13 @@ public class HeapAllocateInstruction extends IRInstruction {
         if (allocSize == oldValue) allocSize = newValue;
         reloadUsedRegisterCollection();
     }
+
+    @Override
+    public IRInstruction copyAndRename(Map<Object, Object> renameMap) {
+        return new HeapAllocateInstruction(
+                (BasicBlock) renameMap.getOrDefault(basicBlock,basicBlock),
+                (Register) renameMap.getOrDefault(dest,dest),
+                (IntValue) renameMap.getOrDefault(allocSize,allocSize)
+        );
+    }
 }
