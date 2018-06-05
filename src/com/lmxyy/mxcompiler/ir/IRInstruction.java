@@ -3,7 +3,7 @@ package com.lmxyy.mxcompiler.ir;
 import java.util.*;
 
 public abstract class IRInstruction {
-    private BasicBlock basicBlock;
+    public BasicBlock basicBlock;
     private IRInstruction pre,nxt;
     protected List<Register> usedRegister = new ArrayList<>();
     protected List<IntValue> usedIntValue = new ArrayList<>();

@@ -284,7 +284,7 @@ public class BasicBlock {
                                     ((BinaryOperationInstruction) instruction).getDest(), rhs));
                         }
                         else {
-                            append(new MoveInstruction(this,NASMRegisterSet.RCX,NASMRegisterSet.R11,true));
+                            append(new MoveInstruction(this,NASMRegisterSet.RCX,NASMRegisterSet.R11));
                             append(new MoveInstruction(this,rhs,NASMRegisterSet.RCX));
                             append(new MoveInstruction(this,lhs,NASMRegisterSet.RAX));
 
@@ -295,7 +295,7 @@ public class BasicBlock {
                             append(parent = new MoveInstruction(this,NASMRegisterSet.RAX,
                                     ((BinaryOperationInstruction) instruction).getDest(),true
                             ));
-                            append(new MoveInstruction(this,NASMRegisterSet.R11,NASMRegisterSet.RCX,true,parent));
+                            append(new MoveInstruction(this,NASMRegisterSet.R11,NASMRegisterSet.RCX,false,parent));
                         }
                         break;
                     default:
