@@ -9,6 +9,7 @@ public class GlobalVariableResolver {
     private static class FunctionInfo {
         Map<StaticData, VirtualRegister> staticMap = new HashMap<>();
         Set<StaticData> writtenStatic = new HashSet<>();
+        Set<StaticData> recursiveWrittenStatic = new HashSet<>();
         Set<StaticData> recursiveStaticUse = new HashSet<>();
     }
 
@@ -100,13 +101,16 @@ public class GlobalVariableResolver {
             processFunction(func);
         }
 
-        for (Function func : irRoot.functions.values()) {
-            FunctionInfo info = funcInfo.get(func);
-            Set<Function> calleeSet = calleeSetMap.get(func);
-            func.calleeSet = calleeSet;
-            info.recursiveStaticUse.addAll(info.staticMap.keySet());
-            calleeSet.forEach(callee->info.recursiveStaticUse.addAll(funcInfo.get(callee).staticMap.keySet()));
-        }
+        for (int i = irRoot.functions.size();i >= 0;--i)
+            for (Function func : irRoot.functions.values()) {
+                FunctionInfo info = funcInfo.get(func);
+                Set<Function> calleeSet = calleeSetMap.get(func);
+                func.calleeSet = calleeSet;
+                info.recursiveStaticUse.addAll(info.staticMap.keySet());
+                info.recursiveWrittenStatic.addAll(info.writtenStatic);
+                calleeSet.forEach(callee->info.recursiveStaticUse.addAll(funcInfo.get(callee).staticMap.keySet()));
+                calleeSet.forEach(callee->info.recursiveWrittenStatic.addAll(funcInfo.get(callee).recursiveWrittenStatic));
+            }
 
         for (Function func : irRoot.functions.values()) {
             FunctionInfo info = funcInfo.get(func);
@@ -127,17 +131,15 @@ public class GlobalVariableResolver {
                                 );
                             }
                         }
-//                        if (calleeInfo.writtenStatic.isEmpty()) continue;
+                        if (calleeInfo.writtenStatic.isEmpty()) continue;
                         Set<StaticData> reloadSet = new HashSet<>();
                         reloadSet.addAll(usedSet);
-//                        reloadSet.retainAll(calleeInfo.writtenStatic);
+                        reloadSet.retainAll(calleeInfo.recursiveWrittenStatic);
                         for (StaticData data:reloadSet) {
-                            if (calleeInfo.recursiveStaticUse.contains(data)) {
-                                inst.append(new LoadInstruction(
-                                        basicBlock,info.staticMap.get(data),data.getRegisterSize(),
-                                        data,data instanceof StaticString
-                                ));
-                            }
+                            inst.append(new LoadInstruction(
+                                    basicBlock, info.staticMap.get(data), data.getRegisterSize(),
+                                    data, data instanceof StaticString
+                            ));
                         }
                     }
                 }
