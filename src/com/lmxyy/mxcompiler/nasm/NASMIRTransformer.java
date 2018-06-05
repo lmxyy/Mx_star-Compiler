@@ -294,7 +294,8 @@ public class NASMIRTransformer {
             }
         });
 
-        calcRecursiveRegisterUse();
+        for (int i = irRoot.functions.size();i >= 0;--i)
+            calcRecursiveRegisterUse();
 
         for (Function func:irRoot.functions.values()) {
             FunctionInfo info = infoMap.get(func);

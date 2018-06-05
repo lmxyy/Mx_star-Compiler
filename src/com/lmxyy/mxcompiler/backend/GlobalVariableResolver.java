@@ -131,7 +131,6 @@ public class GlobalVariableResolver {
                                 );
                             }
                         }
-                        if (calleeInfo.writtenStatic.isEmpty()) continue;
                         Set<StaticData> reloadSet = new HashSet<>();
                         reloadSet.addAll(usedSet);
                         reloadSet.retainAll(calleeInfo.recursiveWrittenStatic);
