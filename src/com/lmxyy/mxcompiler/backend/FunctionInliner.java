@@ -132,7 +132,7 @@ public class FunctionInliner {
         infoMap.forEach((func,info)->{info.skip = info.recursiveCalleeSet.contains(func);});
 
         List<Function> toDeleteFunction = new ArrayList<>();
-        boolean changed = false;
+        boolean changed = true;
         List<BasicBlock> RPO = new ArrayList<>();
         while (changed) {
             changed = false;
