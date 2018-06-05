@@ -1,388 +1,20 @@
-space @n 8
-space @h 8
-space @now 8
 space @a 8
-space @A 8
-space @M 8
-space @Q 8
-space @R 8
-space @seed 8
-asciiz @string  
-asciiz @string_2 
-asciiz @string_3 Sorry, the number n must be a number s.t. there exists i satisfying n=1+2+...+i
-asciiz @string_4 Let's start!
-asciiz @string_5 step 
-asciiz @string_6 :
-asciiz @string_7 Total: 
-asciiz @string_8  step(s)
+space @i 8
+space @j 8
+space @b 8
 
-func random {
+func rec $this {
 
-%random.entry:
-    $t = rem @seed @Q
-    $t_2 = mul @A $t
-    $t_3 = div @seed @Q
-    $t_4 = mul @R $t_3
-    $t_5 = sub $t_2 $t_4
-    $tempseed = move $t_5
-    $t_6 = sge $tempseed 0
-    br $t_6 %if_true %if_false
-
-%if_false:
-    $t_7 = add $tempseed @M
-    @seed = move $t_7
-    jump %if_after
-
-%if_true:
-    @seed = move $tempseed
-    jump %if_after
-
-%if_after:
-    ret @seed
-
-}
-
-func initialize $val {
-
-%initialize.entry:
-    @seed = move $val
+%rec.entry:
     ret 0
 
 }
 
-func swap $x $y {
+func printNum $num {
 
-%swap.entry:
-    $t = mul $x 8
-    $t = add @a $t
-    $t = load 8 $t 8
-    $temp = move $t
-    $t_2 = mul $y 8
-    $t_2 = add @a $t_2
-    $t_2 = load 8 $t_2 8
-    $t_3 = mul $x 8
-    $t_3 = add @a $t_3
-    store 8 $t_3 $t_2 8
-    $t_4 = mul $y 8
-    $t_4 = add @a $t_4
-    store 8 $t_4 $temp 8
+%printNum.entry:
+    call printlnint $num 
     ret 0
-
-}
-
-func pd $x {
-
-%pd.entry:
-    jump %for_cond
-
-%for_cond:
-    $t = sle @h $x
-    br $t %for_loop %for_after
-
-%for_after:
-    $returnValue = move 0
-    jump %pd.exit
-
-%for_loop:
-    $t_2 = add @h 1
-    $t_3 = mul @h $t_2
-    $t_4 = div $t_3 2
-    $t_5 = seq $x $t_4
-    br $t_5 %if_true_2 %if_after_2
-
-%if_true_2:
-    $returnValue = move 1
-    jump %pd.exit
-
-%pd.exit:
-    ret $returnValue
-
-%if_after_2:
-    jump %for_step
-
-%for_step:
-    @h = add @h 1
-    jump %for_cond
-
-}
-
-func show {
-
-%show.entry:
-    $i = move 0
-    $i = move 0
-    jump %for_cond_2
-
-%for_cond_2:
-    $t = slt $i @now
-    br $t %for_loop_2 %for_after_2
-
-%for_after_2:
-    call println @string_2 
-    ret 0
-
-%for_loop_2:
-    $t_2 = mul $i 8
-    $t_2 = add @a $t_2
-    $t_2 = load 8 $t_2 8
-    call printint $t_2 
-    call print @string 
-    jump %for_step_2
-
-%for_step_2:
-    $i = add $i 1
-    jump %for_cond_2
-
-}
-
-func win {
-
-%win.entry:
-    $i = move 0
-    $j = move 0
-    $newaddress = move 808
-    $newaddress = alloc $newaddress
-    store 8 $newaddress 100 0
-    $b = move $newaddress
-    $temp = move 0
-    $t = sne @now @h
-    br $t %if_true_3 %if_after_3
-
-%if_after_3:
-    $j = move 0
-    jump %for_cond_3
-
-%for_cond_3:
-    $t_2 = slt $j @now
-    br $t_2 %for_loop_3 %for_after_3
-
-%for_loop_3:
-    $t_3 = mul $j 8
-    $t_3 = add @a $t_3
-    $t_3 = load 8 $t_3 8
-    $t_4 = mul $j 8
-    $t_4 = add $b $t_4
-    store 8 $t_4 $t_3 8
-    jump %for_step_3
-
-%for_step_3:
-    $j = add $j 1
-    jump %for_cond_3
-
-%for_after_3:
-    $i = move 0
-    jump %for_cond_4
-
-%for_cond_4:
-    $t_5 = sub @now 1
-    $t_6 = slt $i $t_5
-    br $t_6 %for_loop_4 %for_after_4
-
-%for_after_4:
-    $i = move 0
-    jump %for_cond_5
-
-%for_cond_5:
-    $t_7 = slt $i @now
-    br $t_7 %for_loop_5 %for_after_5
-
-%for_after_5:
-    $returnValue = move 1
-    jump %win.exit
-
-%for_loop_5:
-    $t_8 = mul $i 8
-    $t_8 = add $b $t_8
-    $t_8 = load 8 $t_8 8
-    $t_9 = add $i 1
-    $t_10 = sne $t_8 $t_9
-    br $t_10 %if_true_4 %if_after_4
-
-%if_true_4:
-    $returnValue = move 0
-    jump %win.exit
-
-%if_after_4:
-    jump %for_step_4
-
-%for_step_4:
-    $i = add $i 1
-    jump %for_cond_5
-
-%for_loop_4:
-    $t_11 = add $i 1
-    $j = move $t_11
-    jump %for_cond_6
-
-%for_cond_6:
-    $t_12 = slt $j @now
-    br $t_12 %for_loop_6 %for_after_6
-
-%for_after_6:
-    jump %for_step_5
-
-%for_step_5:
-    $i = add $i 1
-    jump %for_cond_4
-
-%for_loop_6:
-    $t_13 = mul $i 8
-    $t_13 = add $b $t_13
-    $t_13 = load 8 $t_13 8
-    $t_14 = mul $j 8
-    $t_14 = add $b $t_14
-    $t_14 = load 8 $t_14 8
-    $t_15 = sgt $t_13 $t_14
-    br $t_15 %if_true_5 %if_after_5
-
-%if_true_5:
-    $t_16 = mul $i 8
-    $t_16 = add $b $t_16
-    $t_16 = load 8 $t_16 8
-    $temp = move $t_16
-    $t_17 = mul $j 8
-    $t_17 = add $b $t_17
-    $t_17 = load 8 $t_17 8
-    $t_18 = mul $i 8
-    $t_18 = add $b $t_18
-    store 8 $t_18 $t_17 8
-    $t_19 = mul $j 8
-    $t_19 = add $b $t_19
-    store 8 $t_19 $temp 8
-    jump %if_after_5
-
-%if_after_5:
-    jump %for_step_6
-
-%for_step_6:
-    $j = add $j 1
-    jump %for_cond_6
-
-%if_true_3:
-    $returnValue = move 0
-    jump %win.exit
-
-%win.exit:
-    ret $returnValue
-
-}
-
-func merge {
-
-%merge.entry:
-    $i = move 0
-    $i = move 0
-    jump %for_cond_7
-
-%for_cond_7:
-    $t = slt $i @now
-    br $t %for_loop_7 %for_after_7
-
-%for_after_7:
-    $i = move 0
-    jump %for_cond_8
-
-%for_cond_8:
-    $t_2 = slt $i @now
-    br $t_2 %for_loop_8 %for_after_8
-
-%for_loop_8:
-    $t_3 = mul $i 8
-    $t_3 = add @a $t_3
-    $t_3 = load 8 $t_3 8
-    $t_4 = seq $t_3 0
-    br $t_4 %if_true_6 %if_after_6
-
-%if_after_6:
-    jump %for_step_7
-
-%for_step_7:
-    $i = add $i 1
-    jump %for_cond_8
-
-%if_true_6:
-    @now = move $i
-    jump %for_after_8
-
-%for_after_8:
-    ret 0
-
-%for_loop_7:
-    $t_5 = mul $i 8
-    $t_5 = add @a $t_5
-    $t_5 = load 8 $t_5 8
-    $t_6 = seq $t_5 0
-    br $t_6 %if_true_7 %if_after_7
-
-%if_true_7:
-    $j = move 0
-    $t_7 = add $i 1
-    $j = move $t_7
-    jump %for_cond_9
-
-%for_cond_9:
-    $t_8 = slt $j @now
-    br $t_8 %for_loop_9 %for_after_9
-
-%for_loop_9:
-    $t_9 = mul $j 8
-    $t_9 = add @a $t_9
-    $t_9 = load 8 $t_9 8
-    $t_10 = sne $t_9 0
-    br $t_10 %if_true_8 %if_after_8
-
-%if_true_8:
-    $t_11 = call swap $i $j 
-    jump %for_after_9
-
-%for_after_9:
-    jump %if_after_7
-
-%if_after_7:
-    jump %for_step_8
-
-%for_step_8:
-    $i = add $i 1
-    jump %for_cond_7
-
-%if_after_8:
-    jump %for_step_9
-
-%for_step_9:
-    $j = add $j 1
-    jump %for_cond_9
-
-}
-
-func move {
-
-%move.entry:
-    $i = move 0
-    jump %for_cond_10
-
-%for_cond_10:
-    $t = slt $i @now
-    br $t %for_loop_10 %for_after_10
-
-%for_after_10:
-    $t_2 = mul @now 8
-    $t_2 = add @a $t_2
-    store 8 $t_2 @now 8
-    $t_3 = move @now
-    @now = add @now 1
-    ret 0
-
-%for_loop_10:
-    $t_4 = mul $i 8
-    $t_4 = add @a $t_4
-    $t_5 = mul $i 8
-    $t_5 = add @a $t_5
-    $t_5 = load 8 $t_5 8
-    $t_6 = sub $t_5 1
-    store 8 $t_4 $t_6 8
-    $t_7 = add $i 1
-    $i = move $t_7
-    jump %for_cond_10
 
 }
 
@@ -390,130 +22,223 @@ func main {
 
 %main.entry:
     call _init 
-    $i = move 0
-    $temp = move 0
-    $count = move 0
-    @n = move 210
-    @h = move 0
-    $newaddress = move 808
-    $newaddress = alloc $newaddress
-    store 8 $newaddress 100 0
-    @a = move $newaddress
-    $t = div @M @A
-    @Q = move $t
-    $t_2 = rem @M @A
-    @R = move $t_2
-    $t_3 = call pd @n 
-    $t_4 = xor $t_3 1
-    br $t_4 %if_true_9 %if_after_9
+    @i = move 0
+    jump %for_cond
 
-%if_true_9:
-    call println @string_3 
-    $returnValue = move 1
-    jump %main.exit
+%for_cond:
+    $t = slt @i 4
+    br $t %for_loop %for_after
 
-%if_after_9:
-    call println @string_4 
-    $t_5 = call initialize 3654898 
-    $t_6 = call random 
-    $t_7 = rem $t_6 10
-    $t_8 = add $t_7 1
-    @now = move $t_8
-    call printlnint @now 
-    jump %for_cond_11
+%for_after:
+    @i = move 0
+    jump %for_cond_2
 
-%for_cond_11:
-    $t_9 = sub @now 1
-    $t_10 = slt $i $t_9
-    br $t_10 %for_loop_11 %for_after_11
+%for_cond_2:
+    $t_2 = slt @i 4
+    br $t_2 %for_loop_2 %for_after_2
 
-%for_loop_11:
-    $t_11 = call random 
-    $t_12 = rem $t_11 10
-    $t_13 = add $t_12 1
-    $t_14 = mul $i 8
-    $t_14 = add @a $t_14
-    store 8 $t_14 $t_13 8
-    jump %while_cond
+%for_loop_2:
+    @j = move 0
+    jump %for_cond_3
 
-%while_cond:
-    $t_15 = mul $i 8
-    $t_15 = add @a $t_15
-    $t_15 = load 8 $t_15 8
-    $t_16 = add $t_15 $temp
-    $t_17 = sgt $t_16 @n
-    br $t_17 %while_loop %while_after
+%for_cond_3:
+    $t_3 = slt @j 10
+    br $t_3 %for_loop_3 %for_after_3
 
-%while_after:
-    $t_18 = mul $i 8
-    $t_18 = add @a $t_18
-    $t_18 = load 8 $t_18 8
-    $t_19 = add $temp $t_18
-    $temp = move $t_19
-    jump %for_step_10
+%for_after_3:
+    jump %for_step
 
-%for_step_10:
-    $i = add $i 1
-    jump %for_cond_11
+%for_step:
+    $t_4 = move @i
+    @i = add @i 1
+    jump %for_cond_2
 
-%while_loop:
-    $t_20 = call random 
-    $t_21 = rem $t_20 10
-    $t_22 = add $t_21 1
-    $t_23 = mul $i 8
-    $t_23 = add @a $t_23
-    store 8 $t_23 $t_22 8
-    jump %while_cond
+%for_loop_3:
+    $t_5 = mul @i 8
+    $t_5 = add @a $t_5
+    $t_5 = load 8 $t_5 8
+    $t_6 = mul @j 8
+    $t_6 = add $t_5 $t_6
+    store 8 $t_6 888 8
+    jump %for_step_2
 
-%for_after_11:
-    $t_24 = sub @n $temp
-    $t_25 = sub @now 1
-    $t_26 = mul $t_25 8
-    $t_26 = add @a $t_26
-    store 8 $t_26 $t_24 8
-    $t_27 = call show 
-    $t_28 = call merge 
-    jump %while_cond_2
+%for_step_2:
+    $t_7 = move @j
+    @j = add @j 1
+    jump %for_cond_3
 
-%while_cond_2:
-    $t_29 = call win 
-    $t_30 = xor $t_29 1
-    br $t_30 %while_loop_2 %while_after_2
+%for_after_2:
+    @i = move 0
+    jump %for_cond_4
 
-%while_after_2:
-    call print @string_7 
-    call printint $count 
-    call println @string_8 
-    $returnValue = move 0
-    jump %main.exit
+%for_cond_4:
+    $t_8 = slt @i 5
+    br $t_8 %for_loop_4 %for_after_4
 
-%main.exit:
-    ret $returnValue
+%for_loop_4:
+    $newaddress = alloc 16
+    call rec $newaddress 
+    $t_9 = mul @i 8
+    $t_9 = add @b $t_9
+    store 8 $t_9 $newaddress 8
+    $t_10 = neg 1
+    $t_11 = mul @i 8
+    $t_11 = add @b $t_11
+    $t_11 = load 8 $t_11 8
+    store 8 $t_11 $t_10 0
+    jump %for_step_3
 
-%while_loop_2:
-    call print @string_5 
-    $count = add $count 1
-    call printint $count 
-    call println @string_6 
-    $t_31 = call move 
-    $t_32 = call merge 
-    $t_33 = call show 
-    jump %while_cond_2
+%for_step_3:
+    $t_12 = move @i
+    @i = add @i 1
+    jump %for_cond_4
+
+%for_after_4:
+    $t_13 = add @a 24
+    $t_13 = load 8 $t_13 8
+    $t_14 = add $t_13 72
+    $t_14 = load 8 $t_14 8
+    $t_15 = call printNum $t_14 
+    @i = move 0
+    jump %for_cond_5
+
+%for_cond_5:
+    $t_16 = sle @i 3
+    br $t_16 %for_loop_5 %for_after_5
+
+%for_after_5:
+    @i = move 0
+    jump %for_cond_6
+
+%for_cond_6:
+    $t_17 = sle @i 3
+    br $t_17 %for_loop_6 %for_after_6
+
+%for_loop_6:
+    @j = move 0
+    jump %for_cond_7
+
+%for_cond_7:
+    $t_18 = sle @j 9
+    br $t_18 %for_loop_7 %for_after_7
+
+%for_after_7:
+    jump %for_step_4
+
+%for_step_4:
+    $t_19 = move @i
+    @i = add @i 1
+    jump %for_cond_6
+
+%for_loop_7:
+    $t_20 = mul @i 8
+    $t_20 = add @a $t_20
+    $t_20 = load 8 $t_20 8
+    $t_21 = mul @j 8
+    $t_21 = add $t_20 $t_21
+    $t_21 = load 8 $t_21 8
+    $t_22 = call printNum $t_21 
+    jump %for_step_5
+
+%for_step_5:
+    $t_23 = move @j
+    @j = add @j 1
+    jump %for_cond_7
+
+%for_after_6:
+    $t_24 = add @a 16
+    $t_24 = load 8 $t_24 8
+    $t_25 = add $t_24 80
+    store 8 $t_25 0 8
+    $t_26 = add @a 16
+    $t_26 = load 8 $t_26 8
+    $t_27 = add $t_26 80
+    $t_27 = load 8 $t_27 8
+    $t_28 = call printNum $t_27 
+    $t_29 = neg 2
+    $t_30 = add @b 0
+    $t_30 = load 8 $t_30 8
+    store 8 $t_30 $t_29 0
+    $t_31 = neg 10
+    $t_32 = add @a 16
+    $t_32 = load 8 $t_32 8
+    $t_33 = add $t_32 80
+    $t_33 = load 8 $t_33 8
+    $t_34 = mul $t_33 8
+    $t_34 = add @b $t_34
+    $t_34 = load 8 $t_34 8
+    store 8 $t_34 $t_31 0
+    $t_35 = add @b 0
+    $t_35 = load 8 $t_35 8
+    $t_36 = load 8 $t_35 0
+    $t_37 = call printNum $t_36 
+    $t_38 = add @b 8
+    $t_38 = load 8 $t_38 8
+    $t_39 = load 8 $t_38 0
+    $t_40 = call printNum $t_39 
+    ret 0
+
+%for_loop_5:
+    @j = move 0
+    jump %for_cond_8
+
+%for_cond_8:
+    $t_41 = sle @j 9
+    br $t_41 %for_loop_8 %for_after_8
+
+%for_loop_8:
+    $t_42 = mul @i 10
+    $t_43 = add $t_42 @j
+    $t_44 = mul @i 8
+    $t_44 = add @a $t_44
+    $t_44 = load 8 $t_44 8
+    $t_45 = mul @j 8
+    $t_45 = add $t_44 $t_45
+    store 8 $t_45 $t_43 8
+    jump %for_step_6
+
+%for_step_6:
+    $t_46 = move @j
+    @j = add @j 1
+    jump %for_cond_8
+
+%for_after_8:
+    jump %for_step_7
+
+%for_step_7:
+    $t_47 = move @i
+    @i = add @i 1
+    jump %for_cond_5
+
+%for_loop:
+    $newaddress_2 = move 96
+    $newaddress_2 = alloc $newaddress_2
+    store 8 $newaddress_2 11 0
+    $t_48 = mul @i 8
+    $t_48 = add @a $t_48
+    store 8 $t_48 $newaddress_2 8
+    jump %for_step_8
+
+%for_step_8:
+    $t_49 = move @i
+    @i = add @i 1
+    jump %for_cond
 
 }
 
 func _init {
 
 %_init.entry:
-    @n = move 0
-    @h = move 0
-    @now = move 0
-    @a = move 0
-    @A = move 48271
-    @M = move 2147483647
-    @Q = move 0
-    @R = move 0
-    @seed = move 1
+    $newaddress = move 40
+    $newaddress = alloc $newaddress
+    store 8 $newaddress 4 0
+    @a = move $newaddress
+    @i = move 0
+    @j = move 0
+    $newaddress_2 = move 48
+    $newaddress_2 = alloc $newaddress_2
+    store 8 $newaddress_2 5 0
+    @b = move $newaddress_2
     ret 0
 
 }

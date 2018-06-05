@@ -115,7 +115,7 @@ public class GlobalVariableResolver {
         for (Function func : irRoot.functions.values()) {
             FunctionInfo info = funcInfo.get(func);
             Set<StaticData> usedSet = info.staticMap.keySet();
-            if (usedSet.isEmpty()) continue;
+//            if (usedSet.isEmpty()) continue;
             for (BasicBlock basicBlock:func.getReversePostOrder()) {
                 for (IRInstruction inst = basicBlock.getHead(); inst != null; inst = inst.getNxt()) {
                     if (inst instanceof CallInstruction) {
