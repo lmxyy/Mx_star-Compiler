@@ -1317,8 +1317,6 @@ public class NASMPrinter implements IRVisitor {
         out.println("global main\n");
 
         out.println("extern malloc");
-//        out.println("\textern puts");
-//        out.println("\textern __stack_chk_fail");
 
         out.println("section .text");
         node.functions.values().forEach(func->func.accept(this));

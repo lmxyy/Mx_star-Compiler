@@ -20,6 +20,11 @@ public class FunctionInliner {
         irRoot = _irRoot;
     }
 
+    private void copyIntValue(Map<Object,Object> renameMap,IntValue intValue) {
+        if (renameMap.containsKey(intValue)) return;
+        renameMap.put(intValue,intValue.copy());
+    }
+
     private void countInstructionNumber() {
         irRoot.functions.values().forEach(func->infoMap.put(func,new FuncInfo()));
         for (Function func:irRoot.functions.values()) {
@@ -53,6 +58,7 @@ public class FunctionInliner {
         Function callee = call.getFunction();
         Map<Object,Object> renameMap = new HashMap<>();
         func.calcReversePostOrder();
+        List<BasicBlock> RPO = callee.getReversePostOrder();
 
         BasicBlock oldExitBlock = callee.exitBasicBlock;
         BasicBlock newExitBlock = new BasicBlock(func,oldExitBlock.getHintName());
@@ -63,7 +69,6 @@ public class FunctionInliner {
 
         Map <Object,Object> moveMap = Collections.singletonMap(call.getBasicBlock(),newExitBlock);
         for (IRInstruction inst = call.getNxt();inst != null;inst = inst.getNxt()) {
-            // TODO
             if (inst instanceof EndInstruction) {
                 newExitBlock.end((EndInstruction)inst.copyAndRename(moveMap));
             }
@@ -83,8 +88,37 @@ public class FunctionInliner {
 
         call.remove();
 
+        RPO.stream().filter(basicBlock -> !renameMap.containsKey(basicBlock)).
+                forEach(basicBlock -> renameMap.put(basicBlock,new BasicBlock(func,basicBlock.getHintName())));
 
-        return null;
+        for (BasicBlock oldBlock:RPO) {
+            BasicBlock newBlock = (BasicBlock) renameMap.get(oldBlock);
+            for (IRInstruction inst = oldBlock.getHead();inst != null;inst = inst.getNxt()) {
+                inst.getUsedIntValue().forEach(v->copyIntValue(renameMap,v));
+                if (inst.getDefinedRegister() != null) {
+                    copyIntValue(renameMap,inst.getDefinedRegister());
+                }
+                if (newBlock != newExitBlock) {
+                    if (inst instanceof EndInstruction) {
+                        if (!(inst instanceof ReturnInstruction))
+                            newBlock.end((EndInstruction)inst.copyAndRename(renameMap));
+                    }
+                    else {
+                        newBlock.append(inst.copyAndRename(renameMap));
+                    }
+                }
+                else {
+                    if (!(inst instanceof ReturnInstruction))
+                        newExitHead.prepend(inst.copyAndRename(renameMap));
+                }
+            }
+        }
+
+        ReturnInstruction retInst = callee.retInstruction.get(0);
+        if (retInst.getRetVal() != null) {
+            newExitHead.prepend(new MoveInstruction(newExitBlock,(IntValue) renameMap.get(retInst.getRetVal()),call.getRegister()));
+        }
+        return newExitHead;
     }
 
     public void run() {
@@ -131,7 +165,7 @@ public class FunctionInliner {
                 }
                 func.calcReversePostOrder();
             }
-// TODO           toDeleteFunction.forEach();
+            toDeleteFunction.forEach(func->irRoot.functions.remove(func));
         }
     }
 }

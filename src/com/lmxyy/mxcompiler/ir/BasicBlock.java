@@ -11,7 +11,7 @@ import static com.lmxyy.mxcompiler.ir.BinaryOperationInstruction.Operator.*;
 
 public class BasicBlock {
     private Set<BasicBlock> pred = new HashSet<>(),succ = new HashSet<>();
-    private Function parent; String hintName;
+    private Function parent; private String hintName;
     private IRInstruction head,tail;
     private boolean ended;
 
