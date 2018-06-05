@@ -138,11 +138,13 @@ public class BasicBlock {
                         ));
                         append(new CqoInstruction(this));
                         if (((BinaryOperationInstruction) instruction).getRhs() instanceof IntImmediate) {
-                            VirtualRegister reg = new VirtualRegister(null);
-                            append(new MoveInstruction(this, ((BinaryOperationInstruction) instruction).getRhs(), reg));
+                            append(new MoveInstruction(
+                                    this,
+                                    ((BinaryOperationInstruction) instruction).getRhs(), NASMRegisterSet.R10)
+                            );
                             append(new TwoAddressInstruction(
                                     this, ((BinaryOperationInstruction) instruction).getOperator(),
-                                    ((BinaryOperationInstruction) instruction).getDest(), reg
+                                    ((BinaryOperationInstruction) instruction).getDest(), NASMRegisterSet.R10
                             ));
                         } else {
                             append(new TwoAddressInstruction(
@@ -169,11 +171,13 @@ public class BasicBlock {
                         ));
                         append(new CqoInstruction(this));
                         if (((BinaryOperationInstruction) instruction).getRhs() instanceof IntImmediate) {
-                            VirtualRegister reg = new VirtualRegister(null);
-                            append(new MoveInstruction(this, ((BinaryOperationInstruction) instruction).getRhs(), reg));
+                            append(new MoveInstruction(
+                                    this,
+                                    ((BinaryOperationInstruction) instruction).getRhs(), NASMRegisterSet.R10)
+                            );
                             append(new TwoAddressInstruction(
                                     this, ((BinaryOperationInstruction) instruction).getOperator(),
-                                    ((BinaryOperationInstruction) instruction).getDest(), reg
+                                    ((BinaryOperationInstruction) instruction).getDest(), NASMRegisterSet.R10
                             ));
                         } else {
                             append(new TwoAddressInstruction(
