@@ -76,6 +76,7 @@ public class Compiler {
         NASMPrinter nasmPrinter = new NASMPrinter(new PrintStream(System.out));
 
         nasmPrinter.visit(irRoot);
+        new NASMPrinter(System.err).visit(irRoot);
     }
 
     public boolean run() throws Exception{
