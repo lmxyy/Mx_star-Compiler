@@ -16,7 +16,7 @@ public class NASMRegisterSet {
     public static NASMRegister RDX = new NASMRegister(0,"rdx","dl",true,true,false,true);
     public static NASMRegister RBX = new NASMRegister(0,"rbx","bl",true,false,true);
     public static NASMRegister RSP = new NASMRegister(0,"rsp","spl",false,true,false);
-    public static NASMRegister RBP = new NASMRegister(0,"rbp","bpl",true,false,true);
+    public static NASMRegister RBP = new NASMRegister(0,"rbp","bpl",false,false,true);
     public static NASMRegister RSI = new NASMRegister(0,"rsi","sil",true,true,false,true);
     public static NASMRegister RDI = new NASMRegister(0,"rdi","dil",true,true,false,true);
     public static NASMRegister R8 = new NASMRegister(0,"r8","r8b",true,true,false,true);
