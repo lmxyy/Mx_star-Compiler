@@ -80,7 +80,7 @@ public class NASMIRTransformer {
             FunctionInfo info = entry.getValue();
             info.recursiveUsedRegister.addAll(func.usedPhysicalGeneralRegister);
             func.calleeSet.forEach(
-                    callee -> info.recursiveUsedRegister.addAll(callee.usedPhysicalGeneralRegister)
+                    callee -> info.recursiveUsedRegister.addAll(infoMap.get(callee).recursiveUsedRegister)
             );
         }
     }
@@ -97,7 +97,8 @@ public class NASMIRTransformer {
         // save caller-save register
         for (int i = 0; i < info.usedCallerSaveRegister.size(); ++i) {
             PhysicalRegister pr = info.usedCallerSaveRegister.get(i);
-            if (!pr.isCallerSave()&&IRRoot.isBuiltinFunction(callee)) continue;
+            if (IRRoot.isBuiltinFunction(callee)&&!pr.isCallerSave()) continue;
+            if (!IRRoot.isBuiltinFunction(callee)&&!calleeInfo.recursiveUsedRegister.contains(pr)) continue;
             offsetMap.put(pr,(info.stackSlotNum + i) * wordSize);
             inst.prepend(new StoreInstruction(
                     basicBlock, NASMRegisterSet.RSP,
@@ -224,7 +225,8 @@ public class NASMIRTransformer {
         // reload caller save registers
         for (int i = 0; i < info.usedCallerSaveRegister.size(); ++i) {
             PhysicalRegister pr = info.usedCallerSaveRegister.get(i);
-            if (!pr.isCallerSave()&&IRRoot.isBuiltinFunction(callee)) continue;
+            if (IRRoot.isBuiltinFunction(callee)&&!pr.isCallerSave()) continue;
+            if (!IRRoot.isBuiltinFunction(callee)&&!calleeInfo.recursiveUsedRegister.contains(pr)) continue;
             inst.append(new LoadInstruction(
                     basicBlock, pr, wordSize, NASMRegisterSet.RSP,
                     (info.stackSlotNum + i) * wordSize)
