@@ -1351,8 +1351,7 @@ public class NASMPrinter implements IRVisitor {
             out.println("___"+dataId(data)+":");
             out.println("\tresb "+data.getRegisterSize()*8);
         });
-        if (out != System.err)
-            printBuiltinFunctions();
+        printBuiltinFunctions();
     }
 
     @Override
