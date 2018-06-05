@@ -62,6 +62,28 @@ public class FunctionInliner {
             func.exitBasicBlock = newExitBlock;
 
         Map <Object,Object> moveMap = Collections.singletonMap(call.getBasicBlock(),newExitBlock);
+        for (IRInstruction inst = call.getNxt();inst != null;inst = inst.getNxt()) {
+            // TODO
+            if (inst instanceof EndInstruction) {
+                newExitBlock.end((EndInstruction)inst.copyAndRename(moveMap));
+            }
+            else {
+                newExitBlock.append(inst.copyAndRename(moveMap));
+            }
+            inst.remove();
+        }
+        IRInstruction newExitHead = newExitBlock.getHead();
+
+        for (int i = 0; i < call.getArgRegList().size(); ++i) {
+            VirtualRegister oldReg = callee.argRegList.get(i);
+            VirtualRegister newReg = (VirtualRegister) oldReg.copy();
+            call.prepend(new MoveInstruction(call.getBasicBlock(),call.getArgRegList().get(i), newReg));
+            renameMap.put(oldReg, newReg);
+        }
+
+        call.remove();
+
+
         return null;
     }
 

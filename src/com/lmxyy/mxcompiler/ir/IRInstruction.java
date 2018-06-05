@@ -73,4 +73,5 @@ public abstract class IRInstruction {
     public abstract void setDefinedRegister(Register newReg);
     public abstract void setUsedRegister(Map<Register, Register> regMap);
     public abstract void replaceIntValueUse(IntValue oldValue,IntValue newValue);
+    public abstract IRInstruction copyAndRename(Map<Object,Object> renameMap);
 }
