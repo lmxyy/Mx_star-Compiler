@@ -48,7 +48,7 @@ public class Function {
         basicBlock.getSucc().forEach(succ->dfsPostOrd(succ));
         reversePostOrder.add(basicBlock);
     }
-    private void calcReversePostOrder() {
+    public void calcReversePostOrder() {
         reversePostOrder = new ArrayList<>();
         visited = new HashSet<>();
         dfsPostOrd(startBasicBlock);

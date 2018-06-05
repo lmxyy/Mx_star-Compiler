@@ -63,9 +63,9 @@ public class Compiler {
         IRBuilder irBuilder = new IRBuilder(globalSymbolTable,irRoot);
 
         irBuilder.visit(ast);
-//        String irInfoPath = "/Users/limuyang/Desktop/Mx_star-Compiler/ir.txt";
-//        IRPrinter irPrinter = new IRPrinter(new PrintStream(irInfoPath));
-//        irPrinter.visit(irRoot);
+        String irInfoPath = "/Users/limuyang/Desktop/Mx_star-Compiler/ir.txt";
+        IRPrinter irPrinter = new IRPrinter(new PrintStream(irInfoPath));
+        irPrinter.visit(irRoot);
         new IRTransformer(irRoot).run();
         new GlobalVariableResolver(irRoot).run();
         new RegisterInjector(irRoot).run();
@@ -76,7 +76,7 @@ public class Compiler {
         NASMPrinter nasmPrinter = new NASMPrinter(new PrintStream(System.out));
 
         nasmPrinter.visit(irRoot);
-        new NASMPrinter(System.err).visit(irRoot);
+//        new NASMPrinter(System.err).visit(irRoot);
     }
 
     public boolean run() throws Exception{
