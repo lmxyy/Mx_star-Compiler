@@ -616,16 +616,16 @@ main..main.entry:
 	mov rax,rdx
 	mov r11,rdx
 	cqo
-	mov r11,qword [rsp]
-	idiv r11
+	mov r10,qword [rsp]
+	idiv r10
 	mov rdx,r11
 	mov rcx,rax
 	mov r12,rcx
 	mov rax,rdx
 	mov r11,rdx
 	cqo
-	mov r11,qword [rsp]
-	idiv r11
+	mov r10,qword [rsp]
+	idiv r10
 	mov r13,rdx
 	mov rdx,r11
 	mov r10,r13
@@ -827,19 +827,19 @@ main..for_loop:
 	mov r10,qword [rsp+72]
 	mov rdx,r10
 	imul rdx,8
-	mov r11,qword [rsp+16]
-	add rdx,r11
+	mov r10,qword [rsp+16]
+	add rdx,r10
 	mov qword [rdx+8],rsi
 	jmp main..while_cond
 main..while_cond:
 	mov r10,qword [rsp+72]
 	mov rdx,r10
 	imul rdx,8
-	mov r11,qword [rsp+16]
-	add rdx,r11
+	mov r10,qword [rsp+16]
+	add rdx,r10
 	mov rdx,qword [rdx+8]
-	mov r11,qword [rsp+48]
-	add rdx,r11
+	mov r10,qword [rsp+48]
+	add rdx,r10
 	cmp rdx,r8
 	mov rdx,0
 	setg dl
@@ -850,8 +850,8 @@ main..while_after:
 	mov r10,qword [rsp+72]
 	mov rdx,r10
 	imul rdx,8
-	mov r11,qword [rsp+16]
-	add rdx,r11
+	mov r10,qword [rsp+16]
+	add rdx,r10
 	mov rdx,qword [rdx+8]
 	mov r10,qword [rsp+48]
 	mov rsi,r10
@@ -860,9 +860,9 @@ main..while_after:
 	mov qword [rsp+48],r10
 	jmp main..for_step
 main..for_step:
-	mov r11,qword [rsp+72]
-	add r11,1
-	mov qword [rsp+72],r11
+	mov r10,qword [rsp+72]
+	add r10,1
+	mov qword [rsp+72],r10
 	jmp main..for_cond
 main..while_loop:
 	mov r10,qword [rsp+56]
@@ -910,20 +910,20 @@ main..while_loop:
 	mov r10,qword [rsp+72]
 	mov rdx,r10
 	imul rdx,8
-	mov r11,qword [rsp+16]
-	add rdx,r11
+	mov r10,qword [rsp+16]
+	add rdx,r10
 	mov qword [rdx+8],rsi
 	jmp main..while_cond
 main..for_after:
 	mov rsi,r8
-	mov r11,qword [rsp+48]
-	sub rsi,r11
+	mov r10,qword [rsp+48]
+	sub rsi,r10
 	mov r10,qword [rsp+40]
 	mov rdx,r10
 	sub rdx,1
 	imul rdx,8
-	mov r11,qword [rsp+16]
-	add rdx,r11
+	mov r10,qword [rsp+16]
+	add rdx,r10
 	mov qword [rdx+8],rsi
 	mov r10,qword [rsp+16]
 	mov qword [___a],r10

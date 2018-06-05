@@ -167,6 +167,7 @@ public class GraphColoringAllocator extends RegisterAllocator {
         for (BasicBlock basicBlock:curFunction.getReversePostOrder()) {
             for (IRInstruction inst = basicBlock.getHead();inst != null;inst = inst.getNxt()) {
                 if (inst instanceof TwoAddressInstruction) {
+                    TwoAddressInstruction ttt = (TwoAddressInstruction) inst;
                     Collection<Register> used = inst.getUsedRegister();
                     used.forEach(reg -> renameMap.put(reg, reg));
                     boolean tmpPR1Used = false;
@@ -174,7 +175,7 @@ public class GraphColoringAllocator extends RegisterAllocator {
                         VirtualRegister reg = (VirtualRegister) ((TwoAddressInstruction) inst).getRhs();
                         Register color = infoMap.get(reg).color;
                         if (color instanceof StackSlot) {
-                            PhysicalRegister pr = tmpPR1Used ? tmpReg1 : tmpReg2;
+                            PhysicalRegister pr = tmpPR1Used ? tmpReg2 : tmpReg1;
                             inst.prepend(new LoadInstruction(basicBlock, pr, wordSize, color, 0));
                             tmpPR1Used = true;
                             renameMap.put(reg, pr);
@@ -191,13 +192,14 @@ public class GraphColoringAllocator extends RegisterAllocator {
                             }
                         }
                     }
+
                     if (((TwoAddressInstruction) inst).getLhs() instanceof VirtualRegister&&
                             ((TwoAddressInstruction) inst).getOperator() != BinaryOperationInstruction.Operator.DIV &&
                             ((TwoAddressInstruction) inst).getOperator() != BinaryOperationInstruction.Operator.MOD) {
                         VirtualRegister reg = (VirtualRegister) ((TwoAddressInstruction) inst).getLhs();
                         Register color = infoMap.get(reg).color;
                         if (color instanceof StackSlot) {
-                            PhysicalRegister pr = tmpPR1Used ? tmpReg1 : tmpReg2;
+                            PhysicalRegister pr = tmpPR1Used ? tmpReg2 : tmpReg1;
                             inst.prepend(new LoadInstruction(basicBlock, pr, wordSize, color, 0));
                             renameMap.put(reg, pr);
                             // curFunction.usedPhysicalGeneralRegister.add(pr);
@@ -210,6 +212,7 @@ public class GraphColoringAllocator extends RegisterAllocator {
                             inst.setUsedRegister(renameMap);
                         }
                     } else inst.setUsedRegister(renameMap);
+
                 }
                 else {
                     Collection<Register> used = inst.getUsedRegister();
