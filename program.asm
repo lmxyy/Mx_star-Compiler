@@ -445,10 +445,12 @@ ___merge..if_true_3:
 	mov qword [rsp+16],rsi
 	mov qword [rsp+24],r14
 	mov qword [rsp+40],rdi
+	mov qword [rsp+32],r8
 	mov rsi,qword [rsp+32]
 	mov rdi,r14
 	call ___swap
 	mov rdi,qword [rsp+40]
+	mov r8,qword [rsp+32]
 	mov r14,qword [rsp+24]
 	mov rsi,qword [rsp+16]
 	mov rdx,qword [rsp+8]
