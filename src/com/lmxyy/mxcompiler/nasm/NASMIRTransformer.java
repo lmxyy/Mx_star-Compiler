@@ -97,9 +97,9 @@ public class NASMIRTransformer {
         // save caller-save register
         for (int i = 0; i < info.usedCallerSaveRegister.size(); ++i) {
             PhysicalRegister pr = info.usedCallerSaveRegister.get(i);
+            offsetMap.put(pr,(info.stackSlotNum + i) * wordSize);
             if (IRRoot.isBuiltinFunction(callee)&&!pr.isCallerSave()) continue;
             if (!IRRoot.isBuiltinFunction(callee)&&!calleeInfo.recursiveUsedRegister.contains(pr)) continue;
-            offsetMap.put(pr,(info.stackSlotNum + i) * wordSize);
             inst.prepend(new StoreInstruction(
                     basicBlock, NASMRegisterSet.RSP,
                     (info.stackSlotNum + i) * wordSize, wordSize, pr
