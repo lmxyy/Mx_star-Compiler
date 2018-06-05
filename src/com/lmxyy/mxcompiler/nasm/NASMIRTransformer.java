@@ -80,7 +80,12 @@ public class NASMIRTransformer {
             FunctionInfo info = entry.getValue();
             info.recursiveUsedRegister.addAll(func.usedPhysicalGeneralRegister);
             func.calleeSet.forEach(
-                    callee -> info.recursiveUsedRegister.addAll(infoMap.get(callee).recursiveUsedRegister)
+                    callee -> {
+                        if (IRRoot.isBuiltinFunction(callee)) {
+                            info.recursiveUsedRegister.addAll(NASMRegisterSet.callerSave);
+                        }
+                        else info.recursiveUsedRegister.addAll(infoMap.get(callee).recursiveUsedRegister);
+                    }
             );
         }
     }

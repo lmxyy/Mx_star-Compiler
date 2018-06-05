@@ -179,7 +179,6 @@ public class GraphColoringAllocator extends RegisterAllocator {
                             inst.prepend(new LoadInstruction(basicBlock, pr, wordSize, color, 0));
                             tmpPR1Used = true;
                             renameMap.put(reg, pr);
-                            // curFunction.usedPhysicalGeneralRegister.add(pr);
                         } else {
                             if (color == NASMRegisterSet.RDX&&
                                     (((TwoAddressInstruction) inst).getOperator() == BinaryOperationInstruction.Operator.DIV ||

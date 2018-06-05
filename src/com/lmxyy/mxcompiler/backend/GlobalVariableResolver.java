@@ -119,8 +119,10 @@ public class GlobalVariableResolver {
             for (BasicBlock basicBlock:func.getReversePostOrder()) {
                 for (IRInstruction inst = basicBlock.getHead(); inst != null; inst = inst.getNxt()) {
                     if (inst instanceof CallInstruction) {
-                        if (irRoot.isBuiltinFunction(((CallInstruction) inst).getFunction()))
+                        if (irRoot.isBuiltinFunction(((CallInstruction) inst).getFunction())) {
+                            func.calleeSet.add(((CallInstruction) inst).getFunction());
                             continue;
+                        }
                         Function callee = ((CallInstruction) inst).getFunction();
                         FunctionInfo calleeInfo = funcInfo.get(callee);
                         for (StaticData data:info.writtenStatic) {
@@ -140,6 +142,9 @@ public class GlobalVariableResolver {
                                     data, data instanceof StaticString
                             ));
                         }
+                    }
+                    else if (inst instanceof HeapAllocateInstruction) {
+                        func.calleeSet.add(IRRoot.funcMalloc);
                     }
                 }
             }

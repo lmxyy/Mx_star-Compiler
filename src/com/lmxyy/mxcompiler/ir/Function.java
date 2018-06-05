@@ -22,6 +22,7 @@ public class Function {
     private String callName = null;
 
     public Function(FunctionType _type) {
+        if (_type == null) return;
         type = _type;
         startBasicBlock = new BasicBlock(this,type.getName()+".entry");
     }

@@ -48,6 +48,7 @@ public class IRRoot {
         builtinFunctions.add(funcToString);
         funcToString.setCallName("_Z8toStringi");
         builtinFunctions.forEach(func->func.usedPhysicalGeneralRegister.addAll(NASMRegisterSet.all));
+        builtinFunctions.add(funcMalloc);
     }
 
     public static Function stringSubString = new Function(GlobalSymbolTable.stringSubString);
@@ -101,16 +102,7 @@ public class IRRoot {
             }})
     );
     public static Function stringOrd = new Function(GlobalSymbolTable.stringOrd);
-    /*public Function stringLength= new Function(new FunctionType(
-            GlobalSymbolTable.stringType,
-            "string.length",
-            new ArrayList<VartypeNode>() {{
-                add(GlobalSymbolTable.stringType);
-            }},
-            new ArrayList<String>() {{
-                add("arg0");
-            }})
-    );*/
+
 
     public static Function funcPrintln = new Function(GlobalSymbolTable.funcPrintln);
     public static Function funcPrint = new Function(GlobalSymbolTable.funcPrint);
@@ -137,6 +129,8 @@ public class IRRoot {
     public static Function funcGetString = new Function(GlobalSymbolTable.funcGetString);
     public static Function funcGetInt = new Function(GlobalSymbolTable.funcGetInt);
     public static Function funcToString = new Function(GlobalSymbolTable.funcToString);
+    public static Function funcMalloc = new Function(null);
+
 
     public List<Function> getBuiltinFunctions() {
         return builtinFunctions;
