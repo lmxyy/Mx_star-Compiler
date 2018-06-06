@@ -201,7 +201,6 @@ public class GraphColoringAllocator extends RegisterAllocator {
                             PhysicalRegister pr = tmpPR1Used ? tmpReg2 : tmpReg1;
                             inst.prepend(new LoadInstruction(basicBlock, pr, wordSize, color, 0));
                             renameMap.put(reg, pr);
-                            // curFunction.usedPhysicalGeneralRegister.add(pr);
                             inst.append(new StoreInstruction(basicBlock, color, CompilerOption.getSizeInt(), 0, pr));
                             inst.setUsedRegister(renameMap);
                             inst = inst.getNxt();
@@ -235,7 +234,6 @@ public class GraphColoringAllocator extends RegisterAllocator {
                                         inst.prepend(new LoadInstruction(basicBlock,pr,wordSize,color,0));
                                         tmpReg1Used = true;
                                         renameMap.put(reg,pr);
-//                                        curFunction.usedPhysicalGeneralRegister.add(pr);
                                     }
                                     else {
                                         renameMap.put(reg,color);
@@ -255,7 +253,6 @@ public class GraphColoringAllocator extends RegisterAllocator {
                         if (color instanceof StackSlot) {
                             inst.append(new StoreInstruction(basicBlock,color,0,wordSize,tmpReg1));
                             inst.setDefinedRegister(tmpReg1);
-//                            curFunction.usedPhysicalGeneralRegister.add(tmpReg1);
                             inst = inst.getNxt();
                         }
                         else {

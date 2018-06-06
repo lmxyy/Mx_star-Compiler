@@ -89,6 +89,9 @@ int[] sha1(int[] input, int length)
 	int h2 = lohi(56574, 39098); //0x98BADCFE
 	int h3 = 271733878;   //0x10325476
 	int h4 = lohi(57840, 50130); //0xC3D2E1F0
+
+	// println(toString(h0));
+	// println(toString(h1));
 	for(i=0;i<nChunk;i++)
 	{
 		for(j=16;j<80;j++)

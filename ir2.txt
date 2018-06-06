@@ -1,43 +1,1356 @@
+space @asciiTable 8
+space @MAXCHUNK 8
+space @MAXLENGTH 8
+space @chunks 8
+space @inputBuffer 8
+space @outputBuffer 8
+asciiz @string  !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~
+asciiz @string_2 
+asciiz @string_3 nChunk > MAXCHUNK!
+asciiz @string_4 Invalid input
+asciiz @string_5 Not Found!
+
+func sha1 $input $length {
+
+%sha1.entry:
+    $t = add $length 64
+    $t_2 = sub $t 56
+    $t_3 = div $t_2 64
+    $t_4 = add $t_3 1
+    $nChunk = move $t_4
+    $t_5 = sgt $nChunk @MAXCHUNK
+    br $t_5 %if_true %if_after
+
+%if_after:
+    $i = move 0
+    $j = move 0
+    $i = move 0
+    jump %for_cond
+
+%for_cond:
+    $t_6 = slt $i $nChunk
+    br $t_6 %for_loop %for_after
+
+%for_after:
+    $i = move 0
+    jump %for_cond_2
+
+%for_cond_2:
+    $t_7 = slt $i $length
+    br $t_7 %for_loop_2 %for_after_2
+
+%for_after_2:
+    $t_8 = div $i 64
+    $t_9 = mul $t_8 8
+    $t_9 = add @chunks $t_9
+    $t_9 = load 8 $t_9 8
+    $t_10 = rem $i 64
+    $t_11 = div $t_10 4
+    $t_12 = mul $t_11 8
+    $t_12 = add $t_9 $t_12
+    $t_12 = load 8 $t_12 8
+    $t_13 = rem $i 4
+    $t_14 = sub 3 $t_13
+    $t_15 = mul $t_14 8
+    $t_16 = shl 128 $t_15
+    $t_17 = or $t_12 $t_16
+    $t_18 = div $i 64
+    $t_19 = mul $t_18 8
+    $t_19 = add @chunks $t_19
+    $t_19 = load 8 $t_19 8
+    $t_20 = rem $i 64
+    $t_21 = div $t_20 4
+    $t_22 = mul $t_21 8
+    $t_22 = add $t_19 $t_22
+    store 8 $t_22 $t_17 8
+    $t_23 = shl $length 3
+    $t_24 = sub $nChunk 1
+    $t_25 = mul $t_24 8
+    $t_25 = add @chunks $t_25
+    $t_25 = load 8 $t_25 8
+    $t_26 = add $t_25 120
+    store 8 $t_26 $t_23 8
+    $t_27 = ashr $length 29
+    $t_28 = and $t_27 7
+    $t_29 = sub $nChunk 1
+    $t_30 = mul $t_29 8
+    $t_30 = add @chunks $t_30
+    $t_30 = load 8 $t_30 8
+    $t_31 = add $t_30 112
+    store 8 $t_31 $t_28 8
+    $h0 = move 1732584193
+    $lo = move 43913
+    $hi = move 61389
+    $t_32 = shl $hi 16
+    $t_33 = or $lo $t_32
+    jump %lohi.entry
+
+%lohi.entry:
+    $t_34 = move $t_33
+    $h1 = move $t_34
+    $lo_2 = move 56574
+    $hi_2 = move 39098
+    $t_35 = shl $hi_2 16
+    $t_36 = or $lo_2 $t_35
+    jump %lohi.entry_2
+
+%lohi.entry_2:
+    $t_37 = move $t_36
+    $h2 = move $t_37
+    $h3 = move 271733878
+    $lo_3 = move 57840
+    $hi_3 = move 50130
+    $t_38 = shl $hi_3 16
+    $t_39 = or $lo_3 $t_38
+    jump %lohi.entry_3
+
+%lohi.entry_3:
+    $t_40 = move $t_39
+    $h4 = move $t_40
+    $i = move 0
+    jump %for_cond_3
+
+%for_cond_3:
+    $t_41 = slt $i $nChunk
+    br $t_41 %for_loop_3 %for_after_3
+
+%for_loop_3:
+    $j = move 16
+    jump %for_cond_4
+
+%for_cond_4:
+    $t_42 = slt $j 80
+    br $t_42 %for_loop_4 %for_after_4
+
+%for_after_4:
+    $a = move $h0
+    $b = move $h1
+    $c = move $h2
+    $d = move $h3
+    $e = move $h4
+    $j = move 0
+    jump %for_cond_5
+
+%for_cond_5:
+    $t_43 = slt $j 80
+    br $t_43 %for_loop_5 %for_after_5
+
+%for_loop_5:
+    $f = move 0
+    $k = move 0
+    $t_44 = slt $j 20
+    br $t_44 %if_true_2 %if_false
+
+%if_false:
+    $t_45 = slt $j 40
+    br $t_45 %if_true_3 %if_false_2
+
+%if_false_2:
+    $t_46 = slt $j 60
+    br $t_46 %if_true_4 %if_false_3
+
+%if_false_3:
+    $t_47 = xor $b $c
+    $t_48 = xor $t_47 $d
+    $f = move $t_48
+    $lo_4 = move 49622
+    $hi_4 = move 51810
+    $t_49 = shl $hi_4 16
+    $t_50 = or $lo_4 $t_49
+    jump %lohi.entry_4
+
+%lohi.entry_4:
+    $t_51 = move $t_50
+    $k = move $t_51
+    jump %if_after_2
+
+%if_true_4:
+    $t_52 = and $b $c
+    $t_53 = and $b $d
+    $t_54 = or $t_52 $t_53
+    $t_55 = and $c $d
+    $t_56 = or $t_54 $t_55
+    $f = move $t_56
+    $lo_5 = move 48348
+    $hi_5 = move 36635
+    $t_57 = shl $hi_5 16
+    $t_58 = or $lo_5 $t_57
+    jump %lohi.entry_5
+
+%lohi.entry_5:
+    $t_59 = move $t_58
+    $k = move $t_59
+    jump %if_after_2
+
+%if_after_2:
+    jump %if_after_3
+
+%if_true_3:
+    $t_60 = xor $b $c
+    $t_61 = xor $t_60 $d
+    $f = move $t_61
+    $k = move 1859775393
+    jump %if_after_3
+
+%if_after_3:
+    jump %if_after_4
+
+%if_true_2:
+    $t_62 = and $b $c
+    $t_63 = not $b
+    $t_64 = and $t_63 $d
+    $t_65 = or $t_62 $t_64
+    $f = move $t_65
+    $k = move 1518500249
+    jump %if_after_4
+
+%if_after_4:
+    $x = move $a
+    $shift = move 5
+    $t_66 = seq $shift 1
+    br $t_66 %if_true_5 %if_after_5
+
+%if_true_5:
+    $t_67 = and $x 2147483647
+    $t_68 = shl $t_67 1
+    $t_69 = ashr $x 31
+    $t_70 = and $t_69 1
+    $t_71 = or $t_68 $t_70
+    $returnValue = move $t_71
+    jump %rotate_left.exit
+
+%if_after_5:
+    $t_72 = seq $shift 31
+    br $t_72 %if_true_6 %if_after_6
+
+%if_after_6:
+    $t_73 = sub 32 $shift
+    $t_74 = shl 1 $t_73
+    $t_75 = sub $t_74 1
+    $t_76 = and $x $t_75
+    $t_77 = shl $t_76 $shift
+    $t_78 = sub 32 $shift
+    $t_79 = ashr $x $t_78
+    $t_80 = shl 1 $shift
+    $t_81 = sub $t_80 1
+    $t_82 = and $t_79 $t_81
+    $t_83 = or $t_77 $t_82
+    $returnValue = move $t_83
+    jump %rotate_left.exit
+
+%if_true_6:
+    $t_84 = and $x 1
+    $t_85 = shl $t_84 31
+    $t_86 = ashr $x 1
+    $t_87 = and $t_86 2147483647
+    $t_88 = or $t_85 $t_87
+    $returnValue = move $t_88
+    jump %rotate_left.exit
+
+%rotate_left.exit:
+    $t_89 = move $returnValue
+    $x_2 = move $t_89
+    $y = move $e
+    $t_90 = and $x_2 65535
+    $t_91 = and $y 65535
+    $t_92 = add $t_90 $t_91
+    $low = move $t_92
+    $t_93 = ashr $x_2 16
+    $t_94 = and $t_93 65535
+    $t_95 = ashr $y 16
+    $t_96 = and $t_95 65535
+    $t_97 = add $t_94 $t_96
+    $t_98 = ashr $low 16
+    $t_99 = add $t_97 $t_98
+    $t_100 = and $t_99 65535
+    $high = move $t_100
+    $t_101 = shl $high 16
+    $t_102 = and $low 65535
+    $t_103 = or $t_101 $t_102
+    jump %add.entry
+
+%add.entry:
+    $t_104 = move $t_103
+    $x_3 = move $f
+    $y_2 = move $k
+    $t_105 = and $x_3 65535
+    $t_106 = and $y_2 65535
+    $t_107 = add $t_105 $t_106
+    $low_2 = move $t_107
+    $t_108 = ashr $x_3 16
+    $t_109 = and $t_108 65535
+    $t_110 = ashr $y_2 16
+    $t_111 = and $t_110 65535
+    $t_112 = add $t_109 $t_111
+    $t_113 = ashr $low_2 16
+    $t_114 = add $t_112 $t_113
+    $t_115 = and $t_114 65535
+    $high_2 = move $t_115
+    $t_116 = shl $high_2 16
+    $t_117 = and $low_2 65535
+    $t_118 = or $t_116 $t_117
+    jump %add.entry_2
+
+%add.entry_2:
+    $t_119 = move $t_118
+    $x_4 = move $t_104
+    $y_3 = move $t_119
+    $t_120 = and $x_4 65535
+    $t_121 = and $y_3 65535
+    $t_122 = add $t_120 $t_121
+    $low_3 = move $t_122
+    $t_123 = ashr $x_4 16
+    $t_124 = and $t_123 65535
+    $t_125 = ashr $y_3 16
+    $t_126 = and $t_125 65535
+    $t_127 = add $t_124 $t_126
+    $t_128 = ashr $low_3 16
+    $t_129 = add $t_127 $t_128
+    $t_130 = and $t_129 65535
+    $high_3 = move $t_130
+    $t_131 = shl $high_3 16
+    $t_132 = and $low_3 65535
+    $t_133 = or $t_131 $t_132
+    jump %add.entry_3
+
+%add.entry_3:
+    $t_134 = move $t_133
+    $t_135 = mul $i 8
+    $t_135 = add @chunks $t_135
+    $t_135 = load 8 $t_135 8
+    $t_136 = mul $j 8
+    $t_136 = add $t_135 $t_136
+    $t_136 = load 8 $t_136 8
+    $x_5 = move $t_134
+    $y_4 = move $t_136
+    $t_137 = and $x_5 65535
+    $t_138 = and $y_4 65535
+    $t_139 = add $t_137 $t_138
+    $low_4 = move $t_139
+    $t_140 = ashr $x_5 16
+    $t_141 = and $t_140 65535
+    $t_142 = ashr $y_4 16
+    $t_143 = and $t_142 65535
+    $t_144 = add $t_141 $t_143
+    $t_145 = ashr $low_4 16
+    $t_146 = add $t_144 $t_145
+    $t_147 = and $t_146 65535
+    $high_4 = move $t_147
+    $t_148 = shl $high_4 16
+    $t_149 = and $low_4 65535
+    $t_150 = or $t_148 $t_149
+    jump %add.entry_4
+
+%add.entry_4:
+    $t_151 = move $t_150
+    $temp = move $t_151
+    $e = move $d
+    $d = move $c
+    $x_6 = move $b
+    $shift_2 = move 30
+    $t_152 = seq $shift_2 1
+    br $t_152 %if_true_7 %if_after_7
+
+%if_after_7:
+    $t_153 = seq $shift_2 31
+    br $t_153 %if_true_8 %if_after_8
+
+%if_true_8:
+    $t_154 = and $x_6 1
+    $t_155 = shl $t_154 31
+    $t_156 = ashr $x_6 1
+    $t_157 = and $t_156 2147483647
+    $t_158 = or $t_155 $t_157
+    $returnValue_2 = move $t_158
+    jump %rotate_left.exit_2
+
+%if_after_8:
+    $t_159 = sub 32 $shift_2
+    $t_160 = shl 1 $t_159
+    $t_161 = sub $t_160 1
+    $t_162 = and $x_6 $t_161
+    $t_163 = shl $t_162 $shift_2
+    $t_164 = sub 32 $shift_2
+    $t_165 = ashr $x_6 $t_164
+    $t_166 = shl 1 $shift_2
+    $t_167 = sub $t_166 1
+    $t_168 = and $t_165 $t_167
+    $t_169 = or $t_163 $t_168
+    $returnValue_2 = move $t_169
+    jump %rotate_left.exit_2
+
+%if_true_7:
+    $t_170 = and $x_6 2147483647
+    $t_171 = shl $t_170 1
+    $t_172 = ashr $x_6 31
+    $t_173 = and $t_172 1
+    $t_174 = or $t_171 $t_173
+    $returnValue_2 = move $t_174
+    jump %rotate_left.exit_2
+
+%rotate_left.exit_2:
+    $t_175 = move $returnValue_2
+    $c = move $t_175
+    $b = move $a
+    $a = move $temp
+    jump %for_step
+
+%for_step:
+    $t_176 = move $j
+    $j = add $j 1
+    jump %for_cond_5
+
+%for_after_5:
+    $x_7 = move $h0
+    $y_5 = move $a
+    $t_177 = and $x_7 65535
+    $t_178 = and $y_5 65535
+    $t_179 = add $t_177 $t_178
+    $low_5 = move $t_179
+    $t_180 = ashr $x_7 16
+    $t_181 = and $t_180 65535
+    $t_182 = ashr $y_5 16
+    $t_183 = and $t_182 65535
+    $t_184 = add $t_181 $t_183
+    $t_185 = ashr $low_5 16
+    $t_186 = add $t_184 $t_185
+    $t_187 = and $t_186 65535
+    $high_5 = move $t_187
+    $t_188 = shl $high_5 16
+    $t_189 = and $low_5 65535
+    $t_190 = or $t_188 $t_189
+    jump %add.entry_5
+
+%add.entry_5:
+    $t_191 = move $t_190
+    $h0 = move $t_191
+    $x_8 = move $h1
+    $y_6 = move $b
+    $t_192 = and $x_8 65535
+    $t_193 = and $y_6 65535
+    $t_194 = add $t_192 $t_193
+    $low_6 = move $t_194
+    $t_195 = ashr $x_8 16
+    $t_196 = and $t_195 65535
+    $t_197 = ashr $y_6 16
+    $t_198 = and $t_197 65535
+    $t_199 = add $t_196 $t_198
+    $t_200 = ashr $low_6 16
+    $t_201 = add $t_199 $t_200
+    $t_202 = and $t_201 65535
+    $high_6 = move $t_202
+    $t_203 = shl $high_6 16
+    $t_204 = and $low_6 65535
+    $t_205 = or $t_203 $t_204
+    jump %add.entry_6
+
+%add.entry_6:
+    $t_206 = move $t_205
+    $h1 = move $t_206
+    $x_9 = move $h2
+    $y_7 = move $c
+    $t_207 = and $x_9 65535
+    $t_208 = and $y_7 65535
+    $t_209 = add $t_207 $t_208
+    $low_7 = move $t_209
+    $t_210 = ashr $x_9 16
+    $t_211 = and $t_210 65535
+    $t_212 = ashr $y_7 16
+    $t_213 = and $t_212 65535
+    $t_214 = add $t_211 $t_213
+    $t_215 = ashr $low_7 16
+    $t_216 = add $t_214 $t_215
+    $t_217 = and $t_216 65535
+    $high_7 = move $t_217
+    $t_218 = shl $high_7 16
+    $t_219 = and $low_7 65535
+    $t_220 = or $t_218 $t_219
+    jump %add.entry_7
+
+%add.entry_7:
+    $t_221 = move $t_220
+    $h2 = move $t_221
+    $x_10 = move $h3
+    $y_8 = move $d
+    $t_222 = and $x_10 65535
+    $t_223 = and $y_8 65535
+    $t_224 = add $t_222 $t_223
+    $low_8 = move $t_224
+    $t_225 = ashr $x_10 16
+    $t_226 = and $t_225 65535
+    $t_227 = ashr $y_8 16
+    $t_228 = and $t_227 65535
+    $t_229 = add $t_226 $t_228
+    $t_230 = ashr $low_8 16
+    $t_231 = add $t_229 $t_230
+    $t_232 = and $t_231 65535
+    $high_8 = move $t_232
+    $t_233 = shl $high_8 16
+    $t_234 = and $low_8 65535
+    $t_235 = or $t_233 $t_234
+    jump %add.entry_8
+
+%add.entry_8:
+    $t_236 = move $t_235
+    $h3 = move $t_236
+    $x_11 = move $h4
+    $y_9 = move $e
+    $t_237 = and $x_11 65535
+    $t_238 = and $y_9 65535
+    $t_239 = add $t_237 $t_238
+    $low_9 = move $t_239
+    $t_240 = ashr $x_11 16
+    $t_241 = and $t_240 65535
+    $t_242 = ashr $y_9 16
+    $t_243 = and $t_242 65535
+    $t_244 = add $t_241 $t_243
+    $t_245 = ashr $low_9 16
+    $t_246 = add $t_244 $t_245
+    $t_247 = and $t_246 65535
+    $high_9 = move $t_247
+    $t_248 = shl $high_9 16
+    $t_249 = and $low_9 65535
+    $t_250 = or $t_248 $t_249
+    jump %add.entry_9
+
+%add.entry_9:
+    $t_251 = move $t_250
+    $h4 = move $t_251
+    jump %for_step_2
+
+%for_step_2:
+    $t_252 = move $i
+    $i = add $i 1
+    jump %for_cond_3
+
+%for_loop_4:
+    $t_253 = mul $i 8
+    $t_253 = add @chunks $t_253
+    $t_253 = load 8 $t_253 8
+    $t_254 = sub $j 3
+    $t_255 = mul $t_254 8
+    $t_255 = add $t_253 $t_255
+    $t_255 = load 8 $t_255 8
+    $t_256 = mul $i 8
+    $t_256 = add @chunks $t_256
+    $t_256 = load 8 $t_256 8
+    $t_257 = sub $j 8
+    $t_258 = mul $t_257 8
+    $t_258 = add $t_256 $t_258
+    $t_258 = load 8 $t_258 8
+    $t_259 = xor $t_255 $t_258
+    $t_260 = mul $i 8
+    $t_260 = add @chunks $t_260
+    $t_260 = load 8 $t_260 8
+    $t_261 = sub $j 14
+    $t_262 = mul $t_261 8
+    $t_262 = add $t_260 $t_262
+    $t_262 = load 8 $t_262 8
+    $t_263 = xor $t_259 $t_262
+    $t_264 = mul $i 8
+    $t_264 = add @chunks $t_264
+    $t_264 = load 8 $t_264 8
+    $t_265 = sub $j 16
+    $t_266 = mul $t_265 8
+    $t_266 = add $t_264 $t_266
+    $t_266 = load 8 $t_266 8
+    $t_267 = xor $t_263 $t_266
+    $x_12 = move $t_267
+    $shift_3 = move 1
+    $t_268 = seq $shift_3 1
+    br $t_268 %if_true_9 %if_after_9
+
+%if_after_9:
+    $t_269 = seq $shift_3 31
+    br $t_269 %if_true_10 %if_after_10
+
+%if_true_10:
+    $t_270 = and $x_12 1
+    $t_271 = shl $t_270 31
+    $t_272 = ashr $x_12 1
+    $t_273 = and $t_272 2147483647
+    $t_274 = or $t_271 $t_273
+    $returnValue_3 = move $t_274
+    jump %rotate_left.exit_3
+
+%if_after_10:
+    $t_275 = sub 32 $shift_3
+    $t_276 = shl 1 $t_275
+    $t_277 = sub $t_276 1
+    $t_278 = and $x_12 $t_277
+    $t_279 = shl $t_278 $shift_3
+    $t_280 = sub 32 $shift_3
+    $t_281 = ashr $x_12 $t_280
+    $t_282 = shl 1 $shift_3
+    $t_283 = sub $t_282 1
+    $t_284 = and $t_281 $t_283
+    $t_285 = or $t_279 $t_284
+    $returnValue_3 = move $t_285
+    jump %rotate_left.exit_3
+
+%if_true_9:
+    $t_286 = and $x_12 2147483647
+    $t_287 = shl $t_286 1
+    $t_288 = ashr $x_12 31
+    $t_289 = and $t_288 1
+    $t_290 = or $t_287 $t_289
+    $returnValue_3 = move $t_290
+    jump %rotate_left.exit_3
+
+%rotate_left.exit_3:
+    $t_291 = move $returnValue_3
+    $t_292 = mul $i 8
+    $t_292 = add @chunks $t_292
+    $t_292 = load 8 $t_292 8
+    $t_293 = mul $j 8
+    $t_293 = add $t_292 $t_293
+    store 8 $t_293 $t_291 8
+    jump %for_step_3
+
+%for_step_3:
+    $t_294 = move $j
+    $j = add $j 1
+    jump %for_cond_4
+
+%for_after_3:
+    $t_295 = add @outputBuffer 0
+    store 8 $t_295 $h0 8
+    $t_296 = add @outputBuffer 8
+    store 8 $t_296 $h1 8
+    $t_297 = add @outputBuffer 16
+    store 8 $t_297 $h2 8
+    $t_298 = add @outputBuffer 24
+    store 8 $t_298 $h3 8
+    $t_299 = add @outputBuffer 32
+    store 8 $t_299 $h4 8
+    $returnValue_4 = move @outputBuffer
+    jump %sha1.exit
+
+%for_loop_2:
+    $t_300 = div $i 64
+    $t_301 = mul $t_300 8
+    $t_301 = add @chunks $t_301
+    $t_301 = load 8 $t_301 8
+    $t_302 = rem $i 64
+    $t_303 = div $t_302 4
+    $t_304 = mul $t_303 8
+    $t_304 = add $t_301 $t_304
+    $t_304 = load 8 $t_304 8
+    $t_305 = mul $i 8
+    $t_305 = add $input $t_305
+    $t_305 = load 8 $t_305 8
+    $t_306 = rem $i 4
+    $t_307 = sub 3 $t_306
+    $t_308 = mul $t_307 8
+    $t_309 = shl $t_305 $t_308
+    $t_310 = or $t_304 $t_309
+    $t_311 = div $i 64
+    $t_312 = mul $t_311 8
+    $t_312 = add @chunks $t_312
+    $t_312 = load 8 $t_312 8
+    $t_313 = rem $i 64
+    $t_314 = div $t_313 4
+    $t_315 = mul $t_314 8
+    $t_315 = add $t_312 $t_315
+    store 8 $t_315 $t_310 8
+    jump %for_step_4
+
+%for_step_4:
+    $t_316 = move $i
+    $i = add $i 1
+    jump %for_cond_2
+
+%for_loop:
+    $j = move 0
+    jump %for_cond_6
+
+%for_cond_6:
+    $t_317 = slt $j 80
+    br $t_317 %for_loop_6 %for_after_6
+
+%for_loop_6:
+    $t_318 = mul $i 8
+    $t_318 = add @chunks $t_318
+    $t_318 = load 8 $t_318 8
+    $t_319 = mul $j 8
+    $t_319 = add $t_318 $t_319
+    store 8 $t_319 0 8
+    jump %for_step_5
+
+%for_step_5:
+    $t_320 = move $j
+    $j = add $j 1
+    jump %for_cond_6
+
+%for_after_6:
+    jump %for_step_6
+
+%for_step_6:
+    $t_321 = move $i
+    $i = add $i 1
+    jump %for_cond
+
+%if_true:
+    call println @string_3 
+    $returnValue_4 = move 0
+    jump %sha1.exit
+
+%sha1.exit:
+    ret $returnValue_4
+
+}
+
 func main {
 
 %main.entry:
-    jump %_init.entry
+    @asciiTable = move @string
+    @MAXCHUNK = move 100
+    $t = sub @MAXCHUNK 1
+    $t_2 = mul $t 64
+    $t_3 = sub $t_2 16
+    @MAXLENGTH = move $t_3
+    $newaddress = mul @MAXCHUNK 8
+    $newaddress = add $newaddress 8
+    $newaddress = alloc $newaddress
+    store 8 $newaddress @MAXCHUNK 0
+    $myloopvariable = move 0
+    jump %for_cond_7
 
-%_init.entry:
-    $a = move 2
-    $p = move 10
-    $mod = move 10000
-    $t = move 1
-    $y = move $a
+%for_cond_7:
+    $t_4 = slt $myloopvariable @MAXCHUNK
+    br $t_4 %for_loop_7 %for_after_7
+
+%for_loop_7:
+    $newaddress_2 = move 648
+    $newaddress_2 = alloc $newaddress_2
+    store 8 $newaddress_2 80 0
+    $t_5 = mul $myloopvariable 8
+    $t_5 = add $newaddress $t_5
+    store 8 $t_5 $newaddress_2 8
+    jump %for_step_7
+
+%for_step_7:
+    $myloopvariable = add $myloopvariable 1
+    jump %for_cond_7
+
+%for_after_7:
+    @chunks = move $newaddress
+    $newaddress_3 = mul @MAXLENGTH 8
+    $newaddress_3 = add $newaddress_3 8
+    $newaddress_3 = alloc $newaddress_3
+    store 8 $newaddress_3 @MAXLENGTH 0
+    @inputBuffer = move $newaddress_3
+    $newaddress_4 = move 48
+    $newaddress_4 = alloc $newaddress_4
+    store 8 $newaddress_4 5 0
+    @outputBuffer = move $newaddress_4
+    $op = move 0
+    $input = move 0
     jump %while_cond
 
 %while_cond:
-    $t_2 = sgt $p 0
-    br $t_2 %while_loop %while_after
+    jump %while_loop
 
 %while_loop:
-    $t_3 = and $p 1
-    $t_4 = seq $t_3 1
-    br $t_4 %if_true %if_after
+    $gottenint = call getInt 
+    $op = move $gottenint
+    $t_6 = seq $op 0
+    br $t_6 %if_true_11 %if_after_11
 
-%if_true:
-    $t_5 = mul $t $y
-    $t_6 = rem $t_5 $mod
-    $t = move $t_6
-    jump %if_after
-
-%if_after:
-    $t_7 = mul $y $y
-    $t_8 = rem $t_7 $mod
-    $y = move $t_8
-    $t_9 = div $p 2
-    $p = move $t_9
-    jump %while_cond
+%if_true_11:
+    jump %while_after
 
 %while_after:
-    $t_10 = move $t
-    call printlnint $t_10 
     ret 0
+
+%if_after_11:
+    $t_7 = seq $op 1
+    br $t_7 %if_true_12 %if_false_4
+
+%if_true_12:
+    $gottenstring = call getString 
+    $input = move $gottenstring
+    $input_2 = move $input
+    $i = move 0
+    $i = move 0
+    jump %for_cond_8
+
+%for_cond_8:
+    $size = load 8 $input_2 0
+    $t_8 = slt $i $size
+    br $t_8 %for_loop_8 %for_after_8
+
+%for_loop_8:
+    $ord = call string.ord $input_2 $i 
+    $t_9 = mul $i 8
+    $t_9 = add @inputBuffer $t_9
+    store 8 $t_9 $ord 8
+    jump %for_step_8
+
+%for_step_8:
+    $t_10 = move $i
+    $i = add $i 1
+    jump %for_cond_8
+
+%for_after_8:
+    $size_2 = load 8 $input_2 0
+    $t_11 = call sha1 @inputBuffer $size_2 
+    $result = move $t_11
+    $i = move 0
+    jump %for_cond_9
+
+%for_cond_9:
+    $size_3 = load 8 $result 0
+    $t_12 = slt $i $size_3
+    br $t_12 %for_loop_9 %for_after_9
+
+%for_after_9:
+    call println @string_2 
+    jump %if_after_12
+
+%for_loop_9:
+    $t_13 = mul $i 8
+    $t_13 = add $result $t_13
+    $t_13 = load 8 $t_13 8
+    $x = move $t_13
+    $ret = move @string_2
+    $i_2 = move 0
+    $i_2 = move 28
+    jump %for_cond_10
+
+%for_cond_10:
+    $t_14 = sge $i_2 0
+    br $t_14 %for_loop_10 %for_after_10
+
+%for_after_10:
+    $t_15 = move $ret
+    call print $t_15 
+    jump %for_step_9
+
+%for_step_9:
+    $t_16 = move $i
+    $i = add $i 1
+    jump %for_cond_9
+
+%for_loop_10:
+    $t_17 = ashr $x $i_2
+    $t_18 = and $t_17 15
+    $digit = move $t_18
+    $t_19 = slt $digit 10
+    br $t_19 %if_true_13 %if_false_5
+
+%if_true_13:
+    $t_20 = add 48 $digit
+    $x_2 = move $t_20
+    $t_21 = sge $x_2 32
+    br $t_21 %lhs_true %lhs_false
+
+%lhs_true:
+    $t_22 = sle $x_2 126
+    $t_23 = move $t_22
+    jump %lhs_merge
+
+%lhs_false:
+    $t_23 = move 0
+    jump %lhs_merge
+
+%lhs_merge:
+    br $t_23 %if_true_14 %if_after_13
+
+%if_after_13:
+    $returnValue = move @string_2
+    jump %int2chr.exit
+
+%if_true_14:
+    $t_24 = sub $x_2 32
+    $t_25 = sub $x_2 32
+    $substr = call string.substring @asciiTable $t_24 $t_25 
+    $returnValue = move $substr
+    jump %int2chr.exit
+
+%int2chr.exit:
+    $t_26 = move $returnValue
+    $t_27 = call string.concat $ret $t_26 
+    $ret = move $t_27
+    jump %if_after_14
+
+%if_false_5:
+    $t_28 = add 65 $digit
+    $t_29 = sub $t_28 10
+    $x_3 = move $t_29
+    $t_30 = sge $x_3 32
+    br $t_30 %lhs_true_2 %lhs_false_2
+
+%lhs_true_2:
+    $t_31 = sle $x_3 126
+    $t_32 = move $t_31
+    jump %lhs_merge_2
+
+%lhs_false_2:
+    $t_32 = move 0
+    jump %lhs_merge_2
+
+%lhs_merge_2:
+    br $t_32 %if_true_15 %if_after_15
+
+%if_after_15:
+    $returnValue_2 = move @string_2
+    jump %int2chr.exit_2
+
+%if_true_15:
+    $t_33 = sub $x_3 32
+    $t_34 = sub $x_3 32
+    $substr_2 = call string.substring @asciiTable $t_33 $t_34 
+    $returnValue_2 = move $substr_2
+    jump %int2chr.exit_2
+
+%int2chr.exit_2:
+    $t_35 = move $returnValue_2
+    $t_36 = call string.concat $ret $t_35 
+    $ret = move $t_36
+    jump %if_after_14
+
+%if_after_14:
+    jump %for_step_10
+
+%for_step_10:
+    $t_37 = sub $i_2 4
+    $i_2 = move $t_37
+    jump %for_cond_10
+
+%if_false_4:
+    $t_38 = seq $op 2
+    br $t_38 %if_true_16 %if_after_16
+
+%if_true_16:
+    $gottenstring_2 = call getString 
+    $input = move $gottenstring_2
+    $input_3 = move $input
+    $newaddress_5 = move 48
+    $newaddress_5 = alloc $newaddress_5
+    store 8 $newaddress_5 5 0
+    $target = move $newaddress_5
+    $size_4 = load 8 $input_3 0
+    $t_39 = sne $size_4 40
+    br $t_39 %if_true_17 %if_after_17
+
+%if_true_17:
+    call println @string_4 
+    jump %crackSHA1.exit
+
+%if_after_17:
+    $i_3 = move 0
+    $i_3 = move 0
+    jump %for_cond_11
+
+%for_cond_11:
+    $t_40 = slt $i_3 5
+    br $t_40 %for_loop_11 %for_after_11
+
+%for_loop_11:
+    $t_41 = mul $i_3 8
+    $t_41 = add $target $t_41
+    store 8 $t_41 0 8
+    jump %for_step_11
+
+%for_step_11:
+    $t_42 = move $i_3
+    $i_3 = add $i_3 1
+    jump %for_cond_11
+
+%for_after_11:
+    $i_3 = move 0
+    jump %for_cond_12
+
+%for_cond_12:
+    $t_43 = slt $i_3 40
+    br $t_43 %for_loop_12 %for_after_12
+
+%for_loop_12:
+    $t_44 = div $i_3 8
+    $t_45 = mul $t_44 8
+    $t_45 = add $target $t_45
+    $t_45 = load 8 $t_45 8
+    $t_46 = add $i_3 3
+    $substr_3 = call string.substring $input_3 $i_3 $t_46 
+    $x_4 = move $substr_3
+    $i_4 = move 0
+    $result_2 = move 0
+    $i_4 = move 0
+    jump %for_cond_13
+
+%for_cond_13:
+    $size_5 = load 8 $x_4 0
+    $t_47 = slt $i_4 $size_5
+    br $t_47 %for_loop_13 %for_after_13
+
+%for_loop_13:
+    $ord_2 = call string.ord $x_4 $i_4 
+    $digit_2 = move $ord_2
+    $t_48 = sge $digit_2 48
+    br $t_48 %lhs_true_3 %lhs_false_3
+
+%lhs_false_3:
+    $t_49 = move 0
+    jump %lhs_merge_3
+
+%lhs_true_3:
+    $t_50 = sle $digit_2 57
+    $t_49 = move $t_50
+    jump %lhs_merge_3
+
+%lhs_merge_3:
+    br $t_49 %if_true_18 %if_false_6
+
+%if_true_18:
+    $t_51 = mul $result_2 16
+    $t_52 = add $t_51 $digit_2
+    $t_53 = sub $t_52 48
+    $result_2 = move $t_53
+    jump %if_after_18
+
+%if_false_6:
+    $t_54 = sge $digit_2 65
+    br $t_54 %lhs_true_4 %lhs_false_4
+
+%lhs_false_4:
+    $t_55 = move 0
+    jump %lhs_merge_4
+
+%lhs_true_4:
+    $t_56 = sle $digit_2 70
+    $t_55 = move $t_56
+    jump %lhs_merge_4
+
+%lhs_merge_4:
+    br $t_55 %if_true_19 %if_false_7
+
+%if_false_7:
+    $t_57 = sge $digit_2 97
+    br $t_57 %lhs_true_5 %lhs_false_5
+
+%lhs_true_5:
+    $t_58 = sle $digit_2 102
+    $t_59 = move $t_58
+    jump %lhs_merge_5
+
+%lhs_false_5:
+    $t_59 = move 0
+    jump %lhs_merge_5
+
+%lhs_merge_5:
+    br $t_59 %if_true_20 %if_false_8
+
+%if_false_8:
+    $returnValue_3 = move 0
+    jump %hex2int.exit
+
+%if_true_20:
+    $t_60 = mul $result_2 16
+    $t_61 = add $t_60 $digit_2
+    $t_62 = sub $t_61 97
+    $t_63 = add $t_62 10
+    $result_2 = move $t_63
+    jump %if_after_19
+
+%if_after_19:
+    jump %if_after_20
+
+%if_true_19:
+    $t_64 = mul $result_2 16
+    $t_65 = add $t_64 $digit_2
+    $t_66 = sub $t_65 65
+    $t_67 = add $t_66 10
+    $result_2 = move $t_67
+    jump %if_after_20
+
+%if_after_20:
+    jump %if_after_18
+
+%if_after_18:
+    jump %for_step_12
+
+%for_step_12:
+    $t_68 = move $i_4
+    $i_4 = add $i_4 1
+    jump %for_cond_13
+
+%for_after_13:
+    $returnValue_3 = move $result_2
+    jump %hex2int.exit
+
+%hex2int.exit:
+    $t_69 = move $returnValue_3
+    $t_70 = div $i_3 4
+    $t_71 = rem $t_70 2
+    $t_72 = sub 1 $t_71
+    $t_73 = mul $t_72 16
+    $t_74 = shl $t_69 $t_73
+    $t_75 = or $t_45 $t_74
+    $t_76 = div $i_3 8
+    $t_77 = mul $t_76 8
+    $t_77 = add $target $t_77
+    store 8 $t_77 $t_75 8
+    jump %for_step_13
+
+%for_step_13:
+    $t_78 = add $i_3 4
+    $i_3 = move $t_78
+    jump %for_cond_12
+
+%for_after_12:
+    $MAXDIGIT = move 4
+    $digit_3 = move 0
+    $digit_3 = move 1
+    jump %for_cond_14
+
+%for_cond_14:
+    $t_79 = sle $digit_3 $MAXDIGIT
+    br $t_79 %for_loop_14 %for_after_14
+
+%for_after_14:
+    call println @string_5 
+    jump %crackSHA1.exit
+
+%for_loop_14:
+    $i_3 = move 0
+    jump %for_cond_15
+
+%for_cond_15:
+    $t_80 = slt $i_3 $digit_3
+    br $t_80 %for_loop_15 %for_after_15
+
+%for_after_15:
+    jump %while_cond_2
+
+%while_cond_2:
+    jump %while_loop_2
+
+%while_loop_2:
+    $t_81 = call sha1 @inputBuffer $digit_3 
+    $out = move $t_81
+    $a = move $out
+    $b = move $target
+    $size_6 = load 8 $a 0
+    $size_7 = load 8 $b 0
+    $t_82 = sne $size_6 $size_7
+    br $t_82 %if_true_21 %if_after_21
+
+%if_true_21:
+    $returnValue_4 = move 0
+    jump %array_equal.exit
+
+%if_after_21:
+    $i_5 = move 0
+    $i_5 = move 0
+    jump %for_cond_16
+
+%for_cond_16:
+    $size_8 = load 8 $a 0
+    $t_83 = slt $i_5 $size_8
+    br $t_83 %for_loop_16 %for_after_16
+
+%for_loop_16:
+    $t_84 = mul $i_5 8
+    $t_84 = add $a $t_84
+    $t_84 = load 8 $t_84 8
+    $t_85 = mul $i_5 8
+    $t_85 = add $b $t_85
+    $t_85 = load 8 $t_85 8
+    $t_86 = sne $t_84 $t_85
+    br $t_86 %if_true_22 %if_after_22
+
+%if_true_22:
+    $returnValue_4 = move 0
+    jump %array_equal.exit
+
+%if_after_22:
+    jump %for_step_14
+
+%for_step_14:
+    $t_87 = move $i_5
+    $i_5 = add $i_5 1
+    jump %for_cond_16
+
+%for_after_16:
+    $returnValue_4 = move 1
+    jump %array_equal.exit
+
+%array_equal.exit:
+    $t_88 = move $returnValue_4
+    br $t_88 %if_true_23 %if_after_23
+
+%if_after_23:
+    $now = move @inputBuffer
+    $length = move $digit_3
+    $i_6 = move 0
+    $t_89 = sub $length 1
+    $i_6 = move $t_89
+    jump %for_cond_17
+
+%for_cond_17:
+    $t_90 = sge $i_6 0
+    br $t_90 %for_loop_17 %for_after_17
+
+%for_loop_17:
+    $t_91 = mul $i_6 8
+    $t_91 = add $now $t_91
+    $t_91 = load 8 $t_91 8
+    $now_2 = move $t_91
+    $t_92 = seq $now_2 122
+    br $t_92 %if_true_24 %if_after_24
+
+%if_true_24:
+    $t_93 = neg 1
+    $returnValue_5 = move $t_93
+    jump %nextLetter.exit
+
+%if_after_24:
+    $t_94 = seq $now_2 90
+    br $t_94 %if_true_25 %if_after_25
+
+%if_after_25:
+    $t_95 = seq $now_2 57
+    br $t_95 %if_true_26 %if_after_26
+
+%if_after_26:
+    $t_96 = add $now_2 1
+    $returnValue_5 = move $t_96
+    jump %nextLetter.exit
+
+%if_true_26:
+    $returnValue_5 = move 65
+    jump %nextLetter.exit
+
+%if_true_25:
+    $returnValue_5 = move 97
+    jump %nextLetter.exit
+
+%nextLetter.exit:
+    $t_97 = move $returnValue_5
+    $t_98 = mul $i_6 8
+    $t_98 = add $now $t_98
+    store 8 $t_98 $t_97 8
+    $t_99 = mul $i_6 8
+    $t_99 = add $now $t_99
+    $t_99 = load 8 $t_99 8
+    $t_100 = neg 1
+    $t_101 = seq $t_99 $t_100
+    br $t_101 %if_true_27 %if_false_9
+
+%if_true_27:
+    $t_102 = mul $i_6 8
+    $t_102 = add $now $t_102
+    store 8 $t_102 48 8
+    jump %if_after_27
+
+%if_after_27:
+    jump %for_step_15
+
+%for_step_15:
+    $t_103 = move $i_6
+    $i_6 = sub $i_6 1
+    jump %for_cond_17
+
+%if_false_9:
+    $returnValue_6 = move 1
+    jump %nextText.exit
+
+%for_after_17:
+    $returnValue_6 = move 0
+    jump %nextText.exit
+
+%nextText.exit:
+    $t_104 = move $returnValue_6
+    $t_105 = xor $t_104 1
+    br $t_105 %if_true_28 %if_after_28
+
+%if_after_28:
+    jump %while_cond_2
+
+%if_true_28:
+    jump %while_after_2
+
+%while_after_2:
+    jump %for_step_16
+
+%for_step_16:
+    $t_106 = move $digit_3
+    $digit_3 = add $digit_3 1
+    jump %for_cond_14
+
+%if_true_23:
+    $i_3 = move 0
+    jump %for_cond_18
+
+%for_cond_18:
+    $t_107 = slt $i_3 $digit_3
+    br $t_107 %for_loop_18 %for_after_18
+
+%for_loop_18:
+    $t_108 = mul $i_3 8
+    $t_108 = add @inputBuffer $t_108
+    $t_108 = load 8 $t_108 8
+    $x_5 = move $t_108
+    $t_109 = sge $x_5 32
+    br $t_109 %lhs_true_6 %lhs_false_6
+
+%lhs_true_6:
+    $t_110 = sle $x_5 126
+    $t_111 = move $t_110
+    jump %lhs_merge_6
+
+%lhs_false_6:
+    $t_111 = move 0
+    jump %lhs_merge_6
+
+%lhs_merge_6:
+    br $t_111 %if_true_29 %if_after_29
+
+%if_after_29:
+    $returnValue_7 = move @string_2
+    jump %int2chr.exit_3
+
+%if_true_29:
+    $t_112 = sub $x_5 32
+    $t_113 = sub $x_5 32
+    $substr_4 = call string.substring @asciiTable $t_112 $t_113 
+    $returnValue_7 = move $substr_4
+    jump %int2chr.exit_3
+
+%int2chr.exit_3:
+    $t_114 = move $returnValue_7
+    call print $t_114 
+    jump %for_step_17
+
+%for_step_17:
+    $t_115 = move $i_3
+    $i_3 = add $i_3 1
+    jump %for_cond_18
+
+%for_after_18:
+    call println @string_2 
+    jump %crackSHA1.exit
+
+%crackSHA1.exit:
+    jump %if_after_16
+
+%for_loop_15:
+    $t_116 = mul $i_3 8
+    $t_116 = add @inputBuffer $t_116
+    store 8 $t_116 48 8
+    jump %for_step_18
+
+%for_step_18:
+    $t_117 = move $i_3
+    $i_3 = add $i_3 1
+    jump %for_cond_15
+
+%if_after_16:
+    jump %if_after_12
+
+%if_after_12:
+    jump %while_cond
 
 }
 

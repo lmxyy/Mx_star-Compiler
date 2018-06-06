@@ -19,7 +19,6 @@ public class StaticSpace extends StaticData {
 
     @Override
     public IntValue copy() {
-        System.err.println("Cannot be here.");
         return this;
     }
 }
