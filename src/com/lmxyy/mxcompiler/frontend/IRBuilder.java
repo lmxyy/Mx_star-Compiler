@@ -1443,6 +1443,7 @@ public class IRBuilder implements ASTVisitor {
                 def.accept(this);
         });
         curBasicBlock.end(new ReturnInstruction(curBasicBlock,null));
+        curFunction.exitBasicBlock = curBasicBlock;
         curFunction = null;
         node.getDefs().forEach(def -> {
             if (!(def instanceof DefvarNode))

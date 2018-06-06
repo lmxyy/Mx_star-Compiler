@@ -29,9 +29,17 @@ public abstract class IRInstruction {
 
     public void remove() {
         assert removed == false;
+        if (nxt != null) {
+            nxt.pre = pre;
+        }
+        else {
+            basicBlock.cleanEnd();
+        }
         if (pre != null) pre.nxt = nxt;
-        if (nxt != null) nxt.pre = pre;
-        else basicBlock.cleanEnd();
+        if (basicBlock.getHead() == this)
+            basicBlock.setHead(nxt);
+        if (basicBlock.getTail() == this)
+            basicBlock.setTail(pre);
         removed = true;
     }
 

@@ -64,7 +64,7 @@ public class BasicBlock {
         }
     }
     public void cleanEnd() {
-        if (!ended) return;
+//        if (!ended) return;
         ended = false;
         if (tail instanceof JumpInstruction) {
             delSucc(((JumpInstruction) tail).getTarget());
@@ -78,10 +78,10 @@ public class BasicBlock {
         }
         else {
             // Cannot reach here.
-            assert false;
+//            assert false;
         }
-        if (head == tail) tail = head = null;
-        else tail = tail.getPre();
+//        if (head == tail) tail = head = null;
+//        else tail = tail.getPre();
     }
 
     public Set<BasicBlock> getPred() {

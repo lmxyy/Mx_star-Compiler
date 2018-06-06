@@ -25,7 +25,7 @@ public class ReturnInstruction extends EndInstruction {
         usedRegister.clear();
         if (retVal instanceof Register) usedRegister.add((Register) retVal);
         usedIntValue.clear();
-        usedIntValue.add(retVal);
+        if (retVal instanceof IntValue) usedIntValue.add(retVal);
     }
 
     @Override

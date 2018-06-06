@@ -94,6 +94,8 @@ public class FunctionInliner {
         for (BasicBlock oldBlock:RPO) {
             BasicBlock newBlock = (BasicBlock) renameMap.get(oldBlock);
             for (IRInstruction inst = oldBlock.getHead();inst != null;inst = inst.getNxt()) {
+                if (inst instanceof CallInstruction)
+                    ((CallInstruction) inst).callReloadUsedRegisterCollection();;
                 inst.getUsedIntValue().forEach(v->copyIntValue(renameMap,v));
                 if (inst.getDefinedRegister() != null) {
                     copyIntValue(renameMap,inst.getDefinedRegister());
@@ -113,6 +115,8 @@ public class FunctionInliner {
                 }
             }
         }
+
+        call.basicBlock.end(new JumpInstruction(call.basicBlock,newExitBlock));
 
         ReturnInstruction retInst = callee.retInstruction.get(0);
         if (retInst.getRetVal() != null) {
@@ -165,7 +169,15 @@ public class FunctionInliner {
                 }
                 func.calcReversePostOrder();
             }
-            toDeleteFunction.forEach(func->irRoot.functions.remove(func));
+            toDeleteFunction.forEach(func-> {
+                irRoot.functions.remove(func.getName());
+                for (String i:irRoot.functions.keySet()) {
+                    if (irRoot.functions.get(i) == func) {
+                        irRoot.functions.remove(i);
+                        break;
+                    }
+                }
+            });
         }
     }
 }
