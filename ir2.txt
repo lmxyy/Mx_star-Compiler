@@ -1,0 +1,43 @@
+func main {
+
+%main.entry:
+    jump %_init.entry
+
+%_init.entry:
+    $a = move 2
+    $p = move 10
+    $mod = move 10000
+    $t = move 1
+    $y = move $a
+    jump %while_cond
+
+%while_cond:
+    $t_2 = sgt $p 0
+    br $t_2 %while_loop %while_after
+
+%while_loop:
+    $t_3 = and $p 1
+    $t_4 = seq $t_3 1
+    br $t_4 %if_true %if_after
+
+%if_true:
+    $t_5 = mul $t $y
+    $t_6 = rem $t_5 $mod
+    $t = move $t_6
+    jump %if_after
+
+%if_after:
+    $t_7 = mul $y $y
+    $t_8 = rem $t_7 $mod
+    $y = move $t_8
+    $t_9 = div $p 2
+    $p = move $t_9
+    jump %while_cond
+
+%while_after:
+    $t_10 = move $t
+    call printlnint $t_10 
+    ret 0
+
+}
+

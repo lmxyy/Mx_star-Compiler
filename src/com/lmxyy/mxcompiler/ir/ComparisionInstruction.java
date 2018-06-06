@@ -15,7 +15,7 @@ public class ComparisionInstruction extends BinaryOperationInstruction {
 
     @Override
     public IRInstruction copyAndRename(Map<Object, Object> renameMap) {
-        return new ArithmeticInstruction(
+        return new ComparisionInstruction(
                 (BasicBlock) renameMap.getOrDefault(basicBlock,basicBlock),
                 (Register) renameMap.getOrDefault(getDest(),getDest()),
                 getOperator(),

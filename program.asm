@@ -11,22 +11,62 @@ main..main.entry:
 	jmp main.._init.entry
 main.._init.entry:
 	mov rsi,2
-	mov rbx,10
-	mov r13,10000
-	mov rdx,1
+	mov r13,10
+	mov rdx,10000
+	mov rbx,1
 	mov r12,rsi
 	jmp main..while_cond
 main..while_cond:
+	cmp r13,0
+	mov rsi,0
+	setg sil
 	cmp sil,1
 	jz main..while_loop
 	jnz main..while_after
+main..while_loop:
+	mov rsi,r13
+	and rsi,1
+	cmp rsi,1
+	mov rsi,0
+	sete sil
+	cmp sil,1
+	jz main..if_true
+	jnz main..if_after
+main..if_true:
+	imul rbx,r12
+	mov rax,rbx
+	mov r11,rdx
+	cqo
+	idiv r11
+	mov r14,rdx
+	mov rdx,r11
+	mov rbx,r14
+	jmp main..if_after
+main..if_after:
+	mov rsi,r12
+	imul rsi,r12
+	mov rax,rsi
+	mov r11,rdx
+	cqo
+	idiv r11
+	mov r9,rdx
+	mov rdx,r11
+	mov r12,r9
+	mov rax,r13
+	mov r11,rdx
+	cqo
+	mov r10,2
+	idiv r10
+	mov rdx,r11
+	mov rcx,rax
+	mov r13,rcx
+	jmp main..while_cond
 main..while_after:
-	mov rsi,rdx
 	mov qword [rsp],rsi
 	mov qword [rsp+8],rcx
 	mov qword [rsp+48],r9
 	mov qword [rsp+56],rdx
-	mov rdi,qword [rsp]
+	mov rdi,rbx
 	call _Z10printlnInti
 	mov rdx,qword [rsp+56]
 	mov r9,qword [rsp+48]
@@ -35,42 +75,6 @@ main..while_after:
 	mov rax,0
 	leave
 	ret
-main..while_loop:
-	mov rsi,rbx
-	and rsi,1
-	cmp sil,1
-	jz main..if_true
-	jnz main..if_after
-main..if_true:
-	mov rsi,rdx
-	imul rsi,r12
-	mov rax,rsi
-	mov r11,rdx
-	cqo
-	idiv r13
-	mov r14,rdx
-	mov rdx,r11
-	mov rdx,r14
-	jmp main..if_after
-main..if_after:
-	mov rsi,r12
-	imul rsi,r12
-	mov rax,rsi
-	mov r11,rdx
-	cqo
-	idiv r13
-	mov r9,rdx
-	mov rdx,r11
-	mov r12,r9
-	mov rax,rbx
-	mov r11,rdx
-	cqo
-	mov r10,2
-	idiv r10
-	mov rdx,r11
-	mov rcx,rax
-	mov rbx,rcx
-	jmp main..while_cond
 
 section .data
 
