@@ -284,6 +284,7 @@ public class BasicBlock {
                                     ((BinaryOperationInstruction) instruction).getDest(), rhs));
                         }
                         else {
+
                             append(new MoveInstruction(this,NASMRegisterSet.RCX,NASMRegisterSet.R11));
                             append(new MoveInstruction(this,rhs,NASMRegisterSet.RCX));
                             append(new MoveInstruction(this,lhs,NASMRegisterSet.RAX));
