@@ -286,8 +286,8 @@ public class BasicBlock {
                         else {
 
                             append(new MoveInstruction(this,NASMRegisterSet.RCX,NASMRegisterSet.R11));
-                            append(new MoveInstruction(this,rhs,NASMRegisterSet.RCX));
                             append(new MoveInstruction(this,lhs,NASMRegisterSet.RAX));
+                            append(new MoveInstruction(this,rhs,NASMRegisterSet.RCX));
 
                             append(new TwoAddressInstruction(
                                     this, ((BinaryOperationInstruction) instruction).getOperator(),

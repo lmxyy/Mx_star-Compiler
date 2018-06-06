@@ -72,8 +72,8 @@ public class Compiler {
 //        String irInfoPath2 = "/Users/limuyang/Desktop/Mx_star-Compiler/ir2.txt";
 //        IRPrinter irPrinter2 = new IRPrinter(new PrintStream(irInfoPath2));
 //        irPrinter2.visit(irRoot);
-        IRPrinter irPrinter2 = new IRPrinter(new PrintStream(System.err));
-        irPrinter2.visit(irRoot);
+//        IRPrinter irPrinter2 = new IRPrinter(new PrintStream(System.err));
+//        irPrinter2.visit(irRoot);
         new IRTransformer(irRoot).run();
         new GlobalVariableResolver(irRoot).run();
         new RegisterInjector(irRoot).run();
