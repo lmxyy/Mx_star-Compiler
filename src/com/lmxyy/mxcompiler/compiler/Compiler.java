@@ -63,7 +63,7 @@ public class Compiler {
         IRBuilder irBuilder = new IRBuilder(globalSymbolTable,irRoot);
 
         irBuilder.visit(ast);
-        new FunctionInliner(irRoot).run();
+//        new FunctionInliner(irRoot).run();
 //        String irInfoPath = "/Users/limuyang/Desktop/Mx_star-Compiler/ir.txt";
 //        IRPrinter irPrinter = new IRPrinter(new PrintStream(irInfoPath));
 //        irPrinter.visit(irRoot);
