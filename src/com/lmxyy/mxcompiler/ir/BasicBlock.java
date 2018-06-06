@@ -277,8 +277,8 @@ public class BasicBlock {
                         }
                         break;
                     case SHL:case SHR:
-                        append(new MoveInstruction(this, lhs, ((BinaryOperationInstruction) instruction).getDest()));
                         if (rhs instanceof IntImmediate) {
+                            append(new MoveInstruction(this, lhs, ((BinaryOperationInstruction) instruction).getDest()));
                             append(new TwoAddressInstruction(
                                     this, ((BinaryOperationInstruction) instruction).getOperator(),
                                     ((BinaryOperationInstruction) instruction).getDest(), rhs));
