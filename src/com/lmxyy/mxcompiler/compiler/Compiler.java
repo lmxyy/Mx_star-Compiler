@@ -63,9 +63,9 @@ public class Compiler {
         IRBuilder irBuilder = new IRBuilder(globalSymbolTable,irRoot);
 
         irBuilder.visit(ast);
-        DeadCodeEliminator deadCodeEliminator = new DeadCodeEliminator(irRoot);
-        deadCodeEliminator.run();
-        deadCodeEliminator.visit(ast);
+        VirtualRegisterInjector virtualRegisterInjector = new VirtualRegisterInjector(irRoot);
+        virtualRegisterInjector.run();
+        virtualRegisterInjector.visit(ast);
 
         irRoot = new IRRoot();
         irPrebuilder = new IRPrebuilder(globalSymbolTable,irRoot);
@@ -76,6 +76,7 @@ public class Compiler {
 //        irPrinter1.visit(irRoot);
 
         new FunctionInliner(irRoot).run();
+        new DeadCodeEliminator(irRoot).run();
 
 //        String irInfoPath2 = "/Users/limuyang/Desktop/Mx_star-Compiler/ir2.txt";
 //        IRPrinter irPrinter2 = new IRPrinter(new PrintStream(irInfoPath2));
@@ -87,9 +88,9 @@ public class Compiler {
         new RegisterInjector(irRoot).run();
         new GraphColoringAllocator(irRoot,NASMRegisterSet.general,NASMRegisterSet.R10,NASMRegisterSet.R11).run();
         new NASMIRTransformer(irRoot).run();
-        String asmInfoPath = "/Users/limuyang/Desktop/Mx_star-Compiler/program.asm";
-        NASMPrinter nasmPrinter = new NASMPrinter(new PrintStream(asmInfoPath));
-//        NASMPrinter nasmPrinter = new NASMPrinter(new PrintStream(System.out));
+//        String asmInfoPath = "/Users/limuyang/Desktop/Mx_star-Compiler/program.asm";
+//        NASMPrinter nasmPrinter = new NASMPrinter(new PrintStream(asmInfoPath));
+        NASMPrinter nasmPrinter = new NASMPrinter(new PrintStream(System.out));
 
         nasmPrinter.visit(irRoot);
 //        new NASMPrinter(System.err).visit(irRoot);
