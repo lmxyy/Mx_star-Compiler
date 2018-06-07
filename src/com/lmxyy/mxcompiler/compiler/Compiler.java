@@ -71,8 +71,8 @@ public class Compiler {
         irPrebuilder = new IRPrebuilder(globalSymbolTable,irRoot);
         ast.accept(irPrebuilder);
         ast.accept(new IRRebuilder(globalSymbolTable,irRoot));
-//        String irInfoPath1 = "/Users/limuyang/Desktop/Mx_star-Compiler/ir1.txt";
-//        IRPrinter irPrinter1 = new IRPrinter(new PrintStream(irInfoPath1));
+        String irInfoPath1 = "/Users/limuyang/Desktop/Mx_star-Compiler/ir1.txt";
+        IRPrinter irPrinter1 = new IRPrinter(new PrintStream(irInfoPath1));
 //        irPrinter1.visit(irRoot);
 
         new FunctionInliner(irRoot).run();
