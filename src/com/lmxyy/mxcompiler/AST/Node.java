@@ -1,6 +1,7 @@
 package com.lmxyy.mxcompiler.ast;
 
 import com.lmxyy.mxcompiler.ir.IntValue;
+import com.lmxyy.mxcompiler.ir.StaticData;
 import com.lmxyy.mxcompiler.ir.VirtualRegister;
 import com.lmxyy.mxcompiler.symbol.SymbolTable;
 import com.lmxyy.mxcompiler.utils.Location;
@@ -16,6 +17,7 @@ public abstract class Node {
         if (usedIntValue.isEmpty()) return false;
         for (IntValue vr:usedIntValue) {
             if (vr.important&&vr instanceof VirtualRegister) return false;
+            if (vr instanceof StaticData) return false;
         }
         return true;
     }
