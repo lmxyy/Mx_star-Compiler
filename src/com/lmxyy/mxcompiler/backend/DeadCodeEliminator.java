@@ -69,7 +69,7 @@ public class DeadCodeEliminator {
         for (BasicBlock basicBlock:func.getReversePostOrder()) {
             for (IRInstruction inst = basicBlock.getHead();inst != null;inst = inst.getNxt()) {
                 Register defined = inst.getDefinedRegister();
-                if ((defined != null&&!(defined instanceof StaticData))&&!(inst.getNxt().liveIn.contains(defined))) {
+                if ((defined != null&&!(defined instanceof StaticData))&&!(inst instanceof CallInstruction)&&!(inst.getNxt().liveIn.contains(defined))) {
                     inst.remove();
                 }
             }
