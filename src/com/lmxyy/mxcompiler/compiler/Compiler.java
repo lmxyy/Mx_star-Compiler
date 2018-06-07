@@ -86,7 +86,7 @@ public class Compiler {
         new GlobalVariableResolver(irRoot).run();
         new RegisterInjector(irRoot).run();
         new GraphColoringAllocator(irRoot,NASMRegisterSet.general,NASMRegisterSet.R10,NASMRegisterSet.R11).run();
-        new NASMIRTransformer(irRoot).run();
+//        new NASMIRTransformer(irRoot).run();
 //        String asmInfoPath = "/Users/limuyang/Desktop/Mx_star-Compiler/program.asm";
 //        NASMPrinter nasmPrinter = new NASMPrinter(new PrintStream(asmInfoPath));
         NASMPrinter nasmPrinter = new NASMPrinter(new PrintStream(System.out));

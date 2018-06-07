@@ -65,6 +65,14 @@ public class LivenessAnalysis {
                 }
             }
         }
+        for (BasicBlock basicBlock:func.getReversePostOrder()) {
+            for (IRInstruction inst = basicBlock.getHead();inst != null;inst = inst.getNxt()) {
+                Register defined = inst.getDefinedRegister();
+                if (defined != null&&!(inst.getNxt().liveIn.contains(defined))) {
+                    inst.remove();
+                }
+            }
+        }
     }
 
     public void run() {
