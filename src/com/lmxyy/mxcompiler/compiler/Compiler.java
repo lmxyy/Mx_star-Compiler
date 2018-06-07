@@ -63,6 +63,14 @@ public class Compiler {
         IRBuilder irBuilder = new IRBuilder(globalSymbolTable,irRoot);
 
         irBuilder.visit(ast);
+        DeadCodeEliminator deadCodeEliminator = new DeadCodeEliminator(irRoot);
+        deadCodeEliminator.run();
+        deadCodeEliminator.visit(ast);
+
+        irRoot = new IRRoot();
+        irPrebuilder = new IRPrebuilder(globalSymbolTable,irRoot);
+        ast.accept(irPrebuilder);
+        ast.accept(new IRRebuilder(globalSymbolTable,irRoot));
 //        String irInfoPath1 = "/Users/limuyang/Desktop/Mx_star-Compiler/ir1.txt";
 //        IRPrinter irPrinter1 = new IRPrinter(new PrintStream(irInfoPath1));
 //        irPrinter1.visit(irRoot);
@@ -72,7 +80,7 @@ public class Compiler {
 //        String irInfoPath2 = "/Users/limuyang/Desktop/Mx_star-Compiler/ir2.txt";
 //        IRPrinter irPrinter2 = new IRPrinter(new PrintStream(irInfoPath2));
 //        irPrinter2.visit(irRoot);
-//        IRPrinter irPrinter2 = new IRPrinter(new PrintStream(System.err));
+        IRPrinter irPrinter2 = new IRPrinter(new PrintStream(System.err));
 //        irPrinter2.visit(irRoot);
         new IRTransformer(irRoot).run();
         new GlobalVariableResolver(irRoot).run();

@@ -1,0 +1,62 @@
+func foo $d $x $y {
+
+%foo.entry:
+    $t = mul $d 1000
+    $t_2 = mul $x 10
+    $t_3 = add $t $t_2
+    $t_4 = add $t_3 $y
+    call printlnint $t_4 
+    $t_5 = seq $d 1
+    br $t_5 %if_true %if_after
+
+%if_after:
+    $t_6 = move $x
+    $x = move $y
+    $y = move $t_6
+    $t_7 = call foo 1 $x $y 
+    $t_8 = mul $d 1000
+    $t_9 = mul $x 10
+    $t_10 = add $t_8 $t_9
+    $t_11 = add $t_10 $y
+    call printlnint $t_11 
+    jump %foo.exit
+
+%if_true:
+    jump %foo.exit
+
+%foo.exit:
+    ret 0
+
+}
+
+func main {
+
+%main.entry:
+    jump %_init.entry
+
+%_init.entry:
+    $a = move 3100
+    $b = move 0
+    $c = move 1
+    call printlnint $a 
+    $a_2 = move 3100
+    $b_2 = move 0
+    $c_2 = move 1
+    call printlnint $a_2 
+    jump %cost_a_lot_of_time.entry
+
+%cost_a_lot_of_time.entry:
+    $t = call foo 7 5 3 
+    $aa = move 0
+    $newaddress = move 88
+    $newaddress = alloc $newaddress
+    store 8 $newaddress 10 0
+    $bb = move $newaddress
+    $newaddress_2 = move 24
+    $newaddress_2 = alloc $newaddress_2
+    store 8 $newaddress_2 2 0
+    $cc = move $newaddress_2
+    ret 0
+
+}
+
