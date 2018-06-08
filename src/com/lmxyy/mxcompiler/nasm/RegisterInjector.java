@@ -19,21 +19,27 @@ public class RegisterInjector {
             func.argStackSlopMap.put(vr,sl);
             if (i == 0) {
                 first.prepend(new StoreInstruction(func.startBasicBlock,sl,0,8,NASMRegisterSet.RDI));
+                func.usedPhysicalGeneralRegister.add(NASMRegisterSet.RDI);
             }
             if (i == 1) {
                 first.prepend(new StoreInstruction(func.startBasicBlock,sl,0,8,NASMRegisterSet.RSI));
+                func.usedPhysicalGeneralRegister.add(NASMRegisterSet.RSI);
             }
             if (i == 2) {
                 first.prepend(new StoreInstruction(func.startBasicBlock,sl,0,8,NASMRegisterSet.RDX));
+                func.usedPhysicalGeneralRegister.add(NASMRegisterSet.RDX);
             }
             if (i == 3) {
                 first.prepend(new StoreInstruction(func.startBasicBlock,sl,0,8,NASMRegisterSet.RCX));
+                func.usedPhysicalGeneralRegister.add(NASMRegisterSet.RCX);
             }
             if (i == 4) {
                 first.prepend(new StoreInstruction(func.startBasicBlock,sl,0,8,NASMRegisterSet.R8));
+                func.usedPhysicalGeneralRegister.add(NASMRegisterSet.R8);
             }
             if (i == 5) {
                 first.prepend(new StoreInstruction(func.startBasicBlock,sl,0,8,NASMRegisterSet.R9));
+                func.usedPhysicalGeneralRegister.add(NASMRegisterSet.R9);
             }
         }
         for (int i = 0;i < func.argRegList.size();++i) {
