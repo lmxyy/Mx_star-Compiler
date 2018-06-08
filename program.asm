@@ -3,686 +3,915 @@ global main
 extern malloc
 section .text
 
+___getResult:
+___getResult..getResult.entry:
+	push rbp
+	mov rbp,rsp
+	sub rsp,96
+	mov qword [rsp+8],rdi
+	mov qword [rsp],rsi
+	mov qword [rsp+16],rdx
+	mov r14,qword [rsp+8]
+	mov rsi,qword [rsp]
+	mov rbx,qword [rsp+16]
+	mov r9,qword [___gps]
+	mov rcx,qword [___b]
+	mov r15,qword [___prime]
+	mov rdi,qword [___result]
+	mov r8,rsi
+	imul r8,8
+	add r8,rdi
+	mov r8,qword [r8+8]
+	mov r12,rbx
+	imul r12,8
+	add r12,r8
+	mov r12,qword [r12+8]
+	mov r8,-1
+	cmp r12,r8
+	mov r8,0
+	sete r8b
+	cmp r8b,1
+	jz ___getResult..if_true
+	jnz ___getResult..if_after
+___getResult..if_true:
+	mov r8,rbx
+	imul r8,8
+	add r8,r15
+	mov r8,qword [r8+8]
+	imul r8,2
+	mov r12,rsi
+	imul r12,8
+	add r12,r15
+	mov r12,qword [r12+8]
+	sub r8,r12
+	cmp r8,r14
+	mov r8,0
+	setle r8b
+	cmp r8b,1
+	jz ___getResult..if_true_2
+	jnz ___getResult..if_after_2
+___getResult..if_true_2:
+	mov r8,rbx
+	imul r8,8
+	add r8,r15
+	mov r8,qword [r8+8]
+	imul r8,2
+	mov r12,rsi
+	imul r12,8
+	add r12,r15
+	mov r12,qword [r12+8]
+	sub r8,r12
+	imul r8,8
+	add r8,rcx
+	mov r8,qword [r8+8]
+	cmp r8,0
+	mov r8,0
+	setne r8b
+	cmp r8b,1
+	jz ___getResult..if_true_3
+	jnz ___getResult..if_after_3
+___getResult..if_true_3:
+	mov r8,rbx
+	imul r8,8
+	add r8,r15
+	mov r8,qword [r8+8]
+	mov rcx,r8
+	imul rcx,2
+	mov r8,rsi
+	imul r8,8
+	add r8,r15
+	mov r8,qword [r8+8]
+	sub rcx,r8
+	imul rcx,8
+	add rcx,r9
+	mov rcx,qword [rcx+8]
+	mov qword [rsp+24],r9
+	mov qword [rsp+32],r8
+	mov qword [rsp+40],rsi
+	mov qword [rsp+48],r14
+	mov qword [rsp+56],rbx
+	mov qword [rsp+64],rdi
+	mov qword [rsp+72],r15
+	mov qword [rsp+80],rcx
+	mov qword [rsp+88],r12
+	mov rdx,qword [rsp+80]
+	mov rsi,rbx
+	mov rdi,r14
+	call ___getResult
+	mov r12,qword [rsp+88]
+	mov rcx,qword [rsp+80]
+	mov r15,qword [rsp+72]
+	mov rdi,qword [rsp+64]
+	mov rbx,qword [rsp+56]
+	mov r14,qword [rsp+48]
+	mov rsi,qword [rsp+40]
+	mov r8,qword [rsp+32]
+	mov r9,qword [rsp+24]
+	mov r14,rax
+	add r14,1
+	mov r9,rsi
+	imul r9,8
+	add r9,rdi
+	mov r9,qword [r9+8]
+	mov r8,rbx
+	imul r8,8
+	add r8,r9
+	mov qword [r8+8],r14
+	jmp ___getResult..if_after_3
+___getResult..if_after_3:
+	jmp ___getResult..if_after_2
+___getResult..if_after_2:
+	jmp ___getResult..if_after
+___getResult..if_after:
+	mov r9,rsi
+	imul r9,8
+	add r9,rdi
+	mov r9,qword [r9+8]
+	mov r8,rbx
+	imul r8,8
+	add r8,r9
+	mov r8,qword [r8+8]
+	mov r9,-1
+	cmp r8,r9
+	mov r9,0
+	sete r9b
+	cmp r9b,1
+	jz ___getResult..if_true_4
+	jnz ___getResult..if_after_4
+___getResult..if_true_4:
+	mov r8,rsi
+	imul r8,8
+	add r8,rdi
+	mov r8,qword [r8+8]
+	mov r9,rbx
+	imul r9,8
+	add r9,r8
+	mov qword [r9+8],1
+	jmp ___getResult..if_after_4
+___getResult..if_after_4:
+	imul rsi,8
+	add rsi,rdi
+	mov rsi,qword [rsi+8]
+	mov r9,rbx
+	imul r9,8
+	add r9,rsi
+	mov r9,qword [r9+8]
+	mov rax,r9
+	leave
+	ret
+
 main:
 main..main.entry:
 	push rbp
 	mov rbp,rsp
-	sub rsp,112
-	mov r10,qword [___total]
-	mov qword [rsp],r10
-	mov r14,qword [___i]
-	mov rsi,qword [___j]
-	mov r10,qword [___h]
+	sub rsp,176
+	mov r10,qword [___b]
+	mov qword [rsp+72],r10
+	mov r10,___string
+	mov qword [rsp+64],r10
+	mov r10,qword [___i]
+	mov qword [rsp+24],r10
+	mov rdx,___string_2
+	mov r10,qword [___N]
+	mov qword [rsp+16],r10
+	mov rdi,qword [___resultCount]
+	mov r10,qword [___gps]
 	mov qword [rsp+8],r10
-	mov r12,qword [___N]
-	mov rdi,qword [___k]
-	mov r12,0
-	mov r10,99
-	mov qword [rsp+8],r10
-	mov r14,100
-	mov rsi,101
-	mov rdi,102
+	mov rsi,qword [___M]
+	mov r14,___string_3
+	mov r10,qword [___tmp]
+	mov qword [rsp+40],r10
+	mov r12,qword [___primeCount]
+	mov r9,qword [___prime]
+	mov r10,qword [___j]
+	mov qword [rsp+48],r10
+	mov rbx,qword [___result]
 	mov r10,0
-	mov qword [rsp],r10
+	mov qword [rsp+16],r10
+	mov rsi,0
+	mov r10,0
+	mov qword [rsp+24],r10
+	mov r10,0
+	mov qword [rsp+48],r10
+	mov r12,0
+	mov rdi,0
+	mov r9,8016
+	mov qword [rsp+80],r9
+	mov qword [rsp+88],r8
+	mov qword [rsp+96],rsi
+	mov qword [rsp+104],rdi
+	mov qword [rsp+136],rcx
+	mov qword [rsp+152],rdx
+	mov rdi,r9
+	call malloc
+	mov rdx,qword [rsp+152]
+	mov rcx,qword [rsp+136]
+	mov rdi,qword [rsp+104]
+	mov rsi,qword [rsp+96]
+	mov r8,qword [rsp+88]
+	mov r9,qword [rsp+80]
+	mov r9,rax
+	mov qword [r9],1001
+	mov r10,r9
+	mov qword [rsp+72],r10
+	mov r9,1368
+	mov qword [rsp+80],r9
+	mov qword [rsp+88],r8
+	mov qword [rsp+96],rsi
+	mov qword [rsp+104],rdi
+	mov qword [rsp+136],rcx
+	mov qword [rsp+152],rdx
+	mov rdi,r9
+	call malloc
+	mov rdx,qword [rsp+152]
+	mov rcx,qword [rsp+136]
+	mov rdi,qword [rsp+104]
+	mov rsi,qword [rsp+96]
+	mov r8,qword [rsp+88]
+	mov r9,qword [rsp+80]
+	mov r9,rax
+	mov qword [r9],170
+	mov r8,8016
+	mov qword [rsp+80],r9
+	mov qword [rsp+88],r8
+	mov qword [rsp+96],rsi
+	mov qword [rsp+104],rdi
+	mov qword [rsp+136],rcx
+	mov qword [rsp+152],rdx
+	mov rdi,r8
+	call malloc
+	mov rdx,qword [rsp+152]
+	mov rcx,qword [rsp+136]
+	mov rdi,qword [rsp+104]
+	mov rsi,qword [rsp+96]
+	mov r8,qword [rsp+88]
+	mov r9,qword [rsp+80]
+	mov r8,rax
+	mov qword [r8],1001
+	mov r10,r8
+	mov qword [rsp+8],r10
+	mov r8,16
+	mov qword [rsp+80],r9
+	mov qword [rsp+88],r8
+	mov qword [rsp+96],rsi
+	mov qword [rsp+104],rdi
+	mov qword [rsp+136],rcx
+	mov qword [rsp+152],rdx
+	mov rdi,r8
+	call malloc
+	mov rdx,qword [rsp+152]
+	mov rcx,qword [rsp+136]
+	mov rdi,qword [rsp+104]
+	mov rsi,qword [rsp+96]
+	mov r8,qword [rsp+88]
+	mov r9,qword [rsp+80]
+	mov r8,rax
+	mov qword [r8],1
+	mov r10,r8
+	mov qword [rsp+40],r10
+	mov rbx,0
 	jmp main.._init.entry
 main.._init.entry:
-	mov r9,0
-	mov r15,0
-	mov rdx,0
-	mov rcx,0
-	mov r13,0
-	mov rbx,0
-	mov qword [rsp+16],r8
-	mov qword [rsp+24],rsi
-	mov qword [rsp+40],rdx
-	mov qword [rsp+56],rcx
-	mov qword [rsp+72],rdi
-	mov qword [rsp+96],r9
-	call _Z6getIntv
-	mov r9,qword [rsp+96]
-	mov rdi,qword [rsp+72]
-	mov rcx,qword [rsp+56]
-	mov rdx,qword [rsp+40]
-	mov rsi,qword [rsp+24]
-	mov r8,qword [rsp+16]
-	mov r12,rax
-	mov r9,1
+	mov rsi,170
+	mov rbx,rsi
+	imul rbx,8
+	add rbx,8
+	mov qword [rsp+80],r9
+	mov qword [rsp+88],r8
+	mov qword [rsp+96],rsi
+	mov qword [rsp+104],rdi
+	mov qword [rsp+136],rcx
+	mov qword [rsp+152],rdx
+	mov rdi,rbx
+	call malloc
+	mov rdx,qword [rsp+152]
+	mov rcx,qword [rsp+136]
+	mov rdi,qword [rsp+104]
+	mov rsi,qword [rsp+96]
+	mov r8,qword [rsp+88]
+	mov r9,qword [rsp+80]
+	mov rbx,rax
+	mov qword [rbx],rsi
+	mov r10,0
+	mov qword [rsp+24],r10
 	jmp main..for_cond
 main..for_cond:
-	cmp r9,r12
+	mov r10,qword [rsp+24]
+	cmp r10,rsi
 	mov r8,0
-	setle r8b
+	setl r8b
 	cmp r8b,1
 	jz main..for_loop
 	jnz main..for_after
-main..for_loop:
-	mov r15,1
+main..for_after:
+	mov r10,1000
+	mov qword [rsp+16],r10
+	mov qword [rsp+80],r9
+	mov qword [rsp+88],r8
+	mov qword [rsp+96],rsi
+	mov qword [rsp+104],rdi
+	mov qword [rsp+136],rcx
+	mov qword [rsp+152],rdx
+	call _Z6getIntv
+	mov rdx,qword [rsp+152]
+	mov rcx,qword [rsp+136]
+	mov rdi,qword [rsp+104]
+	mov rsi,qword [rsp+96]
+	mov r8,qword [rsp+88]
+	mov r9,qword [rsp+80]
+	mov rsi,rax
+	mov r12,0
+	mov rdi,0
+	mov r10,qword [rsp+40]
+	mov r8,r10
+	add r8,0
+	mov qword [r8+8],0
+	mov r10,0
+	mov qword [rsp+24],r10
 	jmp main..for_cond_2
 main..for_cond_2:
-	cmp r15,r12
+	mov r10,qword [rsp+16]
+	mov r8,r10
+	add r8,1
+	mov r10,qword [rsp+24]
+	cmp r10,r8
 	mov r8,0
-	setle r8b
+	setl r8b
 	cmp r8b,1
 	jz main..for_loop_2
 	jnz main..for_after_2
-main..for_after_2:
+main..for_loop_2:
+	mov r10,qword [rsp+24]
+	mov r8,r10
+	imul r8,8
+	mov r10,qword [rsp+72]
+	add r8,r10
+	mov qword [r8+8],1
+	mov r10,qword [rsp+24]
+	mov r8,r10
+	imul r8,8
+	mov r10,qword [rsp+8]
+	add r8,r10
+	mov qword [r8+8],0
 	jmp main..for_step
 main..for_step:
-	mov r8,r9
-	add r9,1
-	jmp main..for_cond
-main..for_loop_2:
-	mov rdx,1
+	mov r10,qword [rsp+24]
+	mov r8,r10
+	add r8,1
+	mov r10,r8
+	mov qword [rsp+24],r10
+	jmp main..for_cond_2
+main..for_after_2:
+	mov r10,0
+	mov qword [rsp+24],r10
 	jmp main..for_cond_3
 main..for_cond_3:
-	cmp rdx,r12
+	mov r8,rsi
+	add r8,1
+	mov r10,qword [rsp+24]
+	cmp r10,r8
 	mov r8,0
-	setle r8b
+	setl r8b
 	cmp r8b,1
 	jz main..for_loop_3
 	jnz main..for_after_3
 main..for_after_3:
-	jmp main..for_step_2
-main..for_step_2:
-	mov r8,r15
-	add r15,1
-	jmp main..for_cond_2
-main..for_loop_3:
-	mov rcx,1
+	mov r10,0
+	mov qword [rsp+24],r10
 	jmp main..for_cond_4
 main..for_cond_4:
-	cmp rcx,r12
+	mov r10,qword [rsp+24]
+	cmp r10,rsi
 	mov r8,0
 	setle r8b
 	cmp r8b,1
 	jz main..for_loop_4
 	jnz main..for_after_4
 main..for_loop_4:
-	mov r13,1
+	mov r10,0
+	mov qword [rsp+48],r10
 	jmp main..for_cond_5
 main..for_cond_5:
-	cmp r13,r12
+	mov r10,qword [rsp+48]
+	cmp r10,rsi
 	mov r8,0
 	setle r8b
 	cmp r8b,1
 	jz main..for_loop_5
 	jnz main..for_after_5
 main..for_loop_5:
-	mov rbx,1
+	mov r8,-1
+	mov r10,qword [rsp+24]
+	mov rcx,r10
+	imul rcx,8
+	add rcx,rbx
+	mov rcx,qword [rcx+8]
+	mov r10,qword [rsp+48]
+	mov r15,r10
+	imul r15,8
+	add r15,rcx
+	mov qword [r15+8],r8
+	jmp main..for_step_2
+main..for_step_2:
+	mov r10,qword [rsp+48]
+	mov r8,r10
+	add r8,1
+	mov r10,r8
+	mov qword [rsp+48],r10
+	jmp main..for_cond_5
+main..for_after_5:
+	jmp main..for_step_3
+main..for_step_3:
+	mov r10,qword [rsp+24]
+	mov r8,r10
+	add r8,1
+	mov r10,r8
+	mov qword [rsp+24],r10
+	jmp main..for_cond_4
+main..for_after_4:
+	mov r10,qword [rsp+16]
+	mov r15,r10
+	mov r10,2
+	mov qword [rsp],r10
+	mov rcx,2
 	jmp main..for_cond_6
 main..for_cond_6:
-	cmp rbx,r12
+	cmp rcx,r15
 	mov r8,0
 	setle r8b
 	cmp r8b,1
 	jz main..for_loop_6
 	jnz main..for_after_6
-main..for_after_6:
-	jmp main..for_step_3
-main..for_step_3:
-	mov r8,r13
-	add r13,1
-	jmp main..for_cond_5
 main..for_loop_6:
-	cmp r9,r15
-	mov r8,0
-	setne r8b
-	cmp r8b,1
-	jz main..lhs_true
-	jnz main..lhs_false
-main..lhs_false:
-	mov r8,0
-	jmp main..lhs_merge
-main..lhs_true:
-	cmp r9,rdx
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge
-main..lhs_merge:
-	cmp r8b,1
-	jz main..lhs_true_2
-	jnz main..lhs_false_2
-main..lhs_true_2:
-	cmp r9,rcx
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_2
-main..lhs_false_2:
-	mov r8,0
-	jmp main..lhs_merge_2
-main..lhs_merge_2:
-	cmp r8b,1
-	jz main..lhs_true_3
-	jnz main..lhs_false_3
-main..lhs_false_3:
-	mov r8,0
-	jmp main..lhs_merge_3
-main..lhs_true_3:
-	cmp r9,r13
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_3
-main..lhs_merge_3:
-	cmp r8b,1
-	jz main..lhs_true_4
-	jnz main..lhs_false_4
-main..lhs_true_4:
-	cmp r9,rbx
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_4
-main..lhs_false_4:
-	mov r8,0
-	jmp main..lhs_merge_4
-main..lhs_merge_4:
-	cmp r8b,1
-	jz main..lhs_true_5
-	jnz main..lhs_false_5
-main..lhs_true_5:
-	mov r10,qword [rsp+8]
-	cmp r9,r10
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_5
-main..lhs_false_5:
-	mov r8,0
-	jmp main..lhs_merge_5
-main..lhs_merge_5:
-	cmp r8b,1
-	jz main..lhs_true_6
-	jnz main..lhs_false_6
-main..lhs_false_6:
-	mov r8,0
-	jmp main..lhs_merge_6
-main..lhs_true_6:
-	cmp r9,r14
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_6
-main..lhs_merge_6:
-	cmp r8b,1
-	jz main..lhs_true_7
-	jnz main..lhs_false_7
-main..lhs_true_7:
-	cmp r9,rsi
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_7
-main..lhs_false_7:
-	mov r8,0
-	jmp main..lhs_merge_7
-main..lhs_merge_7:
-	cmp r8b,1
-	jz main..lhs_true_8
-	jnz main..lhs_false_8
-main..lhs_false_8:
-	mov r8,0
-	jmp main..lhs_merge_8
-main..lhs_true_8:
-	cmp r9,rdi
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_8
-main..lhs_merge_8:
-	cmp r8b,1
-	jz main..lhs_true_9
-	jnz main..lhs_false_9
-main..lhs_true_9:
-	cmp r15,rdx
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_9
-main..lhs_false_9:
-	mov r8,0
-	jmp main..lhs_merge_9
-main..lhs_merge_9:
-	cmp r8b,1
-	jz main..lhs_true_10
-	jnz main..lhs_false_10
-main..lhs_false_10:
-	mov r8,0
-	jmp main..lhs_merge_10
-main..lhs_true_10:
-	cmp r15,rcx
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_10
-main..lhs_merge_10:
-	cmp r8b,1
-	jz main..lhs_true_11
-	jnz main..lhs_false_11
-main..lhs_true_11:
-	cmp r15,r13
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_11
-main..lhs_false_11:
-	mov r8,0
-	jmp main..lhs_merge_11
-main..lhs_merge_11:
-	cmp r8b,1
-	jz main..lhs_true_12
-	jnz main..lhs_false_12
-main..lhs_false_12:
-	mov r8,0
-	jmp main..lhs_merge_12
-main..lhs_true_12:
-	cmp r15,rbx
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_12
-main..lhs_merge_12:
-	cmp r8b,1
-	jz main..lhs_true_13
-	jnz main..lhs_false_13
-main..lhs_false_13:
-	mov r8,0
-	jmp main..lhs_merge_13
-main..lhs_true_13:
-	mov r10,qword [rsp+8]
-	cmp r15,r10
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_13
-main..lhs_merge_13:
-	cmp r8b,1
-	jz main..lhs_true_14
-	jnz main..lhs_false_14
-main..lhs_false_14:
-	mov r8,0
-	jmp main..lhs_merge_14
-main..lhs_true_14:
-	cmp r15,r14
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_14
-main..lhs_merge_14:
-	cmp r8b,1
-	jz main..lhs_true_15
-	jnz main..lhs_false_15
-main..lhs_false_15:
-	mov r8,0
-	jmp main..lhs_merge_15
-main..lhs_true_15:
-	cmp r15,rsi
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_15
-main..lhs_merge_15:
-	cmp r8b,1
-	jz main..lhs_true_16
-	jnz main..lhs_false_16
-main..lhs_true_16:
-	cmp r15,rdi
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_16
-main..lhs_false_16:
-	mov r8,0
-	jmp main..lhs_merge_16
-main..lhs_merge_16:
-	cmp r8b,1
-	jz main..lhs_true_17
-	jnz main..lhs_false_17
-main..lhs_false_17:
-	mov r8,0
-	jmp main..lhs_merge_17
-main..lhs_true_17:
-	cmp rdx,rcx
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_17
-main..lhs_merge_17:
-	cmp r8b,1
-	jz main..lhs_true_18
-	jnz main..lhs_false_18
-main..lhs_true_18:
-	cmp rdx,r13
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_18
-main..lhs_false_18:
-	mov r8,0
-	jmp main..lhs_merge_18
-main..lhs_merge_18:
-	cmp r8b,1
-	jz main..lhs_true_19
-	jnz main..lhs_false_19
-main..lhs_false_19:
-	mov r8,0
-	jmp main..lhs_merge_19
-main..lhs_true_19:
-	cmp rdx,rbx
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_19
-main..lhs_merge_19:
-	cmp r8b,1
-	jz main..lhs_true_20
-	jnz main..lhs_false_20
-main..lhs_false_20:
-	mov r8,0
-	jmp main..lhs_merge_20
-main..lhs_true_20:
-	mov r10,qword [rsp+8]
-	cmp rdx,r10
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_20
-main..lhs_merge_20:
-	cmp r8b,1
-	jz main..lhs_true_21
-	jnz main..lhs_false_21
-main..lhs_true_21:
-	cmp rdx,r14
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_21
-main..lhs_false_21:
-	mov r8,0
-	jmp main..lhs_merge_21
-main..lhs_merge_21:
-	cmp r8b,1
-	jz main..lhs_true_22
-	jnz main..lhs_false_22
-main..lhs_false_22:
-	mov r8,0
-	jmp main..lhs_merge_22
-main..lhs_true_22:
-	cmp rdx,rsi
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_22
-main..lhs_merge_22:
-	cmp r8b,1
-	jz main..lhs_true_23
-	jnz main..lhs_false_23
-main..lhs_true_23:
-	cmp rdx,rdi
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_23
-main..lhs_false_23:
-	mov r8,0
-	jmp main..lhs_merge_23
-main..lhs_merge_23:
-	cmp r8b,1
-	jz main..lhs_true_24
-	jnz main..lhs_false_24
-main..lhs_true_24:
-	cmp rcx,r13
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_24
-main..lhs_false_24:
-	mov r8,0
-	jmp main..lhs_merge_24
-main..lhs_merge_24:
-	cmp r8b,1
-	jz main..lhs_true_25
-	jnz main..lhs_false_25
-main..lhs_false_25:
-	mov r8,0
-	jmp main..lhs_merge_25
-main..lhs_true_25:
-	cmp rcx,rbx
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_25
-main..lhs_merge_25:
-	cmp r8b,1
-	jz main..lhs_true_26
-	jnz main..lhs_false_26
-main..lhs_false_26:
-	mov r8,0
-	jmp main..lhs_merge_26
-main..lhs_true_26:
-	mov r10,qword [rsp+8]
-	cmp rcx,r10
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_26
-main..lhs_merge_26:
-	cmp r8b,1
-	jz main..lhs_true_27
-	jnz main..lhs_false_27
-main..lhs_true_27:
-	cmp rcx,r14
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_27
-main..lhs_false_27:
-	mov r8,0
-	jmp main..lhs_merge_27
-main..lhs_merge_27:
-	cmp r8b,1
-	jz main..lhs_true_28
-	jnz main..lhs_false_28
-main..lhs_true_28:
-	cmp rcx,rsi
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_28
-main..lhs_false_28:
-	mov r8,0
-	jmp main..lhs_merge_28
-main..lhs_merge_28:
-	cmp r8b,1
-	jz main..lhs_true_29
-	jnz main..lhs_false_29
-main..lhs_true_29:
-	cmp rcx,rdi
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_29
-main..lhs_false_29:
-	mov r8,0
-	jmp main..lhs_merge_29
-main..lhs_merge_29:
-	cmp r8b,1
-	jz main..lhs_true_30
-	jnz main..lhs_false_30
-main..lhs_true_30:
-	cmp r13,rbx
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_30
-main..lhs_false_30:
-	mov r8,0
-	jmp main..lhs_merge_30
-main..lhs_merge_30:
-	cmp r8b,1
-	jz main..lhs_true_31
-	jnz main..lhs_false_31
-main..lhs_false_31:
-	mov r8,0
-	jmp main..lhs_merge_31
-main..lhs_true_31:
-	mov r10,qword [rsp+8]
-	cmp r13,r10
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_31
-main..lhs_merge_31:
-	cmp r8b,1
-	jz main..lhs_true_32
-	jnz main..lhs_false_32
-main..lhs_true_32:
-	cmp r13,r14
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_32
-main..lhs_false_32:
-	mov r8,0
-	jmp main..lhs_merge_32
-main..lhs_merge_32:
-	cmp r8b,1
-	jz main..lhs_true_33
-	jnz main..lhs_false_33
-main..lhs_true_33:
-	cmp r13,rsi
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_33
-main..lhs_false_33:
-	mov r8,0
-	jmp main..lhs_merge_33
-main..lhs_merge_33:
-	cmp r8b,1
-	jz main..lhs_true_34
-	jnz main..lhs_false_34
-main..lhs_true_34:
-	cmp r13,rdi
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_34
-main..lhs_false_34:
-	mov r8,0
-	jmp main..lhs_merge_34
-main..lhs_merge_34:
-	cmp r8b,1
-	jz main..lhs_true_35
-	jnz main..lhs_false_35
-main..lhs_false_35:
-	mov r8,0
-	jmp main..lhs_merge_35
-main..lhs_true_35:
-	mov r10,qword [rsp+8]
-	cmp rbx,r10
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_35
-main..lhs_merge_35:
-	cmp r8b,1
-	jz main..lhs_true_36
-	jnz main..lhs_false_36
-main..lhs_false_36:
-	mov r8,0
-	jmp main..lhs_merge_36
-main..lhs_true_36:
-	cmp rbx,r14
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_36
-main..lhs_merge_36:
-	cmp r8b,1
-	jz main..lhs_true_37
-	jnz main..lhs_false_37
-main..lhs_true_37:
-	cmp rbx,rsi
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_37
-main..lhs_false_37:
-	mov r8,0
-	jmp main..lhs_merge_37
-main..lhs_merge_37:
-	cmp r8b,1
-	jz main..lhs_true_38
-	jnz main..lhs_false_38
-main..lhs_false_38:
-	mov r8,0
-	jmp main..lhs_merge_38
-main..lhs_true_38:
-	cmp rbx,rdi
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_38
-main..lhs_merge_38:
-	cmp r8b,1
-	jz main..lhs_true_39
-	jnz main..lhs_false_39
-main..lhs_false_39:
-	mov r8,0
-	jmp main..lhs_merge_39
-main..lhs_true_39:
-	cmp r14,rsi
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_39
-main..lhs_merge_39:
-	cmp r8b,1
-	jz main..lhs_true_40
-	jnz main..lhs_false_40
-main..lhs_false_40:
-	mov r8,0
-	jmp main..lhs_merge_40
-main..lhs_true_40:
-	mov r10,qword [rsp+8]
-	cmp r10,rdi
-	mov r8,0
-	setne r8b
-	jmp main..lhs_merge_40
-main..lhs_merge_40:
+	mov r8,rcx
+	imul r8,8
+	mov r10,qword [rsp+72]
+	add r8,r10
+	mov r8,qword [r8+8]
+	cmp r8,1
+	mov r8,0
+	sete r8b
 	cmp r8b,1
 	jz main..if_true
 	jnz main..if_after
 main..if_true:
-	mov r10,qword [rsp]
+	mov r10,qword [rsp+40]
 	mov r8,r10
-	mov r10,qword [rsp]
-	add r10,1
-	mov qword [rsp],r10
+	add r8,0
+	mov r8,qword [r8+8]
+	add r8,1
+	mov r10,qword [rsp+40]
+	mov r12,r10
+	add r12,0
+	mov qword [r12+8],r8
+	mov r10,qword [rsp+40]
+	mov r8,r10
+	add r8,0
+	mov r8,qword [r8+8]
+	imul r8,8
+	add r8,r9
+	mov qword [r8+8],rcx
+	mov r10,qword [rsp+40]
+	mov r8,r10
+	add r8,0
+	mov r8,qword [r8+8]
+	mov r12,rcx
+	imul r12,8
+	mov r10,qword [rsp+8]
+	add r12,r10
+	mov qword [r12+8],r8
 	jmp main..if_after
 main..if_after:
+	jmp main..while_cond
+main..while_cond:
+	mov r8,rcx
+	mov r10,qword [rsp]
+	imul r8,r10
+	cmp r8,r15
+	mov r8,0
+	setle r8b
+	cmp r8b,1
+	jz main..while_loop
+	jnz main..while_after
+main..while_after:
+	mov r10,2
+	mov qword [rsp],r10
 	jmp main..for_step_4
 main..for_step_4:
-	mov r8,rbx
-	add rbx,1
-	jmp main..for_cond_6
-main..for_after_5:
-	jmp main..for_step_5
-main..for_step_5:
-	mov r8,rcx
 	add rcx,1
-	jmp main..for_cond_4
-main..for_after_4:
-	jmp main..for_step_6
-main..for_step_6:
-	mov r8,rdx
-	add rdx,1
-	jmp main..for_cond_3
-main..for_after:
-	mov qword [rsp+16],r8
-	mov qword [rsp+24],rsi
-	mov qword [rsp+40],rdx
-	mov qword [rsp+56],rcx
-	mov qword [rsp+72],rdi
-	mov qword [rsp+96],r9
-	mov rdi,qword [rsp]
-	call _Z10printlnInti
-	mov r9,qword [rsp+96]
-	mov rdi,qword [rsp+72]
-	mov rcx,qword [rsp+56]
-	mov rdx,qword [rsp+40]
-	mov rsi,qword [rsp+24]
-	mov r8,qword [rsp+16]
+	jmp main..for_cond_6
+main..while_loop:
+	mov r8,rcx
 	mov r10,qword [rsp]
-	mov qword [___total],r10
-	mov qword [___i],r14
-	mov qword [___j],rsi
+	imul r8,r10
+	imul r8,8
+	mov r10,qword [rsp+72]
+	add r8,r10
+	mov qword [r8+8],0
+	mov r10,qword [rsp]
+	mov r8,r10
+	add r8,1
+	mov r10,r8
+	mov qword [rsp],r10
+	jmp main..while_cond
+main..for_after_6:
+	mov r10,qword [rsp+40]
+	mov r12,r10
+	add r12,0
+	mov r12,qword [r12+8]
+	mov r10,1
+	mov qword [rsp+24],r10
+	jmp main..for_cond_7
+main..for_cond_7:
+	mov r10,qword [rsp+24]
+	cmp r10,r12
+	mov r8,0
+	setl r8b
+	cmp r8b,1
+	jz main..for_loop_7
+	jnz main..for_after_7
+main..for_after_7:
+	mov qword [rsp+80],r9
+	mov qword [rsp+88],r8
+	mov qword [rsp+96],rsi
+	mov qword [rsp+104],rdi
+	mov qword [rsp+136],rcx
+	mov qword [rsp+152],rdx
+	mov rdi,qword [rsp+64]
+	call _Z5printPc
+	mov rdx,qword [rsp+152]
+	mov rcx,qword [rsp+136]
+	mov rdi,qword [rsp+104]
+	mov rsi,qword [rsp+96]
+	mov r8,qword [rsp+88]
+	mov r9,qword [rsp+80]
+	mov qword [rsp+80],r9
+	mov qword [rsp+88],r8
+	mov qword [rsp+96],rsi
+	mov qword [rsp+104],rdi
+	mov qword [rsp+136],rcx
+	mov qword [rsp+152],rdx
+	mov rdi,qword [rsp+104]
+	call _Z10printlnInti
+	mov rdx,qword [rsp+152]
+	mov rcx,qword [rsp+136]
+	mov rdi,qword [rsp+104]
+	mov rsi,qword [rsp+96]
+	mov r8,qword [rsp+88]
+	mov r9,qword [rsp+80]
+	mov r10,qword [rsp+16]
+	mov qword [___N],r10
+	mov qword [___resultCount],rdi
 	mov r10,qword [rsp+8]
-	mov qword [___h],r10
-	mov qword [___N],r12
-	mov qword [___k],rdi
+	mov qword [___gps],r10
+	mov qword [___M],rsi
+	mov r10,qword [rsp+72]
+	mov qword [___b],r10
+	mov r10,qword [rsp+40]
+	mov qword [___tmp],r10
+	mov qword [___primeCount],r12
+	mov r10,qword [rsp+24]
+	mov qword [___i],r10
+	mov qword [___prime],r9
+	mov r10,qword [rsp+48]
+	mov qword [___j],r10
+	mov qword [___result],rbx
 	mov rax,0
 	leave
 	ret
+main..for_loop_7:
+	mov r10,qword [rsp+24]
+	mov r8,r10
+	add r8,1
+	mov r10,r8
+	mov qword [rsp+48],r10
+	jmp main..for_cond_8
+main..for_cond_8:
+	mov r10,qword [rsp+48]
+	cmp r10,r12
+	mov r8,0
+	setle r8b
+	cmp r8b,1
+	jz main..for_loop_8
+	jnz main..for_after_8
+main..for_after_8:
+	jmp main..for_step_5
+main..for_step_5:
+	mov r10,qword [rsp+24]
+	mov r8,r10
+	add r8,1
+	mov r10,r8
+	mov qword [rsp+24],r10
+	jmp main..for_cond_7
+main..for_loop_8:
+	mov r10,qword [rsp+24]
+	mov r8,r10
+	imul r8,8
+	add r8,rbx
+	mov r8,qword [r8+8]
+	mov r10,qword [rsp+48]
+	mov r15,r10
+	imul r15,8
+	add r15,r8
+	mov r15,qword [r15+8]
+	mov r8,-1
+	cmp r15,r8
+	mov r8,0
+	sete r8b
+	cmp r8b,1
+	jz main..if_true_2
+	jnz main..if_after_2
+main..if_true_2:
+	mov r10,qword [rsp+8]
+	mov qword [___gps],r10
+	mov r10,qword [rsp+72]
+	mov qword [___b],r10
+	mov qword [___prime],r9
+	mov qword [___result],rbx
+	mov qword [rsp+80],r9
+	mov qword [rsp+88],r8
+	mov qword [rsp+96],rsi
+	mov qword [rsp+104],rdi
+	mov qword [rsp+112],r14
+	mov qword [rsp+120],rbx
+	mov qword [rsp+128],r15
+	mov qword [rsp+136],rcx
+	mov qword [rsp+144],r12
+	mov rdx,qword [rsp+48]
+	mov rsi,qword [rsp+24]
+	mov rdi,qword [rsp+16]
+	call ___getResult
+	mov r12,qword [rsp+144]
+	mov rcx,qword [rsp+136]
+	mov r15,qword [rsp+128]
+	mov rbx,qword [rsp+120]
+	mov r14,qword [rsp+112]
+	mov rdi,qword [rsp+104]
+	mov rsi,qword [rsp+96]
+	mov r8,qword [rsp+88]
+	mov r9,qword [rsp+80]
+	mov r8,rax
+	mov r10,qword [rsp+24]
+	mov r15,r10
+	imul r15,8
+	add r15,rbx
+	mov r15,qword [r15+8]
+	mov r10,qword [rsp+48]
+	mov rcx,r10
+	imul rcx,8
+	add rcx,r15
+	mov qword [rcx+8],r8
+	mov r10,qword [rsp+24]
+	mov r15,r10
+	imul r15,8
+	add r15,rbx
+	mov r15,qword [r15+8]
+	mov r10,qword [rsp+48]
+	mov r8,r10
+	imul r8,8
+	add r8,r15
+	mov r8,qword [r8+8]
+	cmp r8,1
+	mov r8,0
+	setg r8b
+	cmp r8b,1
+	jz main..if_true_3
+	jnz main..if_after_3
+main..if_true_3:
+	mov r10,qword [rsp+24]
+	mov rcx,r10
+	imul rcx,8
+	add rcx,r9
+	mov rcx,qword [rcx+8]
+	mov r10,qword [rsp+48]
+	mov r15,r10
+	imul r15,8
+	add r15,r9
+	mov r15,qword [r15+8]
+	mov r10,qword [rsp+24]
+	mov r8,r10
+	imul r8,8
+	add r8,rbx
+	mov r8,qword [r8+8]
+	mov r10,qword [rsp+48]
+	mov qword [rsp+56],r10
+	mov r10,qword [rsp+56]
+	imul r10,8
+	mov qword [rsp+56],r10
+	mov r10,qword [rsp+56]
+	add r10,r8
+	mov qword [rsp+56],r10
+	mov r10,qword [rsp+56]
+	mov r10,qword [r10+8]
+	mov qword [rsp+56],r10
+	mov r10,r15
+	mov qword [rsp+32],r10
+	mov r10,qword [rsp+56]
+	mov r15,r10
+	mov qword [rsp+80],r9
+	mov qword [rsp+88],r8
+	mov qword [rsp+96],rsi
+	mov qword [rsp+104],rdi
+	mov qword [rsp+136],rcx
+	mov qword [rsp+152],rdx
+	mov rdi,qword [rsp+136]
+	call _Z8printInti
+	mov rdx,qword [rsp+152]
+	mov rcx,qword [rsp+136]
+	mov rdi,qword [rsp+104]
+	mov rsi,qword [rsp+96]
+	mov r8,qword [rsp+88]
+	mov r9,qword [rsp+80]
+	jmp main..while_cond_2
+main..while_cond_2:
+	cmp r15,0
+	mov r8,0
+	setg r8b
+	cmp r8b,1
+	jz main..while_loop_2
+	jnz main..while_after_2
+main..while_after_2:
+	mov qword [rsp+80],r9
+	mov qword [rsp+88],r8
+	mov qword [rsp+96],rsi
+	mov qword [rsp+104],rdi
+	mov qword [rsp+136],rcx
+	mov qword [rsp+152],rdx
+	mov rdi,qword [rsp+152]
+	call _Z5printPc
+	mov rdx,qword [rsp+152]
+	mov rcx,qword [rsp+136]
+	mov rdi,qword [rsp+104]
+	mov rsi,qword [rsp+96]
+	mov r8,qword [rsp+88]
+	mov r9,qword [rsp+80]
+	add rdi,1
+	jmp main..if_after_3
+main..if_after_3:
+	jmp main..if_after_2
+main..while_loop_2:
+	mov qword [rsp+80],r9
+	mov qword [rsp+88],r8
+	mov qword [rsp+96],rsi
+	mov qword [rsp+104],rdi
+	mov qword [rsp+136],rcx
+	mov qword [rsp+152],rdx
+	mov rdi,r14
+	call _Z5printPc
+	mov rdx,qword [rsp+152]
+	mov rcx,qword [rsp+136]
+	mov rdi,qword [rsp+104]
+	mov rsi,qword [rsp+96]
+	mov r8,qword [rsp+88]
+	mov r9,qword [rsp+80]
+	mov qword [rsp+80],r9
+	mov qword [rsp+88],r8
+	mov qword [rsp+96],rsi
+	mov qword [rsp+104],rdi
+	mov qword [rsp+136],rcx
+	mov qword [rsp+152],rdx
+	mov rdi,qword [rsp+32]
+	call _Z8printInti
+	mov rdx,qword [rsp+152]
+	mov rcx,qword [rsp+136]
+	mov rdi,qword [rsp+104]
+	mov rsi,qword [rsp+96]
+	mov r8,qword [rsp+88]
+	mov r9,qword [rsp+80]
+	mov r10,qword [rsp+32]
+	mov r8,r10
+	imul r8,2
+	sub r8,rcx
+	mov r10,r8
+	mov qword [rsp+32],r10
+	mov r10,qword [rsp+32]
+	add rcx,r10
+	mov rax,rcx
+	mov r11,rdx
+	cqo
+	mov r10,2
+	idiv r10
+	mov rdx,r11
+	mov r13,rax
+	mov rcx,r13
+	mov r8,r15
+	sub r8,1
+	mov r15,r8
+	jmp main..while_cond_2
+main..if_after_2:
+	jmp main..for_step_6
+main..for_step_6:
+	mov r10,qword [rsp+48]
+	mov r8,r10
+	add r8,1
+	mov r10,r8
+	mov qword [rsp+48],r10
+	jmp main..for_cond_8
+main..for_loop_3:
+	mov r10,qword [rsp+24]
+	mov r8,r10
+	imul r8,8
+	add r8,r9
+	mov qword [r8+8],0
+	jmp main..for_step_7
+main..for_step_7:
+	mov r10,qword [rsp+24]
+	mov r8,r10
+	add r8,1
+	mov r10,r8
+	mov qword [rsp+24],r10
+	jmp main..for_cond_3
+main..for_loop:
+	mov rdi,rsi
+	imul rdi,8
+	add rdi,8
+	mov qword [rsp+80],r9
+	mov qword [rsp+88],r8
+	mov qword [rsp+96],rsi
+	mov qword [rsp+104],rdi
+	mov qword [rsp+136],rcx
+	mov qword [rsp+152],rdx
+	mov rdi,rdi
+	call malloc
+	mov rdx,qword [rsp+152]
+	mov rcx,qword [rsp+136]
+	mov rdi,qword [rsp+104]
+	mov rsi,qword [rsp+96]
+	mov r8,qword [rsp+88]
+	mov r9,qword [rsp+80]
+	mov rdi,rax
+	mov qword [rdi],rsi
+	mov r10,qword [rsp+24]
+	mov r8,r10
+	imul r8,8
+	add r8,rbx
+	mov qword [r8+8],rdi
+	mov r10,0
+	mov qword [rsp+48],r10
+	jmp main..for_cond_9
+main..for_cond_9:
+	mov r10,qword [rsp+48]
+	cmp r10,rsi
+	mov r8,0
+	setl r8b
+	cmp r8b,1
+	jz main..for_loop_9
+	jnz main..for_after_9
+main..for_loop_9:
+	mov r10,qword [rsp+24]
+	mov r8,r10
+	imul r8,8
+	add r8,rbx
+	mov r8,qword [r8+8]
+	mov r10,qword [rsp+48]
+	mov rdi,r10
+	imul rdi,8
+	add rdi,r8
+	mov qword [rdi+8],0
+	jmp main..for_step_8
+main..for_step_8:
+	mov r10,qword [rsp+48]
+	add r10,1
+	mov qword [rsp+48],r10
+	jmp main..for_cond_9
+main..for_after_9:
+	jmp main..for_step_9
+main..for_step_9:
+	mov r10,qword [rsp+24]
+	add r10,1
+	mov qword [rsp+24],r10
+	jmp main..for_cond
 
 section .data
+___string_3:
+	db 1,0,0,0,0,0,0,0,32,0
+___string_2:
+	db 1,0,0,0,0,0,0,0,10,0
+___string:
+	db 7,0,0,0,0,0,0,0,84,111,116,97,108,58,32,0
 
 section .bss
 ___N:
 	resb 64
-___h:
+___M:
 	resb 64
 ___i:
 	resb 64
 ___j:
 	resb 64
-___k:
+___primeCount:
 	resb 64
-___total:
+___resultCount:
+	resb 64
+___b:
+	resb 64
+___prime:
+	resb 64
+___gps:
+	resb 64
+___tmp:
+	resb 64
+___result:
 	resb 64
 
 

@@ -1,0 +1,463 @@
+space @N 8
+space @M 8
+space @i 8
+space @j 8
+space @primeCount 8
+space @resultCount 8
+space @b 8
+space @prime 8
+space @gps 8
+space @tmp 8
+space @result 8
+asciiz @string  
+asciiz @string_2 \n
+asciiz @string_3 Total: 
+
+func getResult $N $k1 $k2 {
+
+%getResult.entry:
+    $t = mul $k1 8
+    $t = add @result $t
+    $t = load 8 $t 8
+    $t_2 = mul $k2 8
+    $t_2 = add $t $t_2
+    $t_2 = load 8 $t_2 8
+    $t_3 = neg 1
+    $t_4 = seq $t_2 $t_3
+    br $t_4 %if_true %if_after
+
+%if_true:
+    $t_5 = mul $k2 8
+    $t_5 = add @prime $t_5
+    $t_5 = load 8 $t_5 8
+    $t_6 = mul $t_5 2
+    $t_7 = mul $k1 8
+    $t_7 = add @prime $t_7
+    $t_7 = load 8 $t_7 8
+    $t_8 = sub $t_6 $t_7
+    $t_9 = sle $t_8 $N
+    br $t_9 %if_true_2 %if_after_2
+
+%if_true_2:
+    $t_10 = mul $k2 8
+    $t_10 = add @prime $t_10
+    $t_10 = load 8 $t_10 8
+    $t_11 = mul $t_10 2
+    $t_12 = mul $k1 8
+    $t_12 = add @prime $t_12
+    $t_12 = load 8 $t_12 8
+    $t_13 = sub $t_11 $t_12
+    $t_14 = mul $t_13 8
+    $t_14 = add @b $t_14
+    $t_14 = load 8 $t_14 8
+    $t_15 = sne $t_14 0
+    br $t_15 %if_true_3 %if_after_3
+
+%if_true_3:
+    $t_16 = mul $k2 8
+    $t_16 = add @prime $t_16
+    $t_16 = load 8 $t_16 8
+    $t_17 = mul $t_16 2
+    $t_18 = mul $k1 8
+    $t_18 = add @prime $t_18
+    $t_18 = load 8 $t_18 8
+    $t_19 = sub $t_17 $t_18
+    $t_20 = mul $t_19 8
+    $t_20 = add @gps $t_20
+    $t_20 = load 8 $t_20 8
+    $t_21 = call getResult $N $k2 $t_20 
+    $t_22 = add $t_21 1
+    $t_23 = mul $k1 8
+    $t_23 = add @result $t_23
+    $t_23 = load 8 $t_23 8
+    $t_24 = mul $k2 8
+    $t_24 = add $t_23 $t_24
+    store 8 $t_24 $t_22 8
+    jump %if_after_3
+
+%if_after_3:
+    jump %if_after_2
+
+%if_after_2:
+    jump %if_after
+
+%if_after:
+    $t_25 = mul $k1 8
+    $t_25 = add @result $t_25
+    $t_25 = load 8 $t_25 8
+    $t_26 = mul $k2 8
+    $t_26 = add $t_25 $t_26
+    $t_26 = load 8 $t_26 8
+    $t_27 = neg 1
+    $t_28 = seq $t_26 $t_27
+    br $t_28 %if_true_4 %if_after_4
+
+%if_true_4:
+    $t_29 = mul $k1 8
+    $t_29 = add @result $t_29
+    $t_29 = load 8 $t_29 8
+    $t_30 = mul $k2 8
+    $t_30 = add $t_29 $t_30
+    store 8 $t_30 1 8
+    jump %if_after_4
+
+%if_after_4:
+    $t_31 = mul $k1 8
+    $t_31 = add @result $t_31
+    $t_31 = load 8 $t_31 8
+    $t_32 = mul $k2 8
+    $t_32 = add $t_31 $t_32
+    $t_32 = load 8 $t_32 8
+    ret $t_32
+
+}
+
+func main {
+
+%main.entry:
+    @N = move 0
+    @M = move 0
+    @i = move 0
+    @j = move 0
+    @primeCount = move 0
+    @resultCount = move 0
+    $newaddress = move 8016
+    $newaddress = alloc $newaddress
+    store 8 $newaddress 1001 0
+    @b = move $newaddress
+    $newaddress_2 = move 1368
+    $newaddress_2 = alloc $newaddress_2
+    store 8 $newaddress_2 170 0
+    @prime = move $newaddress_2
+    $newaddress_3 = move 8016
+    $newaddress_3 = alloc $newaddress_3
+    store 8 $newaddress_3 1001 0
+    @gps = move $newaddress_3
+    $newaddress_4 = move 16
+    $newaddress_4 = alloc $newaddress_4
+    store 8 $newaddress_4 1 0
+    @tmp = move $newaddress_4
+    @result = move 0
+    jump %_init.entry
+
+%_init.entry:
+    $N = move 170
+    $newaddress_5 = mul $N 8
+    $newaddress_5 = add $newaddress_5 8
+    $newaddress_5 = alloc $newaddress_5
+    store 8 $newaddress_5 $N 0
+    @result = move $newaddress_5
+    @i = move 0
+    jump %for_cond
+
+%for_cond:
+    $t = slt @i $N
+    br $t %for_loop %for_after
+
+%for_after:
+    @N = move 1000
+    $gottenint = call getInt 
+    @M = move $gottenint
+    @primeCount = move 0
+    @resultCount = move 0
+    $t_2 = add @tmp 0
+    store 8 $t_2 0 8
+    @i = move 0
+    jump %for_cond_2
+
+%for_cond_2:
+    $t_3 = add @N 1
+    $t_4 = slt @i $t_3
+    br $t_4 %for_loop_2 %for_after_2
+
+%for_loop_2:
+    $t_5 = mul @i 8
+    $t_5 = add @b $t_5
+    store 8 $t_5 1 8
+    $t_6 = mul @i 8
+    $t_6 = add @gps $t_6
+    store 8 $t_6 0 8
+    jump %for_step
+
+%for_step:
+    $t_7 = add @i 1
+    @i = move $t_7
+    jump %for_cond_2
+
+%for_after_2:
+    @i = move 0
+    jump %for_cond_3
+
+%for_cond_3:
+    $t_8 = add @M 1
+    $t_9 = slt @i $t_8
+    br $t_9 %for_loop_3 %for_after_3
+
+%for_after_3:
+    @i = move 0
+    jump %for_cond_4
+
+%for_cond_4:
+    $t_10 = sle @i @M
+    br $t_10 %for_loop_4 %for_after_4
+
+%for_loop_4:
+    @j = move 0
+    jump %for_cond_5
+
+%for_cond_5:
+    $t_11 = sle @j @M
+    br $t_11 %for_loop_5 %for_after_5
+
+%for_loop_5:
+    $t_12 = neg 1
+    $t_13 = mul @i 8
+    $t_13 = add @result $t_13
+    $t_13 = load 8 $t_13 8
+    $t_14 = mul @j 8
+    $t_14 = add $t_13 $t_14
+    store 8 $t_14 $t_12 8
+    jump %for_step_2
+
+%for_step_2:
+    $t_15 = add @j 1
+    @j = move $t_15
+    jump %for_cond_5
+
+%for_after_5:
+    jump %for_step_3
+
+%for_step_3:
+    $t_16 = add @i 1
+    @i = move $t_16
+    jump %for_cond_4
+
+%for_after_4:
+    $N_2 = move @N
+    $count = move 0
+    $i = move 0
+    $count = move 2
+    $i = move 2
+    jump %for_cond_6
+
+%for_cond_6:
+    $t_17 = sle $i $N_2
+    br $t_17 %for_loop_6 %for_after_6
+
+%for_loop_6:
+    $t_18 = mul $i 8
+    $t_18 = add @b $t_18
+    $t_18 = load 8 $t_18 8
+    $t_19 = seq $t_18 1
+    br $t_19 %if_true_5 %if_after_5
+
+%if_true_5:
+    $t_20 = add @tmp 0
+    $t_20 = load 8 $t_20 8
+    $t_21 = add $t_20 1
+    $t_22 = add @tmp 0
+    store 8 $t_22 $t_21 8
+    $t_23 = add @tmp 0
+    $t_23 = load 8 $t_23 8
+    $t_24 = mul $t_23 8
+    $t_24 = add @prime $t_24
+    store 8 $t_24 $i 8
+    $t_25 = add @tmp 0
+    $t_25 = load 8 $t_25 8
+    $t_26 = mul $i 8
+    $t_26 = add @gps $t_26
+    store 8 $t_26 $t_25 8
+    jump %if_after_5
+
+%if_after_5:
+    jump %while_cond
+
+%while_cond:
+    $t_27 = mul $i $count
+    $t_28 = sle $t_27 $N_2
+    br $t_28 %while_loop %while_after
+
+%while_after:
+    $count = move 2
+    jump %for_step_4
+
+%for_step_4:
+    $t_29 = add $i 1
+    $i = move $t_29
+    jump %for_cond_6
+
+%while_loop:
+    $t_30 = mul $i $count
+    $t_31 = mul $t_30 8
+    $t_31 = add @b $t_31
+    store 8 $t_31 0 8
+    $t_32 = add $count 1
+    $count = move $t_32
+    jump %while_cond
+
+%for_after_6:
+    $t_33 = move 0
+    $t_34 = add @tmp 0
+    $t_34 = load 8 $t_34 8
+    @primeCount = move $t_34
+    @i = move 1
+    jump %for_cond_7
+
+%for_cond_7:
+    $t_35 = slt @i @primeCount
+    br $t_35 %for_loop_7 %for_after_7
+
+%for_after_7:
+    call print @string_3 
+    call printlnint @resultCount 
+    ret 0
+
+%for_loop_7:
+    $t_36 = add @i 1
+    @j = move $t_36
+    jump %for_cond_8
+
+%for_cond_8:
+    $t_37 = sle @j @primeCount
+    br $t_37 %for_loop_8 %for_after_8
+
+%for_after_8:
+    jump %for_step_5
+
+%for_step_5:
+    $t_38 = add @i 1
+    @i = move $t_38
+    jump %for_cond_7
+
+%for_loop_8:
+    $t_39 = mul @i 8
+    $t_39 = add @result $t_39
+    $t_39 = load 8 $t_39 8
+    $t_40 = mul @j 8
+    $t_40 = add $t_39 $t_40
+    $t_40 = load 8 $t_40 8
+    $t_41 = neg 1
+    $t_42 = seq $t_40 $t_41
+    br $t_42 %if_true_6 %if_after_6
+
+%if_true_6:
+    $t_43 = call getResult @N @i @j 
+    $t_44 = mul @i 8
+    $t_44 = add @result $t_44
+    $t_44 = load 8 $t_44 8
+    $t_45 = mul @j 8
+    $t_45 = add $t_44 $t_45
+    store 8 $t_45 $t_43 8
+    $t_46 = mul @i 8
+    $t_46 = add @result $t_46
+    $t_46 = load 8 $t_46 8
+    $t_47 = mul @j 8
+    $t_47 = add $t_46 $t_47
+    $t_47 = load 8 $t_47 8
+    $t_48 = sgt $t_47 1
+    br $t_48 %if_true_7 %if_after_7
+
+%if_true_7:
+    $t_49 = mul @i 8
+    $t_49 = add @prime $t_49
+    $t_49 = load 8 $t_49 8
+    $t_50 = mul @j 8
+    $t_50 = add @prime $t_50
+    $t_50 = load 8 $t_50 8
+    $t_51 = mul @i 8
+    $t_51 = add @result $t_51
+    $t_51 = load 8 $t_51 8
+    $t_52 = mul @j 8
+    $t_52 = add $t_51 $t_52
+    $t_52 = load 8 $t_52 8
+    $k1 = move $t_49
+    $k2 = move $t_50
+    $k3 = move $t_52
+    call printint $k1 
+    jump %while_cond_2
+
+%while_cond_2:
+    $t_53 = sgt $k3 0
+    br $t_53 %while_loop_2 %while_after_2
+
+%while_after_2:
+    call print @string_2 
+    $t_54 = move 0
+    $t_55 = add @resultCount 1
+    @resultCount = move $t_55
+    jump %if_after_7
+
+%if_after_7:
+    jump %if_after_6
+
+%while_loop_2:
+    call print @string 
+    call printint $k2 
+    $t_56 = mul $k2 2
+    $t_57 = sub $t_56 $k1
+    $k2 = move $t_57
+    $t_58 = add $k1 $k2
+    $t_59 = div $t_58 2
+    $k1 = move $t_59
+    $t_60 = sub $k3 1
+    $k3 = move $t_60
+    jump %while_cond_2
+
+%if_after_6:
+    jump %for_step_6
+
+%for_step_6:
+    $t_61 = add @j 1
+    @j = move $t_61
+    jump %for_cond_8
+
+%for_loop_3:
+    $t_62 = mul @i 8
+    $t_62 = add @prime $t_62
+    store 8 $t_62 0 8
+    jump %for_step_7
+
+%for_step_7:
+    $t_63 = add @i 1
+    @i = move $t_63
+    jump %for_cond_3
+
+%for_loop:
+    $newaddress_6 = mul $N 8
+    $newaddress_6 = add $newaddress_6 8
+    $newaddress_6 = alloc $newaddress_6
+    store 8 $newaddress_6 $N 0
+    $t_64 = mul @i 8
+    $t_64 = add @result $t_64
+    store 8 $t_64 $newaddress_6 8
+    @j = move 0
+    jump %for_cond_9
+
+%for_cond_9:
+    $t_65 = slt @j $N
+    br $t_65 %for_loop_9 %for_after_9
+
+%for_loop_9:
+    $t_66 = mul @i 8
+    $t_66 = add @result $t_66
+    $t_66 = load 8 $t_66 8
+    $t_67 = mul @j 8
+    $t_67 = add $t_66 $t_67
+    store 8 $t_67 0 8
+    jump %for_step_8
+
+%for_step_8:
+    $t_68 = move @j
+    @j = add @j 1
+    jump %for_cond_9
+
+%for_after_9:
+    jump %for_step_9
+
+%for_step_9:
+    $t_69 = move @i
+    @i = add @i 1
+    jump %for_cond
+
+}
+
