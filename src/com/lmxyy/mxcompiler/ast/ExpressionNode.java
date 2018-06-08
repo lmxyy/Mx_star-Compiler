@@ -13,9 +13,9 @@ public class ExpressionNode extends ExprNode{
     private boolean hasPar;
 
     public ExpressionNode(List<ExprNode> _exprs,VartypePlusNode _vartype,ExprOperator _op,boolean _hasPar) {
-        exprs = _exprs;
         vartype = _vartype;
         op = _op;
+        exprs = _exprs;
         hasPar = _hasPar;
     }
 

@@ -7,7 +7,7 @@ import java.util.Map;
 public class CallInstruction extends IRInstruction {
     private Register register;
     private Function function;
-    private List<IntValue> argRegList = new ArrayList<>();
+    public List<IntValue> argRegList = new ArrayList<>();
 
     public CallInstruction(BasicBlock _basicBlock, Register _register, Function _function) {
         super(_basicBlock);

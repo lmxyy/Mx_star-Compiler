@@ -28,6 +28,10 @@ public class MoveInstruction extends IRInstruction {
         return dest;
     }
 
+    public void setSource(IntValue _source) {
+        source = _source;
+    }
+
     public MoveInstruction getParentInst() {
         return parentInst;
     }

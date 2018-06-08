@@ -63,4 +63,8 @@ public class HeapAllocateInstruction extends IRInstruction {
                 (IntValue) renameMap.getOrDefault(allocSize,allocSize)
         );
     }
+
+    public void setAllocSize(IntValue _allocSize) {
+        allocSize = _allocSize;
+    }
 }

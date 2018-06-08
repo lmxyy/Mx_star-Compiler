@@ -69,4 +69,11 @@ public abstract class BinaryOperationInstruction extends IRInstruction {
     }
 
     public abstract void accept(IRVisitor visitor);
+
+    public void setLhs(IntValue _lhs) {
+        lhs = _lhs;
+    }
+    public void setRhs(IntValue _rhs) {
+        rhs = _rhs;
+    }
 }
