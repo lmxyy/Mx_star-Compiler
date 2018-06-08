@@ -35,8 +35,8 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
-//         String inFile = "/Users/limuyang/Desktop/Mx_star-Compiler/testcase/558.mx", outFile = null;
-        String inFile = null,outFile = null;
+         String inFile = "/Users/limuyang/Desktop/Mx_star-Compiler/testcase/938.mx", outFile = null;
+//        String inFile = null,outFile = null;
         boolean isPrintHelp = false, isPrintVersion = false, isPrintWarning = false;
         for (int i = 0; i < args.length; ++i) {
             String arg = args[i];

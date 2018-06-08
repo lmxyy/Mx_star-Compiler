@@ -1,0 +1,909 @@
+func main {
+
+%main.entry:
+    jump %_init.entry
+
+%_init.entry:
+    $l1 = move 0
+    $l2 = move $l1
+    $l3 = move $l2
+    $l4 = move $l3
+    $l5 = move $l4
+    $l6 = move $l5
+    $l7 = move $l6
+    $l8 = move $l7
+    $gottenint = call getInt 
+    $T = move $gottenint
+    $ans = move 0
+    $l10 = move 0
+    $l11 = move $l10
+    $l12 = move $l11
+    $l13 = move $l12
+    $l14 = move $l13
+    $l15 = move $l14
+    $l16 = move $l15
+    $l17 = move $l16
+    $l18 = move $l17
+    $l19 = move $l18
+    $i = move 0
+    jump %for_cond
+
+%for_cond:
+    $t = slt $i $T
+    br $t %for_loop %for_after
+
+%for_loop:
+    $j = move 0
+    jump %for_cond_2
+
+%for_cond_2:
+    $t_2 = slt $j $T
+    br $t_2 %for_loop_2 %for_after_2
+
+%for_loop_2:
+    $k = move 0
+    jump %for_cond_3
+
+%for_cond_3:
+    $t_3 = slt $k $T
+    br $t_3 %for_loop_3 %for_after_3
+
+%for_after_3:
+    jump %for_step
+
+%for_step:
+    $j = add $j 1
+    jump %for_cond_2
+
+%for_loop_3:
+    $t_4 = sgt $i 0
+    br $t_4 %lhs_true %lhs_false
+
+%lhs_false:
+    $t_5 = move 0
+    jump %lhs_merge
+
+%lhs_true:
+    $t_6 = rem $i 199
+    $t_7 = seq $t_6 0
+    $t_5 = move $t_7
+    jump %lhs_merge
+
+%lhs_merge:
+    br $t_5 %lhs_true_2 %lhs_false_2
+
+%lhs_true_2:
+    $t_8 = move 1
+    jump %lhs_merge_2
+
+%lhs_false_2:
+    $t_9 = sgt $j 0
+    br $t_9 %lhs_true_3 %lhs_false_3
+
+%lhs_true_3:
+    $t_10 = rem $j 199
+    $t_11 = seq $t_10 0
+    $t_12 = move $t_11
+    jump %lhs_merge_3
+
+%lhs_false_3:
+    $t_12 = move 0
+    jump %lhs_merge_3
+
+%lhs_merge_3:
+    $t_8 = move $t_12
+    jump %lhs_merge_2
+
+%lhs_merge_2:
+    br $t_8 %lhs_true_4 %lhs_false_4
+
+%lhs_false_4:
+    $t_13 = sgt $k 0
+    br $t_13 %lhs_true_5 %lhs_false_5
+
+%lhs_false_5:
+    $t_14 = move 0
+    jump %lhs_merge_4
+
+%lhs_true_5:
+    $t_15 = rem $k 199
+    $t_16 = seq $t_15 0
+    $t_14 = move $t_16
+    jump %lhs_merge_4
+
+%lhs_merge_4:
+    $t_17 = move $t_14
+    jump %lhs_merge_5
+
+%lhs_true_4:
+    $t_17 = move 1
+    jump %lhs_merge_5
+
+%lhs_merge_5:
+    br $t_17 %lhs_true_6 %lhs_false_6
+
+%lhs_true_6:
+    $t_18 = move 1
+    jump %lhs_merge_6
+
+%lhs_false_6:
+    $t_19 = add $i $j
+    $t_20 = add $t_19 $k
+    $t_21 = sgt $t_20 0
+    br $t_21 %lhs_true_7 %lhs_false_7
+
+%lhs_false_7:
+    $t_22 = move 0
+    jump %lhs_merge_7
+
+%lhs_true_7:
+    $t_23 = rem $k 199
+    $t_24 = seq $t_23 0
+    $t_22 = move $t_24
+    jump %lhs_merge_7
+
+%lhs_merge_7:
+    $t_18 = move $t_22
+    jump %lhs_merge_6
+
+%lhs_merge_6:
+    br $t_18 %lhs_true_8 %lhs_false_8
+
+%lhs_true_8:
+    $t_25 = move 1
+    jump %lhs_merge_8
+
+%lhs_false_8:
+    $t_26 = mul $i $j
+    $t_27 = mul $t_26 $k
+    $t_28 = sgt $t_27 0
+    br $t_28 %lhs_true_9 %lhs_false_9
+
+%lhs_false_9:
+    $t_29 = move 0
+    jump %lhs_merge_9
+
+%lhs_true_9:
+    $t_30 = rem $k 199
+    $t_31 = seq $t_30 0
+    $t_29 = move $t_31
+    jump %lhs_merge_9
+
+%lhs_merge_9:
+    $t_25 = move $t_29
+    jump %lhs_merge_8
+
+%lhs_merge_8:
+    $f1 = move $t_25
+    $t_32 = sgt $i 0
+    br $t_32 %lhs_true_10 %lhs_false_10
+
+%lhs_false_10:
+    $t_33 = move 0
+    jump %lhs_merge_10
+
+%lhs_true_10:
+    $t_34 = rem $i 199
+    $t_35 = seq $t_34 0
+    $t_33 = move $t_35
+    jump %lhs_merge_10
+
+%lhs_merge_10:
+    br $t_33 %lhs_true_11 %lhs_false_11
+
+%lhs_true_11:
+    $t_36 = move 1
+    jump %lhs_merge_11
+
+%lhs_false_11:
+    $t_37 = sgt $j 0
+    br $t_37 %lhs_true_12 %lhs_false_12
+
+%lhs_true_12:
+    $t_38 = rem $j 199
+    $t_39 = seq $t_38 0
+    $t_40 = move $t_39
+    jump %lhs_merge_12
+
+%lhs_false_12:
+    $t_40 = move 0
+    jump %lhs_merge_12
+
+%lhs_merge_12:
+    $t_36 = move $t_40
+    jump %lhs_merge_11
+
+%lhs_merge_11:
+    br $t_36 %lhs_true_13 %lhs_false_13
+
+%lhs_false_13:
+    $t_41 = sgt $k 0
+    br $t_41 %lhs_true_14 %lhs_false_14
+
+%lhs_true_14:
+    $t_42 = rem $k 199
+    $t_43 = seq $t_42 0
+    $t_44 = move $t_43
+    jump %lhs_merge_13
+
+%lhs_false_14:
+    $t_44 = move 0
+    jump %lhs_merge_13
+
+%lhs_merge_13:
+    $t_45 = move $t_44
+    jump %lhs_merge_14
+
+%lhs_true_13:
+    $t_45 = move 1
+    jump %lhs_merge_14
+
+%lhs_merge_14:
+    br $t_45 %lhs_true_15 %lhs_false_15
+
+%lhs_true_15:
+    $t_46 = move 1
+    jump %lhs_merge_15
+
+%lhs_false_15:
+    $t_47 = add $i $j
+    $t_48 = add $t_47 $k
+    $t_49 = sgt $t_48 0
+    br $t_49 %lhs_true_16 %lhs_false_16
+
+%lhs_true_16:
+    $t_50 = rem $k 199
+    $t_51 = seq $t_50 0
+    $t_52 = move $t_51
+    jump %lhs_merge_16
+
+%lhs_false_16:
+    $t_52 = move 0
+    jump %lhs_merge_16
+
+%lhs_merge_16:
+    $t_46 = move $t_52
+    jump %lhs_merge_15
+
+%lhs_merge_15:
+    br $t_46 %lhs_true_17 %lhs_false_17
+
+%lhs_true_17:
+    $t_53 = move 1
+    jump %lhs_merge_17
+
+%lhs_false_17:
+    $t_54 = mul $i $j
+    $t_55 = mul $t_54 $k
+    $t_56 = sgt $t_55 0
+    br $t_56 %lhs_true_18 %lhs_false_18
+
+%lhs_true_18:
+    $t_57 = rem $k 199
+    $t_58 = seq $t_57 0
+    $t_59 = move $t_58
+    jump %lhs_merge_18
+
+%lhs_false_18:
+    $t_59 = move 0
+    jump %lhs_merge_18
+
+%lhs_merge_18:
+    $t_53 = move $t_59
+    jump %lhs_merge_17
+
+%lhs_merge_17:
+    $f2 = move $t_53
+    $t_60 = sgt $i 0
+    br $t_60 %lhs_true_19 %lhs_false_19
+
+%lhs_false_19:
+    $t_61 = move 0
+    jump %lhs_merge_19
+
+%lhs_true_19:
+    $t_62 = rem $i 199
+    $t_63 = seq $t_62 0
+    $t_61 = move $t_63
+    jump %lhs_merge_19
+
+%lhs_merge_19:
+    br $t_61 %lhs_true_20 %lhs_false_20
+
+%lhs_false_20:
+    $t_64 = sgt $j 0
+    br $t_64 %lhs_true_21 %lhs_false_21
+
+%lhs_true_21:
+    $t_65 = rem $j 199
+    $t_66 = seq $t_65 0
+    $t_67 = move $t_66
+    jump %lhs_merge_20
+
+%lhs_false_21:
+    $t_67 = move 0
+    jump %lhs_merge_20
+
+%lhs_merge_20:
+    $t_68 = move $t_67
+    jump %lhs_merge_21
+
+%lhs_true_20:
+    $t_68 = move 1
+    jump %lhs_merge_21
+
+%lhs_merge_21:
+    br $t_68 %lhs_true_22 %lhs_false_22
+
+%lhs_false_22:
+    $t_69 = sgt $k 0
+    br $t_69 %lhs_true_23 %lhs_false_23
+
+%lhs_true_23:
+    $t_70 = rem $k 199
+    $t_71 = seq $t_70 0
+    $t_72 = move $t_71
+    jump %lhs_merge_22
+
+%lhs_false_23:
+    $t_72 = move 0
+    jump %lhs_merge_22
+
+%lhs_merge_22:
+    $t_73 = move $t_72
+    jump %lhs_merge_23
+
+%lhs_true_22:
+    $t_73 = move 1
+    jump %lhs_merge_23
+
+%lhs_merge_23:
+    br $t_73 %lhs_true_24 %lhs_false_24
+
+%lhs_true_24:
+    $t_74 = move 1
+    jump %lhs_merge_24
+
+%lhs_false_24:
+    $t_75 = add $i $j
+    $t_76 = add $t_75 $k
+    $t_77 = sgt $t_76 0
+    br $t_77 %lhs_true_25 %lhs_false_25
+
+%lhs_false_25:
+    $t_78 = move 0
+    jump %lhs_merge_25
+
+%lhs_true_25:
+    $t_79 = rem $k 199
+    $t_80 = seq $t_79 0
+    $t_78 = move $t_80
+    jump %lhs_merge_25
+
+%lhs_merge_25:
+    $t_74 = move $t_78
+    jump %lhs_merge_24
+
+%lhs_merge_24:
+    br $t_74 %lhs_true_26 %lhs_false_26
+
+%lhs_true_26:
+    $t_81 = move 1
+    jump %lhs_merge_26
+
+%lhs_false_26:
+    $t_82 = mul $i $j
+    $t_83 = mul $t_82 $k
+    $t_84 = sgt $t_83 0
+    br $t_84 %lhs_true_27 %lhs_false_27
+
+%lhs_true_27:
+    $t_85 = rem $k 199
+    $t_86 = seq $t_85 0
+    $t_87 = move $t_86
+    jump %lhs_merge_27
+
+%lhs_false_27:
+    $t_87 = move 0
+    jump %lhs_merge_27
+
+%lhs_merge_27:
+    $t_81 = move $t_87
+    jump %lhs_merge_26
+
+%lhs_merge_26:
+    $f3 = move $t_81
+    $t_88 = sgt $i 0
+    br $t_88 %lhs_true_28 %lhs_false_28
+
+%lhs_true_28:
+    $t_89 = rem $i 199
+    $t_90 = seq $t_89 0
+    $t_91 = move $t_90
+    jump %lhs_merge_28
+
+%lhs_false_28:
+    $t_91 = move 0
+    jump %lhs_merge_28
+
+%lhs_merge_28:
+    br $t_91 %lhs_true_29 %lhs_false_29
+
+%lhs_true_29:
+    $t_92 = move 1
+    jump %lhs_merge_29
+
+%lhs_false_29:
+    $t_93 = sgt $j 0
+    br $t_93 %lhs_true_30 %lhs_false_30
+
+%lhs_true_30:
+    $t_94 = rem $j 199
+    $t_95 = seq $t_94 0
+    $t_96 = move $t_95
+    jump %lhs_merge_30
+
+%lhs_false_30:
+    $t_96 = move 0
+    jump %lhs_merge_30
+
+%lhs_merge_30:
+    $t_92 = move $t_96
+    jump %lhs_merge_29
+
+%lhs_merge_29:
+    br $t_92 %lhs_true_31 %lhs_false_31
+
+%lhs_false_31:
+    $t_97 = sgt $k 0
+    br $t_97 %lhs_true_32 %lhs_false_32
+
+%lhs_true_32:
+    $t_98 = rem $k 199
+    $t_99 = seq $t_98 0
+    $t_100 = move $t_99
+    jump %lhs_merge_31
+
+%lhs_false_32:
+    $t_100 = move 0
+    jump %lhs_merge_31
+
+%lhs_merge_31:
+    $t_101 = move $t_100
+    jump %lhs_merge_32
+
+%lhs_true_31:
+    $t_101 = move 1
+    jump %lhs_merge_32
+
+%lhs_merge_32:
+    br $t_101 %lhs_true_33 %lhs_false_33
+
+%lhs_false_33:
+    $t_102 = add $i $j
+    $t_103 = add $t_102 $k
+    $t_104 = sgt $t_103 0
+    br $t_104 %lhs_true_34 %lhs_false_34
+
+%lhs_true_34:
+    $t_105 = rem $k 199
+    $t_106 = seq $t_105 0
+    $t_107 = move $t_106
+    jump %lhs_merge_33
+
+%lhs_false_34:
+    $t_107 = move 0
+    jump %lhs_merge_33
+
+%lhs_merge_33:
+    $t_108 = move $t_107
+    jump %lhs_merge_34
+
+%lhs_true_33:
+    $t_108 = move 1
+    jump %lhs_merge_34
+
+%lhs_merge_34:
+    br $t_108 %lhs_true_35 %lhs_false_35
+
+%lhs_false_35:
+    $t_109 = mul $i $j
+    $t_110 = mul $t_109 $k
+    $t_111 = sgt $t_110 0
+    br $t_111 %lhs_true_36 %lhs_false_36
+
+%lhs_true_36:
+    $t_112 = rem $k 199
+    $t_113 = seq $t_112 0
+    $t_114 = move $t_113
+    jump %lhs_merge_35
+
+%lhs_false_36:
+    $t_114 = move 0
+    jump %lhs_merge_35
+
+%lhs_merge_35:
+    $t_115 = move $t_114
+    jump %lhs_merge_36
+
+%lhs_true_35:
+    $t_115 = move 1
+    jump %lhs_merge_36
+
+%lhs_merge_36:
+    $f4 = move $t_115
+    $t_116 = sgt $i 0
+    br $t_116 %lhs_true_37 %lhs_false_37
+
+%lhs_false_37:
+    $t_117 = move 0
+    jump %lhs_merge_37
+
+%lhs_true_37:
+    $t_118 = rem $i 199
+    $t_119 = seq $t_118 0
+    $t_117 = move $t_119
+    jump %lhs_merge_37
+
+%lhs_merge_37:
+    br $t_117 %lhs_true_38 %lhs_false_38
+
+%lhs_true_38:
+    $t_120 = move 1
+    jump %lhs_merge_38
+
+%lhs_false_38:
+    $t_121 = sgt $j 0
+    br $t_121 %lhs_true_39 %lhs_false_39
+
+%lhs_true_39:
+    $t_122 = rem $j 199
+    $t_123 = seq $t_122 0
+    $t_124 = move $t_123
+    jump %lhs_merge_39
+
+%lhs_false_39:
+    $t_124 = move 0
+    jump %lhs_merge_39
+
+%lhs_merge_39:
+    $t_120 = move $t_124
+    jump %lhs_merge_38
+
+%lhs_merge_38:
+    br $t_120 %lhs_true_40 %lhs_false_40
+
+%lhs_true_40:
+    $t_125 = move 1
+    jump %lhs_merge_40
+
+%lhs_false_40:
+    $t_126 = sgt $k 0
+    br $t_126 %lhs_true_41 %lhs_false_41
+
+%lhs_true_41:
+    $t_127 = rem $k 199
+    $t_128 = seq $t_127 0
+    $t_129 = move $t_128
+    jump %lhs_merge_41
+
+%lhs_false_41:
+    $t_129 = move 0
+    jump %lhs_merge_41
+
+%lhs_merge_41:
+    $t_125 = move $t_129
+    jump %lhs_merge_40
+
+%lhs_merge_40:
+    br $t_125 %lhs_true_42 %lhs_false_42
+
+%lhs_false_42:
+    $t_130 = add $i $j
+    $t_131 = add $t_130 $k
+    $t_132 = sgt $t_131 0
+    br $t_132 %lhs_true_43 %lhs_false_43
+
+%lhs_false_43:
+    $t_133 = move 0
+    jump %lhs_merge_42
+
+%lhs_true_43:
+    $t_134 = rem $k 199
+    $t_135 = seq $t_134 0
+    $t_133 = move $t_135
+    jump %lhs_merge_42
+
+%lhs_merge_42:
+    $t_136 = move $t_133
+    jump %lhs_merge_43
+
+%lhs_true_42:
+    $t_136 = move 1
+    jump %lhs_merge_43
+
+%lhs_merge_43:
+    br $t_136 %lhs_true_44 %lhs_false_44
+
+%lhs_false_44:
+    $t_137 = mul $i $j
+    $t_138 = mul $t_137 $k
+    $t_139 = sgt $t_138 0
+    br $t_139 %lhs_true_45 %lhs_false_45
+
+%lhs_false_45:
+    $t_140 = move 0
+    jump %lhs_merge_44
+
+%lhs_true_45:
+    $t_141 = rem $k 199
+    $t_142 = seq $t_141 0
+    $t_140 = move $t_142
+    jump %lhs_merge_44
+
+%lhs_merge_44:
+    $t_143 = move $t_140
+    jump %lhs_merge_45
+
+%lhs_true_44:
+    $t_143 = move 1
+    jump %lhs_merge_45
+
+%lhs_merge_45:
+    $f5 = move $t_143
+    $t_144 = sgt $i 0
+    br $t_144 %lhs_true_46 %lhs_false_46
+
+%lhs_true_46:
+    $t_145 = rem $i 199
+    $t_146 = seq $t_145 0
+    $t_147 = move $t_146
+    jump %lhs_merge_46
+
+%lhs_false_46:
+    $t_147 = move 0
+    jump %lhs_merge_46
+
+%lhs_merge_46:
+    br $t_147 %lhs_true_47 %lhs_false_47
+
+%lhs_false_47:
+    $t_148 = sgt $j 0
+    br $t_148 %lhs_true_48 %lhs_false_48
+
+%lhs_true_48:
+    $t_149 = rem $j 199
+    $t_150 = seq $t_149 0
+    $t_151 = move $t_150
+    jump %lhs_merge_47
+
+%lhs_false_48:
+    $t_151 = move 0
+    jump %lhs_merge_47
+
+%lhs_merge_47:
+    $t_152 = move $t_151
+    jump %lhs_merge_48
+
+%lhs_true_47:
+    $t_152 = move 1
+    jump %lhs_merge_48
+
+%lhs_merge_48:
+    br $t_152 %lhs_true_49 %lhs_false_49
+
+%lhs_false_49:
+    $t_153 = sgt $k 0
+    br $t_153 %lhs_true_50 %lhs_false_50
+
+%lhs_false_50:
+    $t_154 = move 0
+    jump %lhs_merge_49
+
+%lhs_true_50:
+    $t_155 = rem $k 199
+    $t_156 = seq $t_155 0
+    $t_154 = move $t_156
+    jump %lhs_merge_49
+
+%lhs_merge_49:
+    $t_157 = move $t_154
+    jump %lhs_merge_50
+
+%lhs_true_49:
+    $t_157 = move 1
+    jump %lhs_merge_50
+
+%lhs_merge_50:
+    br $t_157 %lhs_true_51 %lhs_false_51
+
+%lhs_false_51:
+    $t_158 = add $i $j
+    $t_159 = add $t_158 $k
+    $t_160 = sgt $t_159 0
+    br $t_160 %lhs_true_52 %lhs_false_52
+
+%lhs_true_52:
+    $t_161 = rem $k 199
+    $t_162 = seq $t_161 0
+    $t_163 = move $t_162
+    jump %lhs_merge_51
+
+%lhs_false_52:
+    $t_163 = move 0
+    jump %lhs_merge_51
+
+%lhs_merge_51:
+    $t_164 = move $t_163
+    jump %lhs_merge_52
+
+%lhs_true_51:
+    $t_164 = move 1
+    jump %lhs_merge_52
+
+%lhs_merge_52:
+    br $t_164 %lhs_true_53 %lhs_false_53
+
+%lhs_true_53:
+    $t_165 = move 1
+    jump %lhs_merge_53
+
+%lhs_false_53:
+    $t_166 = mul $i $j
+    $t_167 = mul $t_166 $k
+    $t_168 = sgt $t_167 0
+    br $t_168 %lhs_true_54 %lhs_false_54
+
+%lhs_false_54:
+    $t_169 = move 0
+    jump %lhs_merge_54
+
+%lhs_true_54:
+    $t_170 = rem $k 199
+    $t_171 = seq $t_170 0
+    $t_169 = move $t_171
+    jump %lhs_merge_54
+
+%lhs_merge_54:
+    $t_165 = move $t_169
+    jump %lhs_merge_53
+
+%lhs_merge_53:
+    $f6 = move $t_165
+    br $f1 %if_true %if_after
+
+%if_true:
+    $ans = add $ans 1
+    jump %if_after
+
+%if_after:
+    br $f2 %if_true_2 %if_after_2
+
+%if_true_2:
+    $ans = add $ans 1
+    jump %if_after_2
+
+%if_after_2:
+    br $f3 %if_true_3 %if_after_3
+
+%if_true_3:
+    $ans = add $ans 1
+    jump %if_after_3
+
+%if_after_3:
+    br $f4 %if_true_4 %if_after_4
+
+%if_true_4:
+    $ans = add $ans 1
+    jump %if_after_4
+
+%if_after_4:
+    br $f5 %if_true_5 %if_after_5
+
+%if_true_5:
+    $ans = add $ans 1
+    jump %if_after_5
+
+%if_after_5:
+    br $f6 %if_true_6 %if_after_6
+
+%if_true_6:
+    $ans = add $ans 1
+    jump %if_after_6
+
+%if_after_6:
+    jump %for_step_2
+
+%for_step_2:
+    $k = add $k 1
+    jump %for_cond_3
+
+%for_after_2:
+    jump %for_step_3
+
+%for_step_3:
+    $i = add $i 1
+    jump %for_cond
+
+%for_after:
+    call printlnint $ans 
+    $i = move 1
+    jump %for_cond_4
+
+%for_cond_4:
+    $t_172 = sle $i 30000000
+    br $t_172 %for_loop_4 %for_after_4
+
+%for_after_4:
+    ret 0
+
+%for_loop_4:
+    $n = move 100
+    $n_2 = move $n
+    $n_3 = move $n_2
+    $n_4 = move $n_3
+    $t_173 = sub $n_4 1
+    $t_174 = rem $n_4 $t_173
+    $t_175 = sub $n_4 2
+    $t_176 = rem $t_174 $t_175
+    $t_177 = sub $n_4 3
+    $t_178 = rem $t_176 $t_177
+    $t_179 = sub $n_4 4
+    $t_180 = rem $t_178 $t_179
+    $t_181 = sub $n_4 5
+    $t_182 = rem $t_180 $t_181
+    $t_183 = sub $n_4 6
+    $t_184 = rem $t_182 $t_183
+    $t_185 = sub $n_4 7
+    $t_186 = rem $t_184 $t_185
+    $t_187 = sub $n_4 8
+    $t_188 = rem $t_186 $t_187
+    $t_189 = sub $n_4 9
+    $t_190 = rem $t_188 $t_189
+    $t_191 = sub $n_4 10
+    $t_192 = rem $t_190 $t_191
+    $t_193 = sub $n_4 11
+    $t_194 = rem $t_192 $t_193
+    $t_195 = sub $n_4 12
+    $t_196 = rem $t_194 $t_195
+    $t_197 = sub $n_4 13
+    $t_198 = rem $t_196 $t_197
+    $t_199 = sub $n_4 14
+    $t_200 = rem $t_198 $t_199
+    $t_201 = sub $n_4 15
+    $t_202 = rem $t_200 $t_201
+    $t_203 = sub $n_4 16
+    $t_204 = rem $t_202 $t_203
+    $t_205 = sub $n_4 17
+    $t_206 = rem $t_204 $t_205
+    $t_207 = sub $n_4 18
+    $t_208 = rem $t_206 $t_207
+    $t_209 = sub $n_4 19
+    $t_210 = rem $t_208 $t_209
+    $t_211 = sub $n_4 20
+    $t_212 = rem $t_210 $t_211
+    jump %p.entry
+
+%p.entry:
+    $t_213 = move $t_212
+    $t_214 = move $t_213
+    $t_215 = move $t_214
+    $t_216 = move $t_215
+    $tt = move $t_216
+    $t_217 = rem $i 3000000
+    $t_218 = seq $t_217 0
+    br $t_218 %if_true_7 %if_after_7
+
+%if_true_7:
+    call printlnint $tt 
+    jump %if_after_7
+
+%if_after_7:
+    jump %for_step_4
+
+%for_step_4:
+    $i = add $i 1
+    jump %for_cond_4
+
+}
+

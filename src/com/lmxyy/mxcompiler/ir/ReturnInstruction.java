@@ -56,4 +56,8 @@ public class ReturnInstruction extends EndInstruction {
                 (IntValue) renameMap.getOrDefault(retVal,retVal)
         );
     }
+
+    public void setRetVal(IntValue _retVal) {
+        retVal = _retVal;
+    }
 }
