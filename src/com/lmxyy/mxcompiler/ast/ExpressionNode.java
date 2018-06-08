@@ -3,6 +3,7 @@ package com.lmxyy.mxcompiler.ast;
 import com.lmxyy.mxcompiler.symbol.ExprOperator;
 import com.lmxyy.mxcompiler.utils.Location;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -15,7 +16,13 @@ public class ExpressionNode extends ExprNode{
     public ExpressionNode(List<ExprNode> _exprs,VartypePlusNode _vartype,ExprOperator _op,boolean _hasPar) {
         vartype = _vartype;
         op = _op;
-        exprs = _exprs;
+        exprs = new ArrayList<>();
+        if (op.getOp() == ExprOperator.Operator.LAND||op.getOp() == ExprOperator.Operator.LOR) {
+            exprs.add(_exprs.get(1));
+            exprs.add(_exprs.get(0));
+        }
+        else exprs.addAll(_exprs);
+//        exprs = _exprs;
         hasPar = _hasPar;
     }
 
